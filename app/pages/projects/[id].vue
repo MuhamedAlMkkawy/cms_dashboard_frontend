@@ -24,6 +24,12 @@
           <i class="pi pi-equals"></i>
         </div>
       </div>
+      <hr />
+      <div class="header_image">
+        <div class="image">
+          <img src="@/assets/images/board.svg" alt="logo_image" loading="lazy" />
+        </div>
+      </div>
     </div>
     <div class="project_content">
       <div class="pages">
@@ -243,6 +249,11 @@ const sidebarComponents = [
     icon: "pi pi-star",
   },
   {
+    type : 'language',
+    label : 'Language',
+    icon : 'pi pi-language'
+  },
+  {
     type: "back-to-top",
     label: "Back to top",
     icon: "pi pi-arrow-up",
@@ -290,13 +301,6 @@ const sections = ref([
   {
     id: 1,
     name: "Header",
-    layout_items: 1,
-    components: [], // { type, label, icon }
-    isDragOver: false,
-  },
-  {
-    id: 2,
-    name: "Hero",
     layout_items: 1,
     components: [], // { type, label, icon }
     isDragOver: false,

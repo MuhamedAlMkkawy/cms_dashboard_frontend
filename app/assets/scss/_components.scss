@@ -40,6 +40,10 @@
         background: #e4e4e4 !important;
       }
     }
+    &:last-of-type{
+      padding: 8px 0 ;
+      background: #fff;
+    }
   }
 
 }
@@ -48,9 +52,9 @@
 .components {
   @include displayFlex($direction: column, $justify: start, $align: start);
   // margin-top: 20px;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: scroll;
-  padding-block: 20px 0px;
+  padding-block: 10px 0px;
 }
 
 .component_item {
@@ -69,17 +73,21 @@
     background: #fff;
     color: $mainColor;
   }
-&.dragging {
-  opacity: 0.5;
-  cursor: grabbing;
-  transform: scale(0.95);
-  border: 1px dashed $mainColor;
-  background: lighten($mainColor, 20%);
-  color: $mainColor;
-}
+  &.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: scale(0.95);
+    border: 1px dashed $mainColor;
+    background: lighten($mainColor, 20%);
+    color: $mainColor;
+  }
   .pi:last-of-type {
     opacity: 0.4;
     margin-inline-start: auto;
     font-size: 15px;
+  }
+
+  &:last-of-type{
+    margin-bottom: 8px;
   }
 }
