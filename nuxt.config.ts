@@ -1,8 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import Aura from '@primeuix/themes/aura';
 
-
-
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: false },
@@ -14,7 +12,7 @@ export default defineNuxtConfig({
     },
   },
 
-  ssr : false,
+  ssr: false,
 
   app: {
     pageTransition: {
@@ -51,6 +49,23 @@ export default defineNuxtConfig({
       ErrorMessage: "VeeErrorMessage",
     },
   },
+
+  components: [
+    // Auto-import everything in fields folder
+    {
+      path: "~/components/fields",
+      // Optional: add a prefix to avoid name conflicts
+      prefix: "Field", // e.g., CardSliderFields.vue → FieldCardSliderFields
+      extensions: ["vue"],
+      global: true,
+    },
+    // Auto-import all other components
+    {
+      path: "~/components",
+      global: true,
+    },
+  ],
+
 
   imports: {
     dirs: ["stores", "composables", "helpers", "schemas"],

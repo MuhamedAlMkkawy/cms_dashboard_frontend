@@ -101,7 +101,7 @@
           >
             <!-- Slot contains a component -->
             <template v-if="section.components[index]">
-              <div class="section_block">
+              <div class="section_block" @click="componentType = section.components[index].type">
                 <div class="section_info">
                   <i :class="section.components[index].icon"></i>
                   <span>{{ section.components[index].label }}</span>
@@ -130,18 +130,20 @@
         <i class="pi pi-plus"></i>
       </div>
     </div>
+    <!-- ################## Add Section Popup ##################-->
     <AddSectionPopup
       v-if="showAddSectionPopup"
       @handleShowAddSectionPopup="showAddSectionPopup = false"
       @handleAddSection="handleAddSection"
     />
-    <!-- Component -->
+    <!-- ################# Add Section  Popup #####################-->
+    <!-- ############## Add Component Content  Popup ##############-->
     <ComponentPopup 
-      v-if="showComponentPopup"
-      type="card-slider"
-      @handleCloseComponentPopup="showComponentPopup = false"
+    v-if="componentType"
+    :type="componentType"
+    @handleCloseComponentPopup="componentType = null"
     />
-    <!-- Component -->
+    <!-- ############## Add Component Content  Popup ##############-->
   </div>
 </template>
 
@@ -156,7 +158,7 @@ const activePage = ref(1);
 // -----------------------------
 const sidebarComponents = [
   {
-    type: "Card Slider",
+    type: "card-slider",
     label: "Card slider",
     icon: "pi pi-sliders-h",
   },
@@ -397,7 +399,8 @@ const removeComponent = (section, index) => {
 // ---------------------------
 // HANDLE ADD THE COMPONENT CONENT
 // ---------------------------
-const showComponentPopup = ref(false)
+const componentType = ref(null)
+
 
 // ----------------------------
 // HANDLE CHANGE SECTION LAYOUT

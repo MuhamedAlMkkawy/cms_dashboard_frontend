@@ -8,7 +8,8 @@
 
       <!-- Dynamic component -->
       <component
-        :is="componentMap[type]"
+        :is="componentMap[props.type]"
+        @handleCloseComponentPopup="$emit('handleCloseComponentPopup')"
         @handleSubmitFields="handleFieldsSubmit"
       />
     </div>
@@ -16,37 +17,24 @@
 </template>
 
 <script setup>
-
+import CardSliderFields from './fields/CardSliderFields.vue'
 // props for dynamic rendering
 const props = defineProps({
   type: String // the component type name
 })
 
-// emit data back to parent
+// DEFINE EMITS
 const emit = defineEmits(['handleCloseComponentPopup'])
 
 // map type name to component
 const componentMap = {
   'card-slider': CardSliderFields,
-  // 'heading': HeadingFields,
-  // 'gallery': GalleryFields,
-  // add all other field components
 }
 
 // called when child emits handleSubmitFields
 const handleFieldsSubmit = (data) => {
-  console.log('Received data from field component:', data)
+  emit('handleCloseComponentPopup')
+  // console.log('Received data from field component:', data)
 }
 </script>
 
-<style lang="scss" scoped>
-// .popup {
-//   .content {
-//     padding: 20px;
-//     background: #fff;
-//     border-radius: 12px;
-//     max-width: 600px;
-//     margin: auto;
-//   }
-// }
-</style>

@@ -46,18 +46,34 @@
         v-for="(img, i) in slider.images" 
         :key="i"
       >
-        <Image :src="img" alt="uploaded image" loading="lazy" preview />
+        <Image :src="img.url" alt="uploaded image" loading="lazy" preview />
         <button class="pi pi-trash delete_btn" @click="removeImage(i)"></button>
       </div>
     </div>
 
-    <button class="main-btn" @click="$emit('handleSubmitFields' , slider)">
+    <button class="main-btn" @click="handleSubmitCardSlider">
       Submit
     </button>
   </div>
 </template>
 
 <script setup>
+  // ------------------
+  // HANDLE ERROR TAOST
+  // ------------------
+  const {
+    showErrorToast
+  } = useToastMsg()
+
+  // ------------------
+  // DEFINE EMITS
+  // ------------------
+  const emit = defineEmits(['handleFieldsSubmit' , 'handleCloseComponentPopup'])
+
+
+  // -----------------
+  // HANDLE SLIDER DATA
+  // -----------------
   const slider = ref({
     itemsToShow : 1,
     autoplay: false,
@@ -71,12 +87,11 @@
     const files = event.target.files
     if (!files || !files.length) return
 
-    Array.from(files).forEach(file => {
-      const reader = new FileReader()
-      reader.onload = e => {
-        slider.value.images.push(e.target.result) 
-      }
-      reader.readAsDataURL(file)
+    Array.from(files).forEach((file) => {
+      slider.value.images.push({
+        url: URL.createObjectURL(file),
+        file: file
+      })
     })
   }
 
@@ -85,6 +100,28 @@
   // -----------------
   const removeImage = (index) => {
     slider.value.images.splice(index, 1)
+  }
+
+
+
+  // --------------------------
+  // HANDLE SUBMIT CARD SLIDER
+  // --------------------------
+  const handleSubmitCardSlider = () => {
+    const cardSlider = new FormData()
+
+    cardSlider.append('itemsToShow' , slider.value.itemsToShow)
+    cardSlider.append('autoplay' , slider.value.autoplay)
+    if(!slider.value.images[0]){
+      showErrorToast('You Should add the images to continue...')
+    }
+    slider.value.images.forEach((item, index) => {
+      cardSlider.append(`images[${index}][id]`, index)
+      cardSlider.append(`images[${index}][file]`, item.file)
+    })
+
+    emit('handleFieldsSubmit' , cardSlider)
+    emit('handleCloseComponentPopup')
   }
 </script>
 
@@ -98,8 +135,13 @@
 
       select {
         border: 1px solid #e4e4e4;
-        width: 80px;
+        border-radius: 4px;
+        width: 95px;
+        height: 40px;
         cursor: pointer;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
       }
     }
 
