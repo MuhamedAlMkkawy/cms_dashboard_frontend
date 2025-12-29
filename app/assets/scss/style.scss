@@ -114,3 +114,16 @@ span[role="alert"] {
     transform: translateY(15px) translateX(5px);
   }
 }
+
+
+
+// Style the spinner for the number input
+::-webkit-inner-spin-button, ::-webkit-outer-spin-button{
+  display: none;
+}
+
+// STYLE THE TOGGLE BUTTON OF THE SLIDER POPUP
+.p-togglebutton-checked .p-togglebutton-content{
+  background: $mainColor !important;
+  color:#fff;
+}

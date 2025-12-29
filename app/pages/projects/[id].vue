@@ -135,6 +135,13 @@
       @handleShowAddSectionPopup="showAddSectionPopup = false"
       @handleAddSection="handleAddSection"
     />
+    <!-- Component -->
+    <ComponentPopup 
+      v-if="showComponentPopup"
+      type="card-slider"
+      @handleCloseComponentPopup="showComponentPopup = false"
+    />
+    <!-- Component -->
   </div>
 </template>
 
@@ -149,7 +156,7 @@ const activePage = ref(1);
 // -----------------------------
 const sidebarComponents = [
   {
-    type: "card-slider",
+    type: "Card Slider",
     label: "Card slider",
     icon: "pi pi-sliders-h",
   },
@@ -387,7 +394,10 @@ const removeComponent = (section, index) => {
   section.components.splice(index, 1);
 };
 
-
+// ---------------------------
+// HANDLE ADD THE COMPONENT CONENT
+// ---------------------------
+const showComponentPopup = ref(false)
 
 // ----------------------------
 // HANDLE CHANGE SECTION LAYOUT
