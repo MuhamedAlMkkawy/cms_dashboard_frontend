@@ -40,7 +40,7 @@
     padding-inline: clamp(8px , 2.5vw , 15px);
     // overflow: hidden !important;
     height: fit-content !important; 
-    max-height: 600px;
+    // max-height: 600px;
     overflow: hidden scroll;
     &::-webkit-scrollbar{
       display: none !important; 
@@ -97,6 +97,9 @@
         background: white;
         color: $dangerColor;
       }
+    }
+    &.max_width{
+      max-width:1200px;
     }
   }
 }

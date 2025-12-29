@@ -127,3 +127,12 @@ span[role="alert"] {
   background: $mainColor !important;
   color:#fff;
 }
+
+
+
+.p-editor{
+  // min-height: 400px;
+  max-height: 500px;
+  overflow-y: scroll;
+  min-height: 400px !important;
+}
