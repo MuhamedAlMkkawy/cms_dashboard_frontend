@@ -144,8 +144,8 @@
     }
     transition: 0.5s;
     &:hover {
-      background: transparent;
-      color: $mainColor;
+      background: $mainColor;
+      color: #fff;
     }
   }
 }

@@ -18,6 +18,7 @@
 
 <script setup>
 import CardSliderFields from './fields/CardSliderFields.vue'
+import MenuFields from './fields/MenuFields.vue'
 // props for dynamic rendering
 const props = defineProps({
   type: String // the component type name
@@ -29,6 +30,7 @@ const emit = defineEmits(['handleCloseComponentPopup'])
 // map type name to component
 const componentMap = {
   'card-slider': CardSliderFields,
+  'nav-menu' : MenuFields
 }
 
 // called when child emits handleSubmitFields

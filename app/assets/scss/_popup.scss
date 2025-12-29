@@ -82,18 +82,20 @@
     .input{
       margin-bottom: 5px;
     }
-    .buttons{
-      @include displayFlex($gap : 5px);
-      button.delete_btn{
-        background: #A80202;
-        &:hover{
-          border-color:#A80202 !important;
-          color: #A80202;
-          background: #fff;
-        }
+
+    .delete_btn{
+      background: $dangerColor;
+      color: white;
+      border: 1px solid $dangerColor;
+      border-radius: 3px;
+      padding: 8px;
+      cursor: pointer;
+      &.circled{
+        border-radius: 50%;
       }
-      @media (max-width : 700px){
-        flex-wrap: wrap;
+      &:hover {
+        background: white;
+        color: $dangerColor;
       }
     }
   }

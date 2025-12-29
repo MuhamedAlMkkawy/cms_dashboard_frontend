@@ -1,6 +1,6 @@
 .flex_buttons{
   @include displayFlex($gap : clamp(10px , 4vw , 20px));
-  margin-block: 30px 0;
+  // margin-block: 30px 0;
   width: 100%;
   .main-btn{
     max-width: 300px;
