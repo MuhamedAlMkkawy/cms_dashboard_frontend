@@ -3,7 +3,7 @@
     <h4 class="centered">Custom HTML Section</h4>
     <!-- HTML QUILL EDITOR -->
     <Editor
-      v-model="htmlData.html"
+      v-model="body.html"
       placeholder="Write or paste HTML here..."
     />
     <!-- <div class="input editor_input">
@@ -29,7 +29,7 @@ const emit = defineEmits(["handleFieldsSubmit", "handleCloseComponentPopup"])
 // ----------------
 // DEFINE EDITOR DATA
 // ----------------
-const htmlData = ref({
+const body = ref({
   hasContainer: false,
   html: ""
 })
@@ -39,14 +39,14 @@ const htmlData = ref({
 // HANDLE SUBMIT 
 // ----------------
 const handleSubmitHtml = () => {
-  if (!htmlData.value.html.trim()) {
+  if (!body.value.html.trim()) {
     showErrorToast("HTML content cannot be empty")
     return
   }
 
   const payload = new FormData()
-  payload.append("hasContainer", htmlData.value.hasContainer)
-  payload.append("html", htmlData.value.html)
+  payload.append("hasContainer", body.value.hasContainer)
+  payload.append("html", body.value.html)
 
   emit("handleFieldsSubmit", payload)
   emit("handleCloseComponentPopup")
