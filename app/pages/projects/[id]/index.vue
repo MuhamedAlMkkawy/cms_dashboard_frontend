@@ -131,8 +131,9 @@
         @click="showAddSectionPopup = true"
       >
         <i class="pi pi-plus"></i>
+        <span>Add Section</span>
       </div>
-      <button class="main-btn" @click="handleSavePageContent">
+      <button class="main-btn savePageButton" @click="handleSavePageContent">
         Save
       </button>
     </div>
@@ -317,22 +318,7 @@ const body = ref(
   {
     id : 1 ,
     name : 'home',
-    sections: [
-      { 
-        id: 1,
-        name: "Header",
-        layout_items: 1,
-        components: [], // { type, label, icon }
-        isDragOver: false,
-      },
-      {
-        id : 2 ,
-        name : 'About',
-        layout_items : 1 ,
-        components : [],
-        isDragOver : false,
-      }
-    ] 
+    sections: [] 
   }
 );
 
@@ -534,6 +520,9 @@ const handleSavePageContent = () => {
       background: #333;
       height: 3px;
     }
+  }
+  button.savePageButton{
+    margin-top: auto;
   }
 }
 

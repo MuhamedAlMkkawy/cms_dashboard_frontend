@@ -156,9 +156,18 @@
     align-items: center;
     justify-content: center;
     min-height: unset;
-    margin-top: auto;
+    gap: 8px;
+    font-size: 18px;
     i.pi {
-      font-size: 25px;
+      @include circle(30px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $mainColor;
+      color: #fff;
+    }
+    span{
+      font-size: 16px;
     }
     transition: 0.5s;
     &:hover {
