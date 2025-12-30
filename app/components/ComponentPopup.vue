@@ -12,6 +12,7 @@
         @handleCloseComponentPopup="$emit('handleCloseComponentPopup')"
         @handleSubmitFields="handleFieldsSubmit"
       />
+      
     </div>
   </div>
 </template>
@@ -19,6 +20,7 @@
 <script setup>
   import CardSliderFields from './fields/CardSliderFields.vue'
   import CustomHtml from './fields/CustomHtml.vue'
+  import LogoField from './fields/LogoField.vue'
   import MenuFields from './fields/MenuFields.vue'
 
 
@@ -34,7 +36,8 @@
   const componentMap = {
     'card-slider': CardSliderFields,
     'nav-menu' : MenuFields,
-    'custom-html' : CustomHtml
+    'custom-html' : CustomHtml,
+    'logo' : LogoField
   }
 
   // called when child emits handleSubmitFields

@@ -105,6 +105,7 @@
         height: 100%;
         // border: 1px solid;
         width: 0;
+        opacity: 0;
         overflow: hidden;
         transition: 0.5s;
         i.pi{
@@ -125,7 +126,7 @@
           border-color: $dangerColor;
           color: #fff;
           border-radius: 0 4px 4px 0;
-          transition-delay: 0.5s;
+          transition-delay: 0.2s;
           &:hover{
             background: #fff;
             color: $dangerColor;
@@ -136,6 +137,7 @@
       &:hover{
         button.section_button{
           width: 80px;
+          opacity: 1;
           // padding-inline: 25px;
           &:hover{
             border: 1px solid ;

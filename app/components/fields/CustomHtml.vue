@@ -6,8 +6,6 @@
       v-model="body.html"
       placeholder="Write or paste HTML here..."
     />
-    <!-- <div class="input editor_input">
-    </div> -->
 
     <button class="main-btn" @click="handleSubmitHtml">
       Submit
@@ -16,8 +14,6 @@
 </template>
 
 <script setup>  
-import Editor from 'primevue/editor';
-
 const { showErrorToast } = useToastMsg()
 
 // ---------------
@@ -40,12 +36,11 @@ const body = ref({
 // ----------------
 const handleSubmitHtml = () => {
   if (!body.value.html.trim()) {
-    showErrorToast("HTML content cannot be empty")
+    showErrorToast("Content cannot be empty")
     return
   }
 
   const payload = new FormData()
-  payload.append("hasContainer", body.value.hasContainer)
   payload.append("html", body.value.html)
 
   emit("handleFieldsSubmit", payload)
