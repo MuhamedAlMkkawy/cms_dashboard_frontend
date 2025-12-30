@@ -101,14 +101,17 @@
           >
             <!-- Slot contains a component -->
             <template v-if="section.components[index]">
-              <div class="section_block" @click="componentType = section.components[index].type">
+              <div class="section_block">
                 <div class="section_info">
                   <i :class="section.components[index].icon"></i>
                   <span>{{ section.components[index].label }}</span>
                 </div>
 
               </div>
-              <button class="remove_component" @click.stop="removeComponent(section, index)">
+              <button class="section_button control_component"  @click="componentType = section.components[index].type">
+                <i class="pi pi-pen-to-square"></i>
+              </button>
+              <button class="section_button remove_component" @click.stop="removeComponent(section, index)">
                 <i class="pi pi-trash"></i>
               </button>
             </template>

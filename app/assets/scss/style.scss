@@ -129,10 +129,17 @@ span[role="alert"] {
 }
 
 
-
+// STYLE THE EDITOR COMPONENT IN THE POPUP
 .p-editor{
   // min-height: 400px;
   max-height: 500px;
   overflow-y: scroll;
   min-height: 400px !important;
+}
+
+
+.p-editor .p-editor-content .ql-editor{
+  min-height: 420px;
+  background: #044D60;
+  color: #fff;
 }

@@ -56,14 +56,12 @@
     max-width: unset;
     .section_component{
       min-height: 66px;
-      // padding-inline: 8px;
       border: 1px solid #e4e4e4;
       border-radius: 8px;
       transition: 0.3s;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: $mainColor;
       position: relative;
       background: $mainColor;
       color: #fff;
@@ -82,17 +80,19 @@
         &.is-dragging {
           background: linear-gradient(135deg, lighten($mainColor, 15%), darken($mainColor, 5%)) !important;
           color: #fff;
-          // border: 2px dashed rgba($mainColor, 0.6) !important;
           box-shadow: 0 0 10px rgba($mainColor, 0.4);
-          // transition: all 0.2s ease-in-out;
         }
 
       }
       .section_block{
         width: 100%;
+        height: 100%;
         position: relative;
+        display: flex;
+        align-items: center;
+        cursor: default;
         .section_info{
-          @include displayFlex( $justify : start , $gap : 8px);
+          @include displayFlex( $justify : center , $gap : 8px);
           width: 200px;
           margin: 0 auto;
           i , span{
@@ -100,22 +100,46 @@
           }
         }
       }
-      button.remove_component{
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        padding-inline: 25px;
+      button.section_button {
+        padding-inline: 0px;
         height: 100%;
-        border-radius: 0 4px 4px 0;
-        background: $dangerColor;
-        border:1px solid $dangerColor;
-        color: #fff;
+        // border: 1px solid;
+        width: 0;
+        overflow: hidden;
+        transition: 0.5s;
         i.pi{
           font-size: 20px;
         }
-        &:hover{
+        &.control_component{
           background: #fff;
-          color: $dangerColor;
+          border-color: #fff;
+          color: $mainColor;
+          font-weight: 600;
+          &:hover{
+            background: $mainColor;
+            color: #fff;
+          }
+        }
+        &.remove_component{
+          background: $dangerColor;
+          border-color: $dangerColor;
+          color: #fff;
+          border-radius: 0 4px 4px 0;
+          transition-delay: 0.5s;
+          &:hover{
+            background: #fff;
+            color: $dangerColor;
+          }
+        }
+      }
+
+      &:hover{
+        button.section_button{
+          width: 80px;
+          // padding-inline: 25px;
+          &:hover{
+            border: 1px solid ;
+          }
         }
       }
     }
@@ -126,19 +150,11 @@
   }
   &.add_section {
     cursor: pointer;
-    // width: 80px;
-    // position: fixed;
-    // bottom: 50px;
-    // right: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: unset;
-    // margin: 20px 0 0 auto ;
     margin-top: auto;
-    // border-style: solid;
-    // background: $mainColor;
-    // color: #fff;
     i.pi {
       font-size: 25px;
     }

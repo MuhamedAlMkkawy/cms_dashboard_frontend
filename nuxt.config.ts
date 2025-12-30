@@ -66,7 +66,6 @@ export default defineNuxtConfig({
     },
   ],
 
-
   imports: {
     dirs: ["stores", "composables", "helpers", "schemas"],
     presets: [
