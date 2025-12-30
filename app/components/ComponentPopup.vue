@@ -1,6 +1,6 @@
 <template>
   <div class="popup">
-    <div :class="['content ' , {max_width : props.type.toLowerCase().replace(/\s+/g, '-') === 'custom-html'} ]">
+    <div :class="['content ' , {max_width : props.componentData.type.toLowerCase().replace(/\s+/g, '-') === 'custom-html'} ]">
       <button
         class="pi pi-times close_btn"
         @click="$emit('handleCloseComponentPopup')"
@@ -8,8 +8,8 @@
 
       <!-- Dynamic component -->
       <component
-        :is="componentMap[props.type.toLowerCase().replace(/\s+/g, '-')]"
-        @handleCloseComponentPopup="$emit('handleCloseComponentPopup')"
+        :is="componentMap[props.componentData.type.toLowerCase().replace(/\s+/g, '-')]"
+        @handleCloseComponentPopup="emit('handleCloseComponentPopup')"
         @handleSubmitFields="handleFieldsSubmit"
       />
       
@@ -26,11 +26,12 @@
 
   // props for dynamic rendering
   const props = defineProps({
-    type: String // the component type name
+    componentData : Object // the component data
   })
 
+
   // DEFINE EMITS
-  const emit = defineEmits(['handleCloseComponentPopup'])
+  const emit = defineEmits(['handleAddComponent' , 'handleCloseComponentPopup'])
 
   // map type name to component
   const componentMap = {
@@ -40,10 +41,16 @@
     'logo' : LogoField
   }
 
+
+
   // called when child emits handleSubmitFields
   const handleFieldsSubmit = (data) => {
-    emit('handleCloseComponentPopup')
-    // console.log('Received data from field component:', data)
+    emit('handleAddComponent' , {
+      sectionID : props.componentData.sectionID ,
+      type : props.componentData.type ,
+      content : {...data}
+    })
+    // emit('handleCloseComponentPopup')
   }
 </script>
 

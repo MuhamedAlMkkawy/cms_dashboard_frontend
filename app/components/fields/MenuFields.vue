@@ -19,7 +19,7 @@
     </div>
     
     <ClassesInput 
-      v-model="body.customClasses"
+      v-model="customClasses"
       id="custom_classes"
       label="CSS Classes"
       placeholder="e.g. rounded-lg shadow-md text-center"
@@ -38,13 +38,14 @@
 <script setup>
 const { showErrorToast } = useToastMsg()
 // define emits 
-const emit = defineEmits(["handleFieldsSubmit", "handleCloseComponentPopup"]);
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
 // default menu
 const body = ref({
   items: [{ title: "", slug: "" }],
-  customClasses : ''
 });
+
+const customClasses = ref('')
 
 // Add new menu item
 const addMenuItem = () => {
@@ -69,11 +70,15 @@ const handleSubmitNavMenu = () => {
   ) {
     showErrorToast("Please fill all titles and slugs before submitting.");
     return;
+  }else{
+    // emit data
+    emit("handleSubmitFields", {
+      ...body.value,
+      classes : customClasses.value
+    }); // deep clone
+    emit("handleCloseComponentPopup");
   }
 
-  // emit data
-  emit("handleFieldsSubmit", body.value); // deep clone
-  emit("handleCloseComponentPopup");
 };
 </script>
 

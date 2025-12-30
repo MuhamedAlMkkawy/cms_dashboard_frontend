@@ -1,5 +1,5 @@
 <template>
-  <div class="error_page">
+  <div class="error_page gradient_background">
     <div class="image">
       <img src="/assets/images/logo.png" alt="logo image" loading="lazy">
     </div>

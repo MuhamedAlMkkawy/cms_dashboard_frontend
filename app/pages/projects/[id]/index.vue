@@ -62,7 +62,7 @@
     <hr />
     <div class="project_sections">
       <div
-        v-for="section in sections"
+        v-for="section in body?.sections"
         :key="section.id"
         class="section"
       >
@@ -108,7 +108,7 @@
                 </div>
 
               </div>
-              <button class="section_button control_component"  @click="componentType = section.components[index].type">
+              <button class="section_button control_component"  @click="handleSectionContent(section.id , section.components[index].type)">
                 <i class="pi pi-pen-to-square"></i>
               </button>
               <button class="section_button remove_component" @click.stop="removeComponent(section, index)">
@@ -132,6 +132,9 @@
       >
         <i class="pi pi-plus"></i>
       </div>
+      <button class="main-btn" @click="handleSavePageContent">
+        Save
+      </button>
     </div>
     <!-- ################## Add Section Popup ##################-->
     <AddSectionPopup
@@ -142,9 +145,10 @@
     <!-- ################# Add Section  Popup #####################-->
     <!-- ############## Add Component Content  Popup ##############-->
     <ComponentPopup 
-    v-if="componentType"
-    :type="componentType"
-    @handleCloseComponentPopup="componentType = null"
+      v-if="componentData.type"
+      :componentData="componentData"
+      @handleCloseComponentPopup="componentData = {}"
+      @handleAddComponent="handleAddComponentContent"
     />
     <!-- ############## Add Component Content  Popup ##############-->
   </div>
@@ -307,25 +311,38 @@ const items = ref([
 
 
 // ----------------------------
-// HANDLE SECTION DESIGN
+// HANDLE PAGES CONTENT 
 // ----------------------------
-const sections = ref([
+const body = ref(
   {
-    id: 1,
-    name: "Header",
-    layout_items: 1,
-    components: [], // { type, label, icon }
-    isDragOver: false,
-  },
-]);
+    id : 1 ,
+    name : 'home',
+    sections: [
+      { 
+        id: 1,
+        name: "Header",
+        layout_items: 1,
+        components: [], // { type, label, icon }
+        isDragOver: false,
+      },
+      {
+        id : 2 ,
+        name : 'About',
+        layout_items : 1 ,
+        components : [],
+        isDragOver : false,
+      }
+    ] 
+  }
+);
 
 
 // -------------------------
 // HANDLE ADD NEW SECTION
 // -------------------------
 const handleAddSection = (section) => {
-  sections.value.push({
-    id : sections.length,
+  body?.value?.sections?.value.push({
+    id : body?.value?.sections?.length,
     ...section
   })
   showAddSectionPopup.value = false
@@ -392,17 +409,47 @@ const onDrop = (section) => {
 };
 
 
+
 // ---------------------------
-// HANDLE REMOVE THE COMPONENT
+// HANDLE ADD THE COMPONENT POPUP
 // ---------------------------
+const componentData = ref({})
+
+
 const removeComponent = (section, index) => {
   section.components.splice(index, 1);
 };
 
-// ---------------------------
-// HANDLE ADD THE COMPONENT CONENT
-// ---------------------------
-const componentType = ref(null)
+const handleSectionContent = (sectionID , type) => {
+  componentData.value.sectionID = sectionID
+  componentData.value.type = type
+} 
+
+
+const handleAddComponentContent = (data) => {
+  // 1️⃣ Find section
+  const targetedSection = body.value.sections.find(
+    (item) => item.id == data.sectionID
+  )
+  if (!targetedSection) return console.warn("Section not found")
+
+  // 2️⃣ Find component inside section
+  const targetComponent = targetedSection.components.find(
+    (comp) => comp.type === data.type
+  )
+  if (!targetComponent) return console.warn("Component not found")
+
+  // 3️⃣ Add / replace content
+  targetComponent.content = data.content
+
+}
+
+
+watch(() => body.value , (newValue) => {
+  if(newValue){
+    console.log(newValue)
+  }
+})
 
 
 // ----------------------------
@@ -420,9 +467,15 @@ const changeLayout = (section) => {
 // ----------------------------
 const showAddSectionPopup = ref(false)
 
-watchEffect(()=> {
-  console.log(sections.value)
-})
+
+
+// ----------------------------
+// HANDLE SAVE PAGE CONTENT
+// ----------------------------
+const handleSavePageContent = () => {
+  console.log(body.value)
+}
+
 </script>
 
 <style lang="scss" scoped>
