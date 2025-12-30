@@ -19,13 +19,25 @@
 import Editor from 'primevue/editor';
 
 const { showErrorToast } = useToastMsg()
+
+// ---------------
+// DEFINE EMITS
+// ---------------
 const emit = defineEmits(["handleFieldsSubmit", "handleCloseComponentPopup"])
 
+
+// ----------------
+// DEFINE EDITOR DATA
+// ----------------
 const htmlData = ref({
   hasContainer: false,
   html: ""
 })
 
+
+// ----------------
+// HANDLE SUBMIT 
+// ----------------
 const handleSubmitHtml = () => {
   if (!htmlData.value.html.trim()) {
     showErrorToast("HTML content cannot be empty")
