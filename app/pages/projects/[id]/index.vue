@@ -19,7 +19,7 @@
           @dragstart="onDragStart(item, $event)"
           @dragend="onDragEnd($event)"
         >
-          <i :class="item.icon" class="component_icon" />
+          <i :class="['pi ' , item.icon]" class="component_icon" />
           <span class="component_title">{{ item.label }}</span>
           <i class="pi pi-equals"></i>
         </div>
@@ -118,7 +118,7 @@
 
             <!-- Empty slot -->
             <template v-else>
-              <div class="section_component empty_placeholder active">
+              <div class="section_component empty_placeholder">
                 Drag components here
               </div>
             </template>
@@ -223,57 +223,57 @@ const sidebarComponents = [
   {
     type: "gallery",
     label: "Gallery",
-    icon: "pi pi-images",
+    icon: "pi-images",
   },
   {
     type: "timeline",
     label: "Time line",
-    icon: "pi pi-clock",
+    icon: "pi-clock",
   },
   {
     type: "social-media",
     label: "Social media",
-    icon: "pi pi-share-alt",
+    icon: "pi-share-alt",
   },
   {
     type: "custom-html",
     label: "custom HTML",
-    icon: "pi pi-code",
+    icon: "pi-code",
   },
   {
     type: "heading",
     label: "Heading",
-    icon: "pi pi-info-circle",
+    icon: "pi-info-circle",
   },
   {
     type: "accordion",
     label: "Accordion",
-    icon: "pi pi-align-justify",
+    icon: "pi-align-justify",
   },
   {
     type: "contact-info",
     label: "Contact Info",
-    icon: "pi pi-envelope",
+    icon: "pi-envelope",
   },
   {
     type: "tabs",
     label: "Tabs",
-    icon: "pi pi-folder-open",
+    icon: "pi-folder-open",
   },
   {
     type: "logo",
     label: "Logo",
-    icon: "pi pi-star",
+    icon: "pi-star",
   },
   {
     type : 'language',
     label : 'Language',
-    icon : 'pi pi-language'
+    icon : 'pi-language'
   },
   {
     type: "back-to-top",
     label: "Back to top",
-    icon: "pi pi-arrow-up",
+    icon: "pi-arrow-up",
   },
 ];
 
@@ -327,7 +327,7 @@ const body = ref(
 // HANDLE ADD NEW SECTION
 // -------------------------
 const handleAddSection = (section) => {
-  body?.value?.sections?.value.push({
+  body?.value?.sections.push({
     id : body?.value?.sections?.length,
     ...section
   })
@@ -348,21 +348,39 @@ const draggedComponent = ref(null);
 const isDragging = ref(false);
 
 const onDragStart = (item, e) => {
-  draggedComponent.value = item;
-  isDragging.value = true;
-  e.dataTransfer.effectAllowed = "move";
-  e.target.classList.add("dragging");
-};
+  draggedComponent.value = item
+  isDragging.value = true
+
+  // Clone DOM element
+  const clone = e.target.cloneNode(true)
+  clone.style.width = `${e.target.offsetWidth}px`
+  clone.style.height = `${e.target.offsetHeight}px`
+  clone.classList.add("drag-preview")
+
+  document.body.appendChild(clone)
+
+  // Set ghost image
+  e.dataTransfer.setDragImage(clone, 0, 0)
+
+  // Optional: add dragging class
+  e.target.classList.add("dragging")
+}
+
 
 const onDragEnd = (e) => {
-  draggedComponent.value = null;
-  isDragging.value = false;
-  e.target.classList.remove("dragging");
-};
+  draggedComponent.value = null
+  isDragging.value = false
+  e.target.classList.remove("dragging")
+
+  // Remove ghost preview if exists
+  const ghost = document.querySelector(".drag-preview")
+  if (ghost) ghost.remove()
+}
 
 
 const onDragEnter = (section, e) => {
   section.isDragOver = true;
+
 
   // Get ONLY the empty placeholder inside THIS slot
   const placeholder = e.currentTarget.querySelector('.empty_placeholder');
@@ -429,14 +447,6 @@ const handleAddComponentContent = (data) => {
   targetComponent.content = data.content
 
 }
-
-
-watch(() => body.value , (newValue) => {
-  if(newValue){
-    console.log(newValue)
-  }
-})
-
 
 // ----------------------------
 // HANDLE CHANGE SECTION LAYOUT

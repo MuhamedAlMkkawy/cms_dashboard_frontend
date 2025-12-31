@@ -17,13 +17,9 @@
         @click="removeMenuItem(index)"
       ></button>
     </div>
+
+    <slot></slot>
     
-    <ClassesInput 
-      v-model="customClasses"
-      id="custom_classes"
-      label="CSS Classes"
-      placeholder="e.g. rounded-lg shadow-md text-center"
-    />
 
     <div class="flex_buttons">
       <!-- Add New Menu Item -->
@@ -45,7 +41,6 @@ const body = ref({
   items: [{ title: "", slug: "" }],
 });
 
-const customClasses = ref('')
 
 // Add new menu item
 const addMenuItem = () => {
@@ -68,14 +63,11 @@ const handleSubmitNavMenu = () => {
     body.value.items.length === 0 ||
     body.value.items.some((i) => !i.title || !i.slug)
   ) {
-    showErrorToast("Please fill all titles and slugs before submitting.");
+    showErrorToast("Please fill all titles and slugs to continue");
     return;
   }else{
     // emit data
-    emit("handleSubmitFields", {
-      ...body.value,
-      classes : customClasses.value
-    }); // deep clone
+    emit("handleSubmitFields", body.value); 
     emit("handleCloseComponentPopup");
   }
 
@@ -88,11 +80,13 @@ const handleSubmitNavMenu = () => {
     display: flex;
     align-items: center;
     width: 100%;
-    margin-bottom: 18px;
     border: 1px solid #e4e4e4;
-    padding-inline: 0 12px;
+    padding-inline: 0 8px;
     border-radius: 8px;
     position: relative;
+    &:not(:last-of-type){
+      margin-bottom: 18px;
+    }
   }
   .input {
     display: flex;

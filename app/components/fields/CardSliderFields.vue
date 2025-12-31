@@ -51,6 +51,8 @@
       </div>
     </div>
 
+    <slot></slot>
+
     <button class="main-btn" @click="handleSubmitCardSlider">
       Submit
     </button>

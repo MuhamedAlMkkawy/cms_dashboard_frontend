@@ -49,11 +49,7 @@
     </div>
 
     <!-- CSS classes -->
-    <ClassesInput 
-      v-model="body.customClasses"
-      id="custom_classes"
-      label="CSS Classes"
-    />
+    <slot></slot>
 
   
     <button class="main-btn" @click="handleSubmitLogo">
@@ -63,15 +59,25 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["handleFieldsSubmit", "handleCloseComponentPopup"])
-const { showErrorToast } = useToastMsg()
+  // --------------
+  // DEFINE EMITS
+  // --------------
+  const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"])
+  
+  
+  // --------------
+  // HANDLE ERROR TOAST
+  // --------------
+  const { showErrorToast } = useToastMsg()
 
-const body = ref({
-  image: null,
-  width: "",
-  height: "",
-  customClasses: ""
-})
+  // --------------
+  // HANDLE BODY
+  // --------------
+  const body = ref({
+    image: null,
+    width: "",
+    height: "",
+  })
 
 // -------- HANDLE IMAGE UPLOAD ----------
 const handleImageUpload = (e) => {
@@ -94,14 +100,7 @@ const handleSubmitLogo = () => {
     return
   }
 
-  const form = new FormData()
-  form.append("width", body.value.width)
-  form.append("height", body.value.height)
-  form.append("customClasses", body.value.customClasses)
-  form.append("image[file]", body.value.image.file)
-  form.append("image[id]", "logo")
-
-  emit("handleFieldsSubmit", form)
+  emit("handleSubmitFields", body.value)
   emit("handleCloseComponentPopup")
 }
 </script>

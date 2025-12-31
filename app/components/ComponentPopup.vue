@@ -11,7 +11,14 @@
         :is="componentMap[props.componentData.type.toLowerCase().replace(/\s+/g, '-')]"
         @handleCloseComponentPopup="emit('handleCloseComponentPopup')"
         @handleSubmitFields="handleFieldsSubmit"
+      >
+      <ClassesInput
+        v-model="customClasses"
+        id="custom_classes"
+        label="CSS Classes"
+        placeholder="e.g. rounded-lg shadow-md text-center"
       />
+    </component>
       
     </div>
   </div>
@@ -28,6 +35,9 @@
   const props = defineProps({
     componentData : Object // the component data
   })
+
+  // DEFINE CUSTOM CLASSES 
+  const customClasses = ref('')
 
 
   // DEFINE EMITS
@@ -48,7 +58,10 @@
     emit('handleAddComponent' , {
       sectionID : props.componentData.sectionID ,
       type : props.componentData.type ,
-      content : {...data}
+      content : {
+        ...data ,
+        customClasses : customClasses.value
+      }
     })
     // emit('handleCloseComponentPopup')
   }

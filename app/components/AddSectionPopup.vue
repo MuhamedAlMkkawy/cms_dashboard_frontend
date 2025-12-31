@@ -35,7 +35,7 @@ const handleSubmit = () => {
   if (section.value.name.trim()) {
     emit('handleAddSection', section.value);
   }else{
-    showErrorToast('You should Add the section Name to continue !')
+    showErrorToast('You should Add the section Name to continue!')
   }
 };
 </script>

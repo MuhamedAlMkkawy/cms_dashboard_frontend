@@ -7,6 +7,8 @@
       placeholder="Write or paste HTML here..."
     />
 
+    <slot></slot>
+
     <button class="main-btn" @click="handleSubmitHtml">
       Submit
     </button>
@@ -19,14 +21,13 @@ const { showErrorToast } = useToastMsg()
 // ---------------
 // DEFINE EMITS
 // ---------------
-const emit = defineEmits(["handleFieldsSubmit", "handleCloseComponentPopup"])
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"])
 
 
 // ----------------
 // DEFINE EDITOR DATA
 // ----------------
 const body = ref({
-  hasContainer: false,
   html: ""
 })
 
@@ -40,10 +41,8 @@ const handleSubmitHtml = () => {
     return
   }
 
-  const payload = new FormData()
-  payload.append("html", body.value.html)
 
-  emit("handleFieldsSubmit", payload)
+  emit("handleSubmitFields", body.value)
   emit("handleCloseComponentPopup")
 }
 </script>

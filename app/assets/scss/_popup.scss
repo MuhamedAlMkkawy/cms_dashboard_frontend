@@ -38,12 +38,12 @@
     padding-block: 20px clamp(20px , 2.5vw , 20px);
     text-align: center;
     padding-inline: clamp(8px , 2.5vw , 15px);
-    // overflow: hidden !important;
-    height: fit-content !important; 
-    // max-height: 600px;
+    max-height: 800px;
+    height: fit-content ; 
     overflow: hidden scroll;
     &::-webkit-scrollbar{
-      display: none !important; 
+      width: 4px;
+      border-radius: 8px;
     }
     .image{
       max-width: 200px;

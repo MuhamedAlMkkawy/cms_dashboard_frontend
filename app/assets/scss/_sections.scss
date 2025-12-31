@@ -73,16 +73,7 @@
         text-align: center;
         font-size: 14px;
         color: $mainColor;
-        background:#f1f1f1 !important;
-        &:hover{
-          border: 1px dashed $mainColor !important;
-        }
-        &.is-dragging {
-          background: linear-gradient(135deg, lighten($mainColor, 15%), darken($mainColor, 5%)) !important;
-          color: #fff;
-          box-shadow: 0 0 10px rgba($mainColor, 0.4);
-        }
-
+        background:#f1f1f1;
       }
       .section_block{
         width: 100%;
@@ -92,11 +83,14 @@
         align-items: center;
         cursor: default;
         .section_info{
-          @include displayFlex( $justify : center , $gap : 8px);
+          @include displayFlex( $justify : start , $gap : 8px);
           width: 200px;
           margin: 0 auto;
-          i , span{
-            font-size: 20px;
+          i {
+            font-size: 20px;  
+          }
+          span{
+            font-size: 18px;
           }
         }
       }
@@ -175,4 +169,11 @@
       color: #fff;
     }
   }
+}
+
+
+.is-dragging {
+  background: linear-gradient(135deg, lighten($mainColor, 15%), darken($mainColor, 5%)) !important;
+  color: #fff !important;
+  box-shadow: 0 0 10px rgba($mainColor, 0.4);
 }

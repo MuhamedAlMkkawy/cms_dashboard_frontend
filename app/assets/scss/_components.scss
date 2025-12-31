@@ -81,6 +81,15 @@
     background: lighten($mainColor, 20%);
     color: $mainColor;
   }
+
+  &.drag-preview{
+    background: $mainColor;
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    opacity: 1;
+    // pointer-events: none;
+  }
   .pi:last-of-type {
     opacity: 0.4;
     margin-inline-start: auto;

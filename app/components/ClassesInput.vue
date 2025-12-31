@@ -25,12 +25,13 @@ defineProps({
 const emit = defineEmits(['update:modelValue'])
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .input {
-  margin-bottom: 15px;
+  margin-block: 15px;
   display: flex;
   flex-direction: column;
   gap: 8px !important;
+  border: 1px solid #ddd !important;
 }
 label {
   font-size: 14px;
