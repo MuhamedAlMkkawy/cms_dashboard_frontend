@@ -42,8 +42,9 @@
     height: fit-content ; 
     overflow: hidden scroll;
     &::-webkit-scrollbar{
-      width: 4px;
-      border-radius: 8px;
+      // width: 4px;
+      // border-radius: 8px;
+      display: none;
     }
     .image{
       max-width: 200px;

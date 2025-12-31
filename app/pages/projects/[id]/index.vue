@@ -34,27 +34,27 @@
     <div class="project_content">
       <div class="pages">
         <div
-          v-for="i in 8"
-          :key="i"
-          :class="['page_item', { active: activePage === i }]"
-          @click="activePage = i"
+          v-for="page in pages"
+          :key="page"
+          :class="['page_item', { active: activePage === page?.id }]"
+          @click="activePage = page?.id"
         >
-          <span>Home</span>
+          <span>{{page?.name?.toUpperCase()}}</span>
           <Button
             type="button"
             icon="pi pi-ellipsis-v"
-            @click.stop="(event) => menu[i - 1].toggle(event)"
+            @click.stop="(event) => menu[page?.id - 1].toggle(event)"
             aria-haspopup="true"
-            :aria-controls="`overlay_menu_${i}`"
+            :aria-controls="`overlay_menu_${page?.id}`"
           />
           <Menu
             ref="menu"
-            :id="`overlay_menu_${i}`"
+            :id="`overlay_menu_${page?.id}`"
             :model="items"
             :popup="true"
           />
         </div>
-        <button class="add_page">
+        <button class="add_page" @click="showAddPagePopup = true">
           <i class="pi pi-plus"></i>
         </button>
       </div>
@@ -62,7 +62,7 @@
     <hr />
     <div class="project_sections">
       <div
-        v-for="section in body?.sections"
+        v-for="section in currentPage?.sections"
         :key="section.id"
         class="section"
       >
@@ -144,6 +144,13 @@
       @handleAddSection="handleAddSection"
     />
     <!-- ################# Add Section  Popup #####################-->
+    <!-- ################## Add Page Popup ##################-->
+    <AddPagePopup
+      v-if="showAddPagePopup"
+      @handleShowAddPagePopup="showAddPagePopup = false"
+      @handleAddPage="handleAddPage"
+    />
+    <!-- ################# Add Page  Popup #####################-->
     <!-- ############## Add Component Content  Popup ##############-->
     <ComponentPopup 
       v-if="componentData.type"
@@ -156,10 +163,10 @@
 </template>
 
 <script setup>
-// ----------------------------
-// HANDLE PAGE ITEM 'S MENU
-// ----------------------------
-const activePage = ref(1);
+// -----------------------------
+// HANDLE ERROR TOAST
+// -----------------------------
+const { showErrorToast } = useToastMsg()
 
 // -----------------------------
 // HANDLE SIDE BAR 'S COMPONENTS
@@ -314,21 +321,37 @@ const items = ref([
 // ----------------------------
 // HANDLE PAGES CONTENT 
 // ----------------------------
-const body = ref(
-  {
-    id : 1 ,
-    name : 'home',
-    sections: [] 
-  }
+const pages = ref(
+  [
+    {
+      id : 1 ,
+      name : 'home',
+      sections: [] 
+    },
+    
+  ]
 );
 
 
-// -------------------------
-// HANDLE ADD NEW SECTION
-// -------------------------
+// ----------------------------
+// HANDLE ACTIVE PAGE 
+// ----------------------------
+const activePage = ref(1);
+const currentPage = computed(() =>
+  pages.value.find((p) => p.id === activePage.value)
+)
+
+
+
+// ----------------------------
+// HANDLE ADD SECTION POPUP
+// ----------------------------
+const showAddSectionPopup = ref(false)
+
 const handleAddSection = (section) => {
-  body?.value?.sections.push({
-    id : body?.value?.sections?.length,
+  console.log(section)
+  currentPage.value.sections.push({
+    id : currentPage?.value?.sections?.length +1 ,
     ...section
   })
   showAddSectionPopup.value = false
@@ -340,6 +363,22 @@ const getSlotsCount = (section) => {
 };
 
 
+// ----------------------------
+// HANDLE ADD PAGE POPUP
+// ----------------------------
+const showAddPagePopup = ref(false)
+
+const handleAddPage = (page) => {
+  pages?.value?.push({
+    id : pages?.value?.length +1 ,
+    name : page?.name ,
+    sections  : []
+  })
+  showAddPagePopup.value = false
+}
+
+
+
 // ------------------------------
 // HANDLE DRAG & DROP COMPONENTS
 // ------------------------------
@@ -348,70 +387,58 @@ const draggedComponent = ref(null);
 const isDragging = ref(false);
 
 const onDragStart = (item, e) => {
-  draggedComponent.value = item
+  draggedComponent.value = structuredClone(item)     // CLONE DATA
   isDragging.value = true
 
-  // Clone DOM element
+  // Create custom preview node
   const clone = e.target.cloneNode(true)
   clone.style.width = `${e.target.offsetWidth}px`
   clone.style.height = `${e.target.offsetHeight}px`
   clone.classList.add("drag-preview")
+  clone.style.position = "fixed"
+  clone.style.top = "-9999px"
 
   document.body.appendChild(clone)
-
-  // Set ghost image
   e.dataTransfer.setDragImage(clone, 0, 0)
 
-  // Optional: add dragging class
   e.target.classList.add("dragging")
 }
-
 
 const onDragEnd = (e) => {
   draggedComponent.value = null
   isDragging.value = false
   e.target.classList.remove("dragging")
 
-  // Remove ghost preview if exists
   const ghost = document.querySelector(".drag-preview")
   if (ghost) ghost.remove()
 }
 
-
 const onDragEnter = (section, e) => {
-  section.isDragOver = true;
-
-
-  // Get ONLY the empty placeholder inside THIS slot
-  const placeholder = e.currentTarget.querySelector('.empty_placeholder');
+  section.isDragOver = true
+  const placeholder = e.currentTarget.querySelector(".empty_placeholder")
   if (placeholder && draggedComponent.value) {
-    placeholder.classList.add("is-dragging");
+    placeholder.classList.add("is-dragging")
   }
-};
+}
 
 const onDragLeave = (section, e) => {
-  section.isDragOver = false;
-
-  const placeholder = e.currentTarget.querySelector('.empty_placeholder');
-  if (placeholder) {
-    placeholder.classList.remove("is-dragging");
-  }
-};
-
-
+  section.isDragOver = false
+  const placeholder = e.currentTarget.querySelector(".empty_placeholder")
+  if (placeholder) placeholder.classList.remove("is-dragging")
+}
 
 const onDrop = (section) => {
-  if (!draggedComponent.value) return;
+  if (!draggedComponent.value) return
 
+  // Add new component to this section
   section.components.push({
     id: Date.now(),
     ...draggedComponent.value
-  });
+  })
 
-  draggedComponent.value = null;
-  section.isDragOver = false;
-};
-
+  draggedComponent.value = null
+  section.isDragOver = false
+}
 
 
 // ---------------------------
@@ -432,16 +459,16 @@ const handleSectionContent = (sectionID , type) => {
 
 const handleAddComponentContent = (data) => {
   // 1️⃣ Find section
-  const targetedSection = body.value.sections.find(
+  const targetedSection = currentPage?.value.sections.find(
     (item) => item.id == data.sectionID
   )
-  if (!targetedSection) return console.warn("Section not found")
+  if (!targetedSection) return showErrorToast("Section not found")
 
   // 2️⃣ Find component inside section
   const targetComponent = targetedSection.components.find(
     (comp) => comp.type === data.type
   )
-  if (!targetComponent) return console.warn("Component not found")
+  if (!targetComponent) return showErrorToast("Component not found")
 
   // 3️⃣ Add / replace content
   targetComponent.content = data.content
@@ -459,17 +486,10 @@ const changeLayout = (section) => {
 }
 
 // ----------------------------
-// HANDLE ADD SECTION POPUP
-// ----------------------------
-const showAddSectionPopup = ref(false)
-
-
-
-// ----------------------------
 // HANDLE SAVE PAGE CONTENT
 // ----------------------------
 const handleSavePageContent = () => {
-  console.log(body.value)
+  console.log(pages.value)
 }
 
 </script>

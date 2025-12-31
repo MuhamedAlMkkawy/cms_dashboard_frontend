@@ -51,18 +51,17 @@ export default defineNuxtConfig({
   },
 
   components: [
-    // Auto-import everything in fields folder
+    // Automatically import components from the default components directory
+    { path: "~/components/", pathPrefix: false },
+
+    // Automatically import components from the 'popup' directory with .vue extension
+    { path: "~/components/popup/", pathPrefix: false, extensions: ["vue"] },
+
+    // Automatically import components from the 'fields' directory with .vue extension
     {
-      path: "~/components/fields",
-      // Optional: add a prefix to avoid name conflicts
-      prefix: "Field", // e.g., CardSliderFields.vue → FieldCardSliderFields
+      path: "~/components/components_fields/",
+      pathPrefix: false,
       extensions: ["vue"],
-      global: true,
-    },
-    // Auto-import all other components
-    {
-      path: "~/components",
-      global: true,
     },
   ],
 

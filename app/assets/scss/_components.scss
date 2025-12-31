@@ -84,9 +84,9 @@
 
   &.drag-preview{
     background: $mainColor;
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
+    // position: absolute;
+    // top: -9999px;
+    // left: -9999px;
     opacity: 1;
     // pointer-events: none;
   }

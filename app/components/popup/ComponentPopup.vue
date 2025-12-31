@@ -25,10 +25,10 @@
 </template>
 
 <script setup>
-  import CardSliderFields from './fields/CardSliderFields.vue'
-  import CustomHtml from './fields/CustomHtml.vue'
-  import LogoField from './fields/LogoField.vue'
-  import MenuFields from './fields/MenuFields.vue'
+  import CardSliderFields from '../components_fields/CardSliderFields.vue'
+  import CustomHtml from '../components_fields/CustomHtml.vue'
+  import LogoField from '../components_fields/LogoField.vue'
+  import MenuFields from '../components_fields/MenuFields.vue'
 
 
   // props for dynamic rendering
