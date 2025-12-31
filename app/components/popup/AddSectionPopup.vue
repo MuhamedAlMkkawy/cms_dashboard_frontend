@@ -26,6 +26,7 @@ const emit = defineEmits(['handleAddSection', 'handleShowAddSectionPopup']);
 
 const section = ref({
   name: '',
+  visible : true ,
   layout_items: 1,
   components: [],
   isDragOver: false,

@@ -41,7 +41,7 @@
       }
     }
     &:last-of-type{
-      padding: 8px 0 ;
+      padding: 10px 0 15px;
       background: #fff;
     }
   }
@@ -52,7 +52,7 @@
 .components {
   @include displayFlex($direction: column, $justify: start, $align: start);
   // margin-top: 20px;
-  max-height: 85vh;
+  max-height: 84vh;
   overflow-y: scroll;
   padding-block: 10px 0px;
 }
@@ -84,11 +84,7 @@
 
   &.drag-preview{
     background: $mainColor;
-    // position: absolute;
-    // top: -9999px;
-    // left: -9999px;
     opacity: 1;
-    // pointer-events: none;
   }
   .pi:last-of-type {
     opacity: 0.4;
