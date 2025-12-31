@@ -143,3 +143,13 @@ span[role="alert"] {
   background: #044D60;
   color: #fff;
 }
+
+
+// STYLE THE HIDDEN ELEMENT 
+.hidden_element {
+  background: grey !important;
+  border-color: grey;
+  color: #fff;
+  max-height: 98px;
+  overflow: hidden;
+}

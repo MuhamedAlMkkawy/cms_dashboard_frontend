@@ -19,7 +19,7 @@
           @dragstart="onDragStart(item, $event)"
           @dragend="onDragEnd($event)"
         >
-          <i :class="['pi ', item.icon]" class="component_icon" />
+          <i :class="['component_icon pi', item.icon]" />
           <span class="component_title">{{ item.label }}</span>
           <i class="pi pi-equals"></i>
         </div>
@@ -42,7 +42,7 @@
           :key="page"
           :class="[
             'page_item',
-            { active: activePage === page?.id, hidden: !page.visible },
+            { active: activePage === page?.id, 'hidden_element': !page.visible },
           ]"
           @click="activePage = page?.id"
         >
@@ -71,7 +71,7 @@
       <div
         v-for="section in currentPage?.sections"
         :key="section.id"
-        class="section"
+        :class="['section ' , {'hidden_element' : !section.visible}]"
       >
         <div class="section_header">
           <h3 class="section_title">{{ section.name }}</h3>
@@ -79,6 +79,7 @@
             <!-- layout design button -->
             <button
               class="layout_design section_control"
+              v-if="section.visible"
               @click="changeLayout(section)"
             >
               <i
@@ -92,8 +93,11 @@
               ></i>
             </button>
 
-            <button class="section_control pi pi-pen-to-square"></button>
-            <button class="section_control pi pi-eye"></button>
+            <button v-if="section.visible" class="section_control pi pi-pen-to-square"></button>
+            <button
+              @click="section.visible = !section.visible"
+              :class="['section_control pi', `pi-eye${section.visible ? '' : '-slash'}`]"
+            ></button>
           </div>
         </div>
 
@@ -114,7 +118,7 @@
             <template v-if="section.components[index]">
               <div class="section_block">
                 <div class="section_info">
-                  <i :class="section.components[index].icon"></i>
+                  <i :class="['pi ' , section.components[index].icon]"></i>
                   <span>{{ section.components[index].label }}</span>
                 </div>
               </div>
@@ -192,57 +196,57 @@ const sidebarComponents = [
   {
     type: "card-slider",
     label: "Card slider",
-    icon: "pi pi-sliders-h",
+    icon: "pi-sliders-h",
   },
   {
     type: "nav-menu",
     label: "Nav menu",
-    icon: "pi pi-bars",
+    icon: "pi-bars",
   },
   {
     type: "alert",
     label: "Alert",
-    icon: "pi pi-exclamation-triangle",
+    icon: "pi-exclamation-triangle",
   },
   {
     type: "description-list",
     label: "Description list",
-    icon: "pi pi-list",
+    icon: "pi-list",
   },
   {
     type: "divider",
     label: "Divider",
-    icon: "pi pi-minus",
+    icon: "pi-minus",
   },
   {
     type: "call-to-action",
     label: "Call to action",
-    icon: "pi pi-phone",
+    icon: "pi-phone",
   },
   {
     type: "card",
     label: "Card",
-    icon: "pi pi-id-card",
+    icon: "pi-id-card",
   },
   {
     type: "pricing-list",
     label: "Pricing list",
-    icon: "pi pi-tags",
+    icon: "pi-tags",
   },
   {
     type: "data-tables",
     label: "Data tables",
-    icon: "pi pi-table",
+    icon: "pi-table",
   },
   {
     type: "buttons",
     label: "Buttons",
-    icon: "pi pi-clone",
+    icon: "pi-clone",
   },
   {
     type: "modal-module",
     label: "Modal module",
-    icon: "pi pi-window-maximize",
+    icon: "pi-window-maximize",
   },
   {
     type: "gallery",
@@ -323,6 +327,7 @@ const getPageMenuItems = (pageId) => [
         label: "Edit",
         icon: "pi pi-pen-to-square",
         command: () => router.push("/introduction"),
+        visible: pages.value.find((p) => p.id === pageId)?.visible,
       },
     ]
   }
@@ -526,9 +531,6 @@ const handleSavePageContent = () => {
       &.active {
         background: $mainColor;
         color: #fff;
-      }
-      &.hidden {
-        background: $textColor;
       }
       + .add_page {
         margin-inline-start: auto;

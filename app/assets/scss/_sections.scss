@@ -19,7 +19,7 @@
     .section_title {
       font-size: clamp(20px, 2.5vw, 30px);
       font-weight: 500;
-      padding-bottom: 8px;
+      padding-block: 8px;
     }
     .buttons {
       @include displayFlex($gap: 10px);
