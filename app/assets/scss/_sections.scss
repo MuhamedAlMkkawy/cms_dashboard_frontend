@@ -140,10 +140,10 @@
       }
     }
   }
-  .drag-over {
-    border: 2px dashed $mainColor;
-    background: red;
-  }
+  // .drag-over {
+  //   border: 2px dashed $mainColor;
+  //   background: red;
+  // }
   &.add_section {
     cursor: pointer;
     display: flex;

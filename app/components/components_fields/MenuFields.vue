@@ -8,7 +8,7 @@
     <div class="menu_group" v-for="(item, index) in body.items" :key="index">
 
       <!-- Parent -->
-      <div class="menu_item">
+      <div :class="['menu_item ' , {has_childs : item?.checked}]">
         <div class="input">
           <label>Title</label>
           <input type="text" v-model="item.title" placeholder="Route title" />
@@ -33,19 +33,24 @@
 
       <!-- Childs Block -->
       <div v-if="item.checked" class="submenu_block">
-        <h5></h5>
+        <div class="submenu_block_header">
+          <h5 v-if="item?.title">Sub Menu for: <span>{{ item.title }}</span></h5>
+          <button class="add_sub_menu" @click="addSubMenuItem(index)">
+            <i class="pi pi-plus"></i>
+          </button>
+        </div>
         <div class="submenu_item"
             v-for="(subItem, subIndex) in item.children"
             :key="`child-${index}-${subIndex}`">
-
+          <h4>( {{ subIndex+1 }} ) </h4>
           <div class="input">
-            <label>Child Title</label>
-            <input type="text" v-model="subItem.title" placeholder="Child title" />
+            <label>Sub Menu Title</label>
+            <input type="text" v-model="subItem.title" placeholder="Sub Menu title" />
           </div>
 
           <div class="input">
-            <label>Child Slug</label>
-            <input type="text" v-model="subItem.slug" placeholder="Child slug" />
+            <label>Sub Menu Slug</label>
+            <input type="text" v-model="subItem.slug" placeholder="Sub Menu slug" />
           </div>
 
           <button
@@ -54,10 +59,6 @@
             @click="removeSubMenuItem(index, subIndex)"
           ></button>
         </div>
-
-        <button class="main-btn reversed small_btn" @click="addSubMenuItem(index)">
-          + Add Sub Menu
-        </button>
       </div>
 
     </div>
@@ -155,6 +156,9 @@ const handleSubmitNavMenu = () => {
     &:not(:last-of-type) {
       margin-bottom: 18px;
     }
+    &.has_childs{
+      margin-bottom: 0px;
+    }
   }
 
   .input {
@@ -163,7 +167,7 @@ const handleSubmitNavMenu = () => {
     align-items: start;
     flex-grow: 1;
     border: none;
-
+    margin-bottom: 0;
     label {
       font-size: 14px;
       font-weight: 600;
@@ -201,39 +205,68 @@ const handleSubmitNavMenu = () => {
 ------------------------------ */
 .submenu_block {
   margin-top: 0px;
-  padding-block: 24px;
   padding-inline: 20px;
   border-radius: 0 6px 6px;
-  margin-bottom: 20px;
   position: relative;
-  // background: #e4e4e4;
-  h5 {
-    margin-bottom: 8px;
-    font-weight: 600;
-    font-size: 14px;
+  padding-block: 10px 4px;
+  max-height: 160px;
+  overflow-y: scroll;
+  margin-bottom: 20px;
+  &::-webkit-scrollbar{
+    width: 2px;
+  }
+  .submenu_block_header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    h5 {
+      font-weight: 600;
+      font-size: 14px;
+      text-align: start;
+      span{
+        color: $secColor
+      }
+    }
+    .add_sub_menu{
+      @include circle(35px , 4px);
+      margin-inline-start: auto;
+      background: $mainColor;
+      color: #fff;
+      border: 1px solid $mainColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.4s;
+      &:hover{
+        background: #fff;
+        color: $mainColor;
+      }
+    }
   }
 
   .submenu_item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
     position: relative;
     border: 1px solid #e4e4e4;
-  }
-
-  .small_btn {
-    font-size: 18px;
-    padding: 5px 10px;
+    h4{
+      font-size: 14px;
+      padding-inline: 10px 0;
+    }
+    border-radius: 5px;
+    &:not(:last-of-type){
+      margin-bottom: 18px;
+    }
   }
 
   &::before{
     content: '';
     position: absolute;
     inset-inline-start: 8px;
-    top: -15px;
+    top: 0px;
     width: 1px;
-    height: 80%;
+    height: 100%;
     border: 0.5px dashed $secColor;
     border-radius: 8px;
     // background: red;
