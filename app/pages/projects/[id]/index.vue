@@ -184,319 +184,319 @@
 </template>
 
 <script setup>
-// -----------------------------
-// HANDLE ERROR TOAST
-// -----------------------------
-const { showErrorToast } = useToastMsg();
+  // -----------------------------
+  // HANDLE ERROR TOAST
+  // -----------------------------
+  const { showErrorToast } = useToastMsg();
 
-// -----------------------------
-// HANDLE SIDE BAR 'S COMPONENTS
-// -----------------------------
-const sidebarComponents = [
-  {
-    type: "card-slider",
-    label: "Card slider",
-    icon: "pi-sliders-h",
-  },
-  {
-    type: "nav-menu",
-    label: "Nav menu",
-    icon: "pi-bars",
-  },
-  {
-    type: "alert",
-    label: "Alert",
-    icon: "pi-exclamation-triangle",
-  },
-  {
-    type: "description-list",
-    label: "Description list",
-    icon: "pi-list",
-  },
-  {
-    type: "divider",
-    label: "Divider",
-    icon: "pi-minus",
-  },
-  {
-    type: "call-to-action",
-    label: "Call to action",
-    icon: "pi-phone",
-  },
-  {
-    type: "card",
-    label: "Card",
-    icon: "pi-id-card",
-  },
-  {
-    type: "pricing-list",
-    label: "Pricing list",
-    icon: "pi-tags",
-  },
-  {
-    type: "data-tables",
-    label: "Data tables",
-    icon: "pi-table",
-  },
-  {
-    type: "buttons",
-    label: "Buttons",
-    icon: "pi-clone",
-  },
-  {
-    type: "modal-module",
-    label: "Modal module",
-    icon: "pi-window-maximize",
-  },
-  {
-    type: "gallery",
-    label: "Gallery",
-    icon: "pi-images",
-  },
-  {
-    type: "timeline",
-    label: "Time line",
-    icon: "pi-clock",
-  },
-  {
-    type: "social-media",
-    label: "Social media",
-    icon: "pi-share-alt",
-  },
-  {
-    type: "custom-html",
-    label: "custom HTML",
-    icon: "pi-code",
-  },
-  {
-    type: "heading",
-    label: "Heading",
-    icon: "pi-info-circle",
-  },
-  {
-    type: "accordion",
-    label: "Accordion",
-    icon: "pi-align-justify",
-  },
-  {
-    type: "contact-info",
-    label: "Contact Info",
-    icon: "pi-envelope",
-  },
-  {
-    type: "tabs",
-    label: "Tabs",
-    icon: "pi-folder-open",
-  },
-  {
-    type: "logo",
-    label: "Logo",
-    icon: "pi-star",
-  },
-  {
-    type: "language",
-    label: "Language",
-    icon: "pi-language",
-  },
-  {
-    type: "back-to-top",
-    label: "Back to top",
-    icon: "pi-arrow-up",
-  },
-];
+  // -----------------------------
+  // HANDLE SIDE BAR 'S COMPONENTS
+  // -----------------------------
+  const sidebarComponents = [
+    {
+      type: "card-slider",
+      label: "Card slider",
+      icon: "pi-sliders-h",
+    },
+    {
+      type: "nav-menu",
+      label: "Nav menu",
+      icon: "pi-bars",
+    },
+    {
+      type: "alert",
+      label: "Alert",
+      icon: "pi-exclamation-triangle",
+    },
+    {
+      type: "description-list",
+      label: "Description list",
+      icon: "pi-list",
+    },
+    {
+      type: "divider",
+      label: "Divider",
+      icon: "pi-minus",
+    },
+    {
+      type: "call-to-action",
+      label: "Call to action",
+      icon: "pi-phone",
+    },
+    {
+      type: "card",
+      label: "Card",
+      icon: "pi-id-card",
+    },
+    {
+      type: "pricing-list",
+      label: "Pricing list",
+      icon: "pi-tags",
+    },
+    {
+      type: "data-tables",
+      label: "Data tables",
+      icon: "pi-table",
+    },
+    {
+      type: "buttons",
+      label: "Buttons",
+      icon: "pi-clone",
+    },
+    {
+      type: "modal-module",
+      label: "Modal module",
+      icon: "pi-window-maximize",
+    },
+    {
+      type: "gallery",
+      label: "Gallery",
+      icon: "pi-images",
+    },
+    {
+      type: "timeline",
+      label: "Time line",
+      icon: "pi-clock",
+    },
+    {
+      type: "social-media",
+      label: "Social media",
+      icon: "pi-share-alt",
+    },
+    {
+      type: "custom-html",
+      label: "custom HTML",
+      icon: "pi-code",
+    },
+    {
+      type: "heading",
+      label: "Heading",
+      icon: "pi-info-circle",
+    },
+    {
+      type: "accordion",
+      label: "Accordion",
+      icon: "pi-align-justify",
+    },
+    {
+      type: "contact-info",
+      label: "Contact Info",
+      icon: "pi-envelope",
+    },
+    {
+      type: "tabs",
+      label: "Tabs",
+      icon: "pi-folder-open",
+    },
+    {
+      type: "logo",
+      label: "Logo",
+      icon: "pi-star",
+    },
+    {
+      type: "language",
+      label: "Language",
+      icon: "pi-language",
+    },
+    {
+      type: "back-to-top",
+      label: "Back to top",
+      icon: "pi-arrow-up",
+    },
+  ];
 
-// ----------------------------
-// HANDLE PAGE ITEM 'S MENU
-// ----------------------------
-const menu = ref()
-const getPageMenuItems = (pageId) => [
-  {
-    label: "Options",
-    items: [
-      {
-        label: pages.value.find((p) => p.id === pageId)?.visible ? "Hide" : "Show",
-        icon: pages.value.find((p) => p.id === pageId)?.visible ? "pi pi-eye-slash" : "pi pi-eye",
-        command: () => handleHidePage(pageId),
-      },
-      // {
-      //   label: "Delete",
-      //   icon: "pi pi-trash",
-      //   command: () => router.push("/introduction"),
-      // },  
-      {
-        label: "Edit",
-        icon: "pi pi-pen-to-square",
-        command: () => router.push("/introduction"),
-        visible: pages.value.find((p) => p.id === pageId)?.visible,
-      },
-    ]
-  }
-];
+  // ----------------------------
+  // HANDLE PAGE ITEM 'S MENU
+  // ----------------------------
+  const menu = ref()
+  const getPageMenuItems = (pageId) => [
+    {
+      label: "Options",
+      items: [
+        {
+          label: pages.value.find((p) => p.id === pageId)?.visible ? "Hide" : "Show",
+          icon: pages.value.find((p) => p.id === pageId)?.visible ? "pi pi-eye-slash" : "pi pi-eye",
+          command: () => handleHidePage(pageId),
+        },
+        // {
+        //   label: "Delete",
+        //   icon: "pi pi-trash",
+        //   command: () => router.push("/introduction"),
+        // },  
+        {
+          label: "Edit",
+          icon: "pi pi-pen-to-square",
+          command: () => router.push("/introduction"),
+          visible: pages.value.find((p) => p.id === pageId)?.visible,
+        },
+      ]
+    }
+  ];
 
 
-// ----------------------------
-// HANDLE PAGES CONTENT
-// ----------------------------
-const pages = ref([
-  {
-    id: 1,
-    name: "home",
-    visible: true,
-    sections: [],
-  },
-]);
+  // ----------------------------
+  // HANDLE PAGES CONTENT
+  // ----------------------------
+  const pages = ref([
+    {
+      id: 1,
+      name: "home",
+      visible: true,
+      sections: [],
+    },
+  ]);
 
-// ----------------------------
-// HANDLE ACTIVE PAGE
-// ----------------------------
-const activePage = ref(1);
-const currentPage = computed(() =>
-  pages.value.find((p) => p.id === activePage.value)
-);
-
-// ----------------------------
-// HANDLE ADD SECTION POPUP
-// ----------------------------
-const showAddSectionPopup = ref(false);
-
-const handleAddSection = (section) => {
-  currentPage.value.sections.push({
-    id: currentPage?.value?.sections?.length + 1,
-    ...section,
-  });
-  showAddSectionPopup.value = false;
-};
-
-const getSlotsCount = (section) => {
-  return section.components.length + 1; // always add 1 empty slot
-};
-
-// ----------------------------
-// HANDLE ADD PAGE POPUP
-// ----------------------------
-const showAddPagePopup = ref(false);
-
-const handleAddPage = (page) => {
-  pages?.value?.push({
-    id: pages?.value?.length + 1,
-    name: page?.name,
-    visible: true,
-    sections: [],
-  });
-  showAddPagePopup.value = false;
-};
-
-const handleHidePage = (id) => {
-  const targetPage = pages?.value?.find(item => item.id === id)
-  targetPage.visible = !targetPage.visible
-};
-
-// ------------------------------
-// HANDLE DRAG & DROP COMPONENTS
-// ------------------------------
-const draggedComponent = ref(null);
-
-const isDragging = ref(false);
-
-const onDragStart = (item, e) => {
-  draggedComponent.value = structuredClone(item); // CLONE DATA
-  isDragging.value = true;
-
-  // Create custom preview node
-  const clone = e.target.cloneNode(true);
-  clone.style.width = `${e.target.offsetWidth}px`;
-  clone.style.height = `${e.target.offsetHeight}px`;
-  clone.classList.add("drag-preview");
-  // clone.style.position = "fixed";
-  // clone.style.top = "-9999px";
-
-  document.body.appendChild(clone);
-  e.dataTransfer.setDragImage(clone, 0, 0);
-
-  e.target.classList.add("dragging");
-};
-
-const onDragEnd = (e) => {
-  draggedComponent.value = null;
-  isDragging.value = false;
-  e.target.classList.remove("dragging");
-
-  const ghost = document.querySelector(".drag-preview");
-  if (ghost) ghost.remove();
-};
-
-const onDragEnter = (section, e) => {
-  section.isDragOver = true;
-  const placeholder = e.currentTarget.querySelector(".empty_placeholder");
-  if (placeholder && draggedComponent.value) {
-    placeholder.classList.add("is-dragging");
-  }
-};
-
-const onDragLeave = (section, e) => {
-  section.isDragOver = false;
-  const placeholder = e.currentTarget.querySelector(".empty_placeholder");
-  if (placeholder) placeholder.classList.remove("is-dragging");
-};
-
-const onDrop = (section) => {
-  if (!draggedComponent.value) return;
-
-  // Add new component to this section
-  section.components.push({
-    id: Date.now(),
-    ...draggedComponent.value,
-  });
-
-  draggedComponent.value = null;
-  section.isDragOver = false;
-};
-
-// ---------------------------
-// HANDLE ADD THE COMPONENT POPUP
-// ---------------------------
-const componentData = ref({});
-
-const removeComponent = (section, index) => {
-  section.components.splice(index, 1);
-};
-
-const handleSectionContent = (sectionID, type) => {
-  componentData.value.sectionID = sectionID;
-  componentData.value.type = type;
-};
-
-const handleAddComponentContent = (data) => {
-  // 1️⃣ Find section
-  const targetedSection = currentPage?.value.sections.find(
-    (item) => item.id == data.sectionID
+  // ----------------------------
+  // HANDLE ACTIVE PAGE
+  // ----------------------------
+  const activePage = ref(1);
+  const currentPage = computed(() =>
+    pages.value.find((p) => p.id === activePage.value)
   );
-  if (!targetedSection) return showErrorToast("Section not found");
 
-  // 2️⃣ Find component inside section
-  const targetComponent = targetedSection.components.find(
-    (comp) => comp.type === data.type
-  );
-  if (!targetComponent) return showErrorToast("Component not found");
+  // ----------------------------
+  // HANDLE ADD SECTION POPUP
+  // ----------------------------
+  const showAddSectionPopup = ref(false);
 
-  // 3️⃣ Add / replace content
-  targetComponent.content = data.content;
-};
+  const handleAddSection = (section) => {
+    currentPage.value.sections.push({
+      id: currentPage?.value?.sections?.length + 1,
+      ...section,
+    });
+    showAddSectionPopup.value = false;
+  };
 
-// ----------------------------
-// HANDLE CHANGE SECTION LAYOUT
-// ----------------------------
-const changeLayout = (section) => {
-  section.layout_items =
-    section.layout_items < 3 ? section.layout_items + 1 : 1;
-};
+  const getSlotsCount = (section) => {
+    return section.components.length + 1; // always add 1 empty slot
+  };
 
-// ----------------------------
-// HANDLE SAVE PAGE CONTENT
-// ----------------------------
-const handleSavePageContent = () => {
-  console.log(pages.value);
-};
+  // ----------------------------
+  // HANDLE ADD PAGE POPUP
+  // ----------------------------
+  const showAddPagePopup = ref(false);
+
+  const handleAddPage = (page) => {
+    pages?.value?.push({
+      id: pages?.value?.length + 1,
+      name: page?.name,
+      visible: true,
+      sections: [],
+    });
+    showAddPagePopup.value = false;
+  };
+
+  const handleHidePage = (id) => {
+    const targetPage = pages?.value?.find(item => item.id === id)
+    targetPage.visible = !targetPage.visible
+  };
+
+  // ------------------------------
+  // HANDLE DRAG & DROP COMPONENTS
+  // ------------------------------
+  const draggedComponent = ref(null);
+
+  const isDragging = ref(false);
+
+  const onDragStart = (item, e) => {
+    draggedComponent.value = structuredClone(item); // CLONE DATA
+    isDragging.value = true;
+
+    // Create custom preview node
+    const clone = e.target.cloneNode(true);
+    clone.style.width = `${e.target.offsetWidth}px`;
+    clone.style.height = `${e.target.offsetHeight}px`;
+    clone.classList.add("drag-preview");
+    // clone.style.position = "fixed";
+    // clone.style.top = "-9999px";
+
+    document.body.appendChild(clone);
+    e.dataTransfer.setDragImage(clone, 0, 0);
+
+    e.target.classList.add("dragging");
+  };
+
+  const onDragEnd = (e) => {
+    draggedComponent.value = null;
+    isDragging.value = false;
+    e.target.classList.remove("dragging");
+
+    const ghost = document.querySelector(".drag-preview");
+    if (ghost) ghost.remove();
+  };
+
+  const onDragEnter = (section, e) => {
+    section.isDragOver = true;
+    const placeholder = e.currentTarget.querySelector(".empty_placeholder");
+    if (placeholder && draggedComponent.value) {
+      placeholder.classList.add("is-dragging");
+    }
+  };
+
+  const onDragLeave = (section, e) => {
+    section.isDragOver = false;
+    const placeholder = e.currentTarget.querySelector(".empty_placeholder");
+    if (placeholder) placeholder.classList.remove("is-dragging");
+  };
+
+  const onDrop = (section) => {
+    if (!draggedComponent.value) return;
+
+    // Add new component to this section
+    section.components.push({
+      id: Date.now(),
+      ...draggedComponent.value,
+    });
+
+    draggedComponent.value = null;
+    section.isDragOver = false;
+  };
+
+  // ---------------------------
+  // HANDLE ADD THE COMPONENT POPUP
+  // ---------------------------
+  const componentData = ref({});
+
+  const removeComponent = (section, index) => {
+    section.components.splice(index, 1);
+  };
+
+  const handleSectionContent = (sectionID, type) => {
+    componentData.value.sectionID = sectionID;
+    componentData.value.type = type;
+  };
+
+  const handleAddComponentContent = (data) => {
+    // 1️⃣ Find section
+    const targetedSection = currentPage?.value.sections.find(
+      (item) => item.id == data.sectionID
+    );
+    if (!targetedSection) return showErrorToast("Section not found");
+
+    // 2️⃣ Find component inside section
+    const targetComponent = targetedSection.components.find(
+      (comp) => comp.type === data.type
+    );
+    if (!targetComponent) return showErrorToast("Component not found");
+
+    // 3️⃣ Add / replace content
+    targetComponent.content = data.content;
+  };
+
+  // ----------------------------
+  // HANDLE CHANGE SECTION LAYOUT
+  // ----------------------------
+  const changeLayout = (section) => {
+    section.layout_items =
+      section.layout_items < 3 ? section.layout_items + 1 : 1;
+  };
+
+  // ----------------------------
+  // HANDLE SAVE PAGE CONTENT
+  // ----------------------------
+  const handleSavePageContent = () => {
+    console.log(pages.value);
+  };
 </script>
 
 <style lang="scss" scoped>
