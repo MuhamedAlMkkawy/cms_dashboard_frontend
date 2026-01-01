@@ -407,8 +407,8 @@
     clone.style.width = `${e.target.offsetWidth}px`;
     clone.style.height = `${e.target.offsetHeight}px`;
     clone.classList.add("drag-preview");
-    // clone.style.position = "fixed";
-    // clone.style.top = "-9999px";
+    clone.style.position = "fixed";
+    clone.style.top = "-9999px";
 
     document.body.appendChild(clone);
     e.dataTransfer.setDragImage(clone, 0, 0);
