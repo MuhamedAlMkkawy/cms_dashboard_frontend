@@ -11,12 +11,25 @@
       <!-- Icon -->
       <div class="input icon_input">
         <label>Icon</label>
+
         <button
+          type="button"
           class="icon_select_btn"
           @click="emit('openIconPicker', item)"
         >
-          <i :class="item.icon || 'pi pi-stop'"></i>
+          <i
+            :class="item.icon || 'pi pi-share-alt'"
+            :style="{ color : item.color }"
+          ></i>
         </button>
+      </div>
+
+
+
+      <!-- Color -->
+      <div class="input icon_input">
+        <label for="color">Color</label>
+        <input type="color" name="color" v-model="item.color" id="color">
       </div>
 
       <!-- Link -->
@@ -66,6 +79,7 @@ const socials = ref([
   {
     icon: '',
     link: '',
+    color : '#000',
     classes: ''
   }
 ])
@@ -75,6 +89,7 @@ const addItem = () => {
   socials.value.push({
     icon: '',
     link: '',
+    color : '#000',
     classes: ''
   })
 }
