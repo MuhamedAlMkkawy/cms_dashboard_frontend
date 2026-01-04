@@ -27,6 +27,7 @@
 </template>
 
 <script setup>
+  import AccordionFields from '../components_fields/AccordionFields.vue'
   import ButtonsFields from '../components_fields/ButtonsFields.vue'
   import CardSliderFields from '../components_fields/CardSliderFields.vue'
   import CustomHtml from '../components_fields/CustomHtml.vue'
@@ -52,7 +53,8 @@
     'nav-menu' : MenuFields,
     'custom-html' : CustomHtml,
     'logo' : LogoField,
-    'buttons' : ButtonsFields
+    'buttons' : ButtonsFields,
+    'accordion' : AccordionFields
   }
 
 
