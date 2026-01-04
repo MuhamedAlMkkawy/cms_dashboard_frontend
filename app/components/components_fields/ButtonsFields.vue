@@ -8,7 +8,7 @@
       <!-- Icon -->
       <div class="input icon_input">
         <label>Icon</label>
-        <button class="icon_select_btn" @click="emit('openIconPicker' , btn)">
+        <button class="icon_select_btn" @click="emit('openIconPicker', btn)">
           <i :class="btn.icon || 'pi pi-stop'"></i>
         </button>
       </div>
@@ -35,12 +35,20 @@
         </select>
       </div>
 
+      <!-- Reversed Switch -->
+      <div class="input toggle_input">
+        <ToggleSwitch v-model="btn.reversed" />
+        <span>Reversed</span>
+      </div>
+
       <!-- Delete button -->
       <button
         v-if="buttons.length > 1"
-        class="pi pi-trash delete_btn circled"
+        class="delete_btn circled"
         @click="removeButton(index)"
-      ></button>
+      >
+        <i class="pi pi-trash"></i>
+      </button>
     </div>
 
     <slot></slot>
@@ -55,15 +63,15 @@
 
 <script setup>
 const { showErrorToast } = useToastMsg();
-const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup" , "openIconPicker"]);
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup", "openIconPicker"]);
 
 const buttons = ref([
-  { icon: "", title: "", link: "", target: "" }
+  { icon: "", title: "", link: "", target: "", reversed: false }
 ]);
 
 // Add / Remove Buttons
 const addButton = () => {
-  buttons.value.push({ icon: "", title: "", link: "", target: "" });
+  buttons.value.push({ icon: "", title: "", link: "", target: "", reversed: false });
 };
 
 const removeButton = (index) => {
@@ -73,7 +81,6 @@ const removeButton = (index) => {
     showErrorToast("At least one button is required");
   }
 };
-
 
 // Submit
 const handleSubmitButtons = () => {
@@ -93,57 +100,16 @@ const handleSubmitButtons = () => {
     display: flex;
     align-items: center;
     gap: 10px;
-    border: 1px solid #e4e4e4;
+    // border: 1px solid #e4e4e4;
     padding: 10px;
     border-radius: 8px;
     position: relative;
-    margin-bottom: 12px;
+    // &:not(:last-of-type){
+    //   margin-bottom: 6px;
+    // }
 
-    .input {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 0;
-      label {
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 4px;
-      }
-      input,
-      select {
-        padding: 6px;
-        border-radius: 4px;
-        border: 1px solid #e4e4e4;
-      }
-    }
 
-    .icon_input {
-      flex-shrink: 0;
-      .icon_select_btn {
-        border: 1px solid #e4e4e4;
-        padding: 6px;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 38px;
-        &:hover {
-          background: #e4e4e4;
-        }
-      }
-    }
-
-    .delete_btn {
-      position: absolute;
-      top: -10px;
-      right: -5px;
-    }
   }
 
-  .flex_buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 16px;
-  }
 }
 </style>
