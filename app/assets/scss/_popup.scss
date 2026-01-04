@@ -51,16 +51,26 @@
       }
     }
 
+    h6.item_index{
+      font-size: 20px;
+      margin-bottom: 8px;
+      span{
+        color: $secColor;
+      }
+    }
     .icon_input {
       flex-shrink: 0;
 
       .icon_select_btn {
-        width: 50px;
+        // width: 50px;
+        padding: 5px;
         border-radius: 4px;
         display: flex;
         justify-content: center;
         align-items: center;
-
+        i{
+          font-size: 25px;
+        }
         &:hover {
           background: #e4e4e4;
         }

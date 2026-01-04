@@ -33,6 +33,7 @@
   import CustomHtml from '../components_fields/CustomHtml.vue'
   import LogoField from '../components_fields/LogoField.vue'
   import MenuFields from '../components_fields/MenuFields.vue'
+  import TimelineFields from '../components_fields/TimelineFields.vue'
 
 
   // props for dynamic rendering
@@ -54,7 +55,8 @@
     'custom-html' : CustomHtml,
     'logo' : LogoField,
     'buttons' : ButtonsFields,
-    'accordion' : AccordionFields
+    'accordion' : AccordionFields,
+    'timeline' : TimelineFields
   }
 
 
