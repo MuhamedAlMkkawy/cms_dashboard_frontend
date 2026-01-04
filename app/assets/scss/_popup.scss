@@ -59,6 +59,21 @@
         background: $mainColor;
       }
     }
+
+    .flex_header{
+      @include displayFlex($justify : space-between);
+      margin-block: 20px;
+      width: 100%;
+      h4{
+        padding-bottom: 0;
+      }
+      button.main-btn{
+        width: fit-content;
+        height: 40px;
+        margin: 0;
+      }
+    }
+
     h4{
       text-align: start;
       font-size: clamp(16px , 4vw , 20px);
