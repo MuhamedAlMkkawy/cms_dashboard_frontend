@@ -10,6 +10,7 @@
       <component
         :is="componentMap[props.componentData.type.toLowerCase().replace(/\s+/g, '-')]"
         @handleCloseComponentPopup="emit('handleCloseComponentPopup')"
+        @openIconPicker="openIconPicker"
         @handleSubmitFields="handleFieldsSubmit"
       >
       <ClassesInput
@@ -19,12 +20,14 @@
         placeholder="e.g. rounded-lg shadow-md text-center"
       />
     </component>
-      
+      <!-- Icon Picker -->
+      <IconPicker v-model="iconPickerOpen" @select="setIcon" />
     </div>
   </div>
 </template>
 
 <script setup>
+  import ButtonsFields from '../components_fields/ButtonsFields.vue'
   import CardSliderFields from '../components_fields/CardSliderFields.vue'
   import CustomHtml from '../components_fields/CustomHtml.vue'
   import LogoField from '../components_fields/LogoField.vue'
@@ -48,9 +51,25 @@
     'card-slider': CardSliderFields,
     'nav-menu' : MenuFields,
     'custom-html' : CustomHtml,
-    'logo' : LogoField
+    'logo' : LogoField,
+    'buttons' : ButtonsFields
   }
 
+
+  // --------------------------
+  // HANDLE THE ICON PICKER
+  // --------------------------
+  const iconPickerOpen = ref(false);
+  const currentIconTarget = ref(null);
+
+  const openIconPicker = (target) => {
+    currentIconTarget.value = target;
+    iconPickerOpen.value = true;
+  };
+
+  const setIcon = (icon) => {
+    currentIconTarget.value.icon = icon;
+  };
 
 
   // called when child emits handleSubmitFields

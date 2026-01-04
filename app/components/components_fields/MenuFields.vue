@@ -12,7 +12,7 @@
         <div class="input icon_input">
           <label>Icon</label>
 
-          <button class="icon_select_btn" @click="openIconPicker(item)">
+          <button class="icon_select_btn" @click="emit('openIconPicker' , item)">
             <i :class="item.icon || 'pi pi-stop'"></i>
             <!-- <span>{{ item.icon ? 'Change Icon' : 'Choose Icon' }}</span> -->
           </button>
@@ -106,11 +106,11 @@
       <button class="main-btn" @click="handleSubmitNavMenu">Submit</button>
     </div>
 
-    
+<!--     
   <IconPicker
     v-model="iconPickerOpen"
     @select="setIcon"
-  />
+  /> -->
 
   </div>
 </template>
@@ -118,7 +118,7 @@
 
 <script setup>
 const { showErrorToast } = useToastMsg();
-const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup" , "openIconPicker"]);
 
 // -----------------------------
 // SETUP DEFAULT DATA MODEL
@@ -195,18 +195,18 @@ const removeSubMenuItem = (i, sIndex) => {
 // -----------------------------
 // HANDLE THE ICON PICKER POPUP
 // -----------------------------
-const iconPickerOpen = ref(false);
-const currentIconTarget = ref(null);
+// const iconPickerOpen = ref(false);
+// const currentIconTarget = ref(null);
 
 
-const openIconPicker = (target) => {
-  currentIconTarget.value = target;
-  iconPickerOpen.value = true;
-};
+// const openIconPicker = (target) => {
+//   currentIconTarget.value = target;
+//   iconPickerOpen.value = true;
+// };
 
-const setIcon = (icon) => {
-  currentIconTarget.value.icon = icon;
-};
+// const setIcon = (icon) => {
+//   currentIconTarget.value.icon = icon;
+// };
 
 // -----------------------------
 // HANDLE SUBMIT ACTION

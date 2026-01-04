@@ -97,6 +97,9 @@
     // }
     .input{
       margin-bottom: 5px;
+      &.grow_input{
+        flex-grow: 1;
+      }
     }
 
     .delete_btn{
