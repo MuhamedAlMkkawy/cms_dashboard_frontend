@@ -34,7 +34,7 @@
   import LogoField from '../components_fields/LogoField.vue'
   import MenuFields from '../components_fields/MenuFields.vue'
   import TimelineFields from '../components_fields/TimelineFields.vue'
-
+  import SocialFields from '../components_fields/SocialFields.vue'
 
   // props for dynamic rendering
   const props = defineProps({
@@ -56,7 +56,8 @@
     'logo' : LogoField,
     'buttons' : ButtonsFields,
     'accordion' : AccordionFields,
-    'timeline' : TimelineFields
+    'timeline' : TimelineFields,
+    'social-media' : SocialFields
   }
 
 

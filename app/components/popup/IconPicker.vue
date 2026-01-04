@@ -105,9 +105,9 @@ const close = () => {
 </script>
 
 <style scoped lang="scss">
-  .popup{
-    min-height : 500px;
-  }
+  // .popup{
+  //   // min-height : 500px;
+  // }
 
 
   .content {
