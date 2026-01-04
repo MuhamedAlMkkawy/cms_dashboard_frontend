@@ -35,6 +35,8 @@
   import MenuFields from '../components_fields/MenuFields.vue'
   import TimelineFields from '../components_fields/TimelineFields.vue'
   import SocialFields from '../components_fields/SocialFields.vue'
+  import TabsFields from '../components_fields/TabsFields.vue'
+
 
   // props for dynamic rendering
   const props = defineProps({
@@ -57,7 +59,8 @@
     'buttons' : ButtonsFields,
     'accordion' : AccordionFields,
     'timeline' : TimelineFields,
-    'social-media' : SocialFields
+    'social-media' : SocialFields,
+    'tabs' : TabsFields
   }
 
 
