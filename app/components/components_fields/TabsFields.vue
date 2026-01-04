@@ -8,6 +8,9 @@
       v-for="(tab, index) in tabs"
       :key="index"
     >
+    <div class="item_index">
+      Tab <span># {{ index+1 }} </span>
+    </div>
       <!-- Title + Delete -->
       <div class="tab_header">
         <div class="input grow_input">
