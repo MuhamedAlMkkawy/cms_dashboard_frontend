@@ -107,25 +107,25 @@ const handleSubmitLogo = () => {
 
 <style scoped lang="scss">
 .logo_fields {
+  /* 🔹 Layout override ONLY */
   .input {
-    display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     gap: 30px;
-    label{
+
+    label {
       flex-shrink: 0;
     }
-    .input-wrap {
-      border: 1px solid #e4e4e4;
-      border-radius: 4px;
-      max-width: 400px;
-      width: 100%;
-      height: 38px;
-      padding: 0 10px;
-      font-size: 14px;
+
+    input{
+      border: 0.5px solid #e4e4e4;
+      max-width: 150px;
+      padding: 8px 10px;
     }
   }
 
+  /* 🔹 File upload button (component-specific) */
   label.upload_logo_btn {
     border: 1px dashed #e4e4e4;
     border-radius: 6px;
@@ -147,19 +147,19 @@ const handleSubmitLogo = () => {
     }
   }
 
+  /* 🔹 Image preview */
   .preview {
     margin-block: 10px;
     position: relative;
     max-width: 100px;
+    height: 100px;
     border-radius: 4px;
     overflow: hidden;
-    height: 100px;
 
     .delete_btn {
       position: absolute;
       top: 2px;
       right: 2px;
-      padding: 5px;
       font-size: 13px;
       cursor: pointer;
       border-radius: 4px;

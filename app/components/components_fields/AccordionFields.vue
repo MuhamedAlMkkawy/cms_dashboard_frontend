@@ -8,7 +8,7 @@
       v-for="(item, index) in accordions"
       :key="index"
     >
-    <h6>Item <span>#{{ index+1 }}</span></h6>
+    <h6 class="item_index">Item <span>#{{ index+1 }}</span></h6>
       <!-- Title -->
       <div class="input grow_input">
         <label>Title</label>

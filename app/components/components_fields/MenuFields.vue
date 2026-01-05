@@ -64,7 +64,7 @@
 
           <div class="icon_input input">
             <label for="icon">icon</label>
-            <button class="icon_select_btn" @click="openIconPicker(subItem)">
+            <button class="icon_select_btn" @click="emit('openIconPicker' , subItem)">
               <i :class="subItem.icon || 'pi pi-stop'"></i>
             </button>
           </div>
@@ -258,6 +258,7 @@ const handleSubmitNavMenu = () => {
     justify-content: start;
     align-items: center;
     border: none;
+    gap: 0;
     flex-grow: 1;
     margin-bottom: 0;
     label {
@@ -275,7 +276,7 @@ const handleSubmitNavMenu = () => {
 
     input,
     select {
-      padding: 6px;
+      // padding: 6px;
       border: 1px solid #e4e4e4;
       border-radius: 4px;
     }
@@ -324,7 +325,7 @@ const handleSubmitNavMenu = () => {
 }
 
 /* -----------------------------
-   SUB MENU STYLE
+  SUB MENU STYLE
 ------------------------------ */
 .submenu_block {
   margin-top: 0px;

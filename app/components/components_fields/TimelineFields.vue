@@ -33,13 +33,11 @@
         <!-- Title -->
         <div class="input grow_input">
           <label>Title</label>
-          <div class="input">
-            <input
-              type="text"
-              v-model="item.title"
-              placeholder="Timeline title"
-            />
-          </div>
+          <input
+            type="text"
+            v-model="item.title"
+            placeholder="Timeline title"
+          />
         </div>
       </div>
 
@@ -56,13 +54,11 @@
       <!-- Description -->
       <div class="input full_input">
         <label>Description</label>
-        <div class="input">
-          <textarea
-            rows="3"
-            v-model="item.description"
-            placeholder="Timeline description..."
-          ></textarea>
-        </div>
+        <textarea
+          rows="3"
+          v-model="item.description"
+          placeholder="Timeline description..."
+        ></textarea>
       </div>
     </div>
 
@@ -147,6 +143,9 @@ const handleSubmitTimeline = () => {
     position: relative;
   }
 
+  input{
+    border: none ;
+  }
 
   .inputs{
     display: flex;

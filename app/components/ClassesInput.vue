@@ -43,7 +43,7 @@ label {
 .classes-input {
   width: 100%;
   padding: 9px 10px;
-  border: 1px solid #ddd;
+  // border-bottom: 1px solid #ddd;
   border-radius: 6px;
 }
 </style>

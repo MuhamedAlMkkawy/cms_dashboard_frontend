@@ -194,6 +194,7 @@ const handleSubmitCardSlider = () => {
 .card_fields {
   .input {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
@@ -210,13 +211,6 @@ const handleSubmitCardSlider = () => {
     }
   }
 
-  .main-btn {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 12px;
-    cursor: pointer;
-  }
 
   .items_editor {
     display: flex;
