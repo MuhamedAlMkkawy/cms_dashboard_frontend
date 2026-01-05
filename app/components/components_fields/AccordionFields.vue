@@ -65,7 +65,6 @@
     {
       title: "",
       content: "",
-      open: false,
       classes: ""
     }
   ])
@@ -75,7 +74,6 @@
     accordions.value.push({
       title: "",
       content: "",
-      open: false,
       classes: ""
     })
   }
