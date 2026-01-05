@@ -9,8 +9,9 @@
       :key="index"
     >
       <div class="item_index">
-        Tab <span># {{ index+1 }} </span>
+        Tab <span># {{ index + 1 }}</span>
       </div>
+
       <div class="tab_header">
         <!-- Title -->
         <div class="input grow_input">
@@ -37,7 +38,6 @@
           placeholder="Tab description..."
         ></textarea>
       </div>
-
     </div>
 
     <slot />
@@ -58,8 +58,7 @@ const tabs = ref([
   {
     title: "",
     description: "",
-    classes: ""
-  }
+  },
 ])
 
 // Add tab
@@ -67,7 +66,6 @@ const addTab = () => {
   tabs.value.push({
     title: "",
     description: "",
-    classes: ""
   })
 }
 
@@ -83,10 +81,10 @@ const removeTab = (index) => {
 // Submit tabs
 const handleSubmitTabs = () => {
   const invalid = tabs.value.some(
-    t => !t.title.trim() || !t.content.trim()
+    t => !t?.title?.trim() || !t?.description?.trim()
   )
   if (invalid) {
-    showErrorToast("Please fill all tab titles and content")
+    showErrorToast("Please fill all tab titles and descriptions")
     return
   }
   emit("handleSubmitFields", tabs.value)
@@ -95,43 +93,42 @@ const handleSubmitTabs = () => {
 </script>
 
 <style scoped lang="scss">
-  .tabs_fields {
-    /* only spacing / layout specific to tabs component */
-    .tab_item {
-      margin-bottom: 12px;
-      padding: 10px;
-      border: 1px solid #e4e4e4;
-      border-radius: 8px;
-      background: #fff;
-      position: relative;
+.tabs_fields {
+  .tab_item {
+    margin-bottom: 12px;
+    padding: 10px;
+    border: 1px solid #e4e4e4;
+    border-radius: 8px;
+    background: #fff;
+    position: relative;
 
-      .tab_header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .toggle_input {
-        margin-top: 8px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      h6.item_index {
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 6px;
-        span {
-          color: $secColor;
-        }
-      }
+    .tab_header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .flex_buttons {
+    .toggle_input {
+      margin-top: 8px;
       display: flex;
-      gap: 10px;
-      margin-top: 10px;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .item_index {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      span {
+        color: $secColor;
+      }
     }
   }
+
+  .flex_buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+}
 </style>
