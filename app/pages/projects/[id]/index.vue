@@ -479,8 +479,9 @@
     );
     if (!targetComponent) return showErrorToast("Component not found");
 
-    // 3️⃣ Add / replace content
+    // 3️⃣ Add / replace content  
     targetComponent.content = data.content;
+    console.log(targetComponent)
     console.log(data.content)
   };
 
