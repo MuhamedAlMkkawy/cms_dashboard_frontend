@@ -113,7 +113,7 @@ const { showErrorToast } = useToastMsg()
 // -----------------------------
 // EMITS
 // -----------------------------
-const emit = defineEmits(['handleFieldsSubmit', 'handleCloseComponentPopup'])
+const emit = defineEmits(['handleSubmitFields', 'handleCloseComponentPopup'])
 
 // -----------------------------
 // SLIDER STATE
@@ -169,23 +169,7 @@ const handleSubmitCardSlider = () => {
     return
   }
 
-  const cardSlider = new FormData()
-  cardSlider.append('itemsToShow', slider.value.itemsToShow)
-  cardSlider.append('autoplay', slider.value.autoplay)
-
-  slider.value.items.forEach((item, index) => {
-    if (!item.file) {
-      showErrorToast(`Card ${index + 1} is missing an image.`)
-      return
-    }
-    cardSlider.append(`items[${index}][id]`, index)
-    cardSlider.append(`items[${index}][file]`, item.file)
-    cardSlider.append(`items[${index}][title]`, item.title)
-    cardSlider.append(`items[${index}][text]`, item.text)
-    cardSlider.append(`items[${index}][link]`, item.link)
-  })
-
-  emit('handleFieldsSubmit', cardSlider)
+  emit('handleSubmitFields', slider.value)
   emit('handleCloseComponentPopup')
 }
 </script>

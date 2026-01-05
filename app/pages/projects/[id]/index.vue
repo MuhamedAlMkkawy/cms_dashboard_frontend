@@ -177,7 +177,7 @@
       v-if="componentData.type"
       :componentData="componentData"
       @handleCloseComponentPopup="componentData = {}"
-      @handleAddComponent="handleAddComponentContent"
+      @handleAddComponent="handleAddComponent"
     />
     <!-- ############## Add Component Content  Popup ##############-->
   </div>
@@ -466,7 +466,7 @@
     componentData.value.type = type;
   };
 
-  const handleAddComponentContent = (data) => {
+  const handleAddComponent = (data) => {
     // 1️⃣ Find section
     const targetedSection = currentPage?.value.sections.find(
       (item) => item.id == data.sectionID
@@ -481,6 +481,7 @@
 
     // 3️⃣ Add / replace content
     targetComponent.content = data.content;
+    console.log(data.content)
   };
 
   // ----------------------------
