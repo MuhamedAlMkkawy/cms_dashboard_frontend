@@ -10,21 +10,7 @@
         </div>
       </div>
       <hr />
-      <!-- <div class="components">
-        <div
-          v-for="item in sidebarComponents"
-          :key="item.type"
-          class="component_item"
-          draggable="true"
-          @onDragStart="onDragStart(item, $event)"
-          @dragend="onDragEnd($event)"
-        >
-          <i :class="['component_icon pi', item.icon]" />
-          <span class="component_title">{{ item.label }}</span>
-          <i class="pi pi-equals"></i>
-        </div>
-      </div> -->
-    <ComponentItems 
+      <ComponentItems 
         draggable="true"
         @onDragStart="onDragStart"
         @onDragEnd="onDragEnd"
@@ -66,7 +52,7 @@
             :popup="true"
           />
         </div>
-        <button class="add_page" @click="showAddPagePopup = true">
+        <button class="add_page" @click="showControlPagePopup = true">
           <i class="pi pi-plus"></i>
         </button>
       </div>
@@ -171,10 +157,11 @@
     />
     <!-- ################# Add Section  Popup #####################-->
     <!-- ##################### Add Page Popup #####################-->
-    <AddPagePopup
-      v-if="showAddPagePopup"
-      @handleShowAddPagePopup="showAddPagePopup = false"
-      @handleAddPage="handleAddPage"
+    <ControlPagePopup
+      v-if="showControlPagePopup"
+      :modifiedPage="modifiedPage"
+      @handleShowControlPagePopup="showControlPagePopup = false"
+      @handleControlPage="handleControlPage"
     />
     <!-- ################### Add Page  Popup ######################-->
     <!-- ############## Add Component Content  Popup ##############-->
@@ -215,7 +202,7 @@
         {
           label: "Edit",
           icon: "pi pi-pen-to-square",
-          command: () => router.push("/introduction"),
+          command: () => handleEditPage(pageId),
           visible: pages.value.find((p) => p.id === pageId)?.visible,
         },
       ]
@@ -263,22 +250,34 @@
   // ----------------------------
   // HANDLE ADD PAGE POPUP
   // ----------------------------
-  const showAddPagePopup = ref(false);
+  const modifiedPage = ref()
+  const showControlPagePopup = ref(false);
 
-  const handleAddPage = (page) => {
-    pages?.value?.push({
-      id: pages?.value?.length + 1,
-      name: page?.name,
-      visible: true,
-      sections: [],
-    });
-    showAddPagePopup.value = false;
+  const handleControlPage = (page) => {
+    if(modifiedPage.value){
+      const targetPage = pages?.value?.find(item => item.id === modifiedPage.value.id)
+      targetPage.name = page?.name
+    }else{
+      pages?.value?.push({
+        id: pages?.value?.length + 1,
+        name: page?.name,
+        visible: true,
+        sections: [],
+      });
+    }
+    showControlPagePopup.value = false;
   };
 
   const handleHidePage = (id) => {
     const targetPage = pages?.value?.find(item => item.id === id)
     targetPage.visible = !targetPage.visible
   };
+
+  const handleEditPage = (id) => {
+    showControlPagePopup.value = true
+    const targetPage = pages?.value?.find(item => item.id === id)
+    modifiedPage.value = targetPage
+  }
 
   // ------------------------------
   // HANDLE DRAG & DROP COMPONENTS
@@ -287,24 +286,24 @@
 
   const isDragging = ref(false);
 
-const onDragStart = (item, e) => {
-  // SAFE CLONE (no DataCloneError)
-  draggedComponent.value = JSON.parse(JSON.stringify(item))
-  isDragging.value = true
+  const onDragStart = (item, e) => {
+    // SAFE CLONE (no DataCloneError)
+    draggedComponent.value = JSON.parse(JSON.stringify(item))
+    isDragging.value = true
 
-    // Create custom preview node
-    const clone = e.target.cloneNode(true);
-    clone.style.width = `${e.target.offsetWidth}px`;
-    clone.style.height = `${e.target.offsetHeight}px`;
-    clone.classList.add("drag-preview");
-    clone.style.position = "fixed";
-    clone.style.top = "-9999px";
+      // Create custom preview node
+      const clone = e.target.cloneNode(true);
+      clone.style.width = `${e.target.offsetWidth}px`;
+      clone.style.height = `${e.target.offsetHeight}px`;
+      clone.classList.add("drag-preview");
+      clone.style.position = "fixed";
+      clone.style.top = "-9999px";
 
-    document.body.appendChild(clone);
+      document.body.appendChild(clone);
 
-  e.dataTransfer.setDragImage(clone, 0, 0)
-  e.target.classList.add('dragging')
-}
+    e.dataTransfer.setDragImage(clone, 0, 0)
+    e.target.classList.add('dragging')
+  }
 
 
   const onDragEnd = (e) => {
@@ -372,8 +371,8 @@ const onDragStart = (item, e) => {
 
     // 3️⃣ Add / replace content  
     targetComponent.content = data.content;
-    console.log(targetComponent)
-    console.log(data.content)
+    // console.log(targetComponent)
+    // console.log(data.content)
   };
 
   // ----------------------------
@@ -406,12 +405,20 @@ const onDragStart = (item, e) => {
       color: $mainColor;
       padding: 5px 10px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 15px;
+      gap: 5px;
       border-radius: 8px;
       transition: 0.3s;
       cursor: pointer;
       text-transform: capitalize;
+      width: 120px;
+      span{
+        max-width: 70px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       button {
         background: transparent;
         border: none;
