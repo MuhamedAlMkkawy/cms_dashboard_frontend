@@ -48,7 +48,7 @@
 
 
   // DEFINE EMITS
-  const emit = defineEmits(['handleAddComponent' , 'handleCloseComponentPopup'])
+  const emit = defineEmits(['handleAddComponentContent' , 'handleCloseComponentPopup'])
 
   // map type name to component
   const componentMap = {
@@ -82,7 +82,7 @@
 
   // called when child emits handleSubmitFields
   const handleFieldsSubmit = (data) => {
-    emit('handleAddComponent' , {
+    emit('handleAddComponentContent' , {
       sectionID : props.componentData.sectionID ,
       type : props.componentData.type ,
       content : {

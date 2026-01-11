@@ -86,17 +86,18 @@
 
   // HANDLE SUBMIT
   const handleSubmit = (values) => {
-    const formData = new FormData();
-    if(!image.value){
+    if(!image.value.file){
       showErrorToast('You should upload Logo to Continue...')
+    }else{
+      const formData = new FormData();
+      formData.append("logo", image.value.file);
+      formData.append("name.ar", values.ar_name);
+      formData.append("name.en", values.en_name);
+      formData.append("description.ar", values.ar_description);
+      formData.append("description.en", values.en_description);
+  
+      submitMethod('/projects' , false , formData , 'POST' , '/projects')
     }
-    formData.append("logo", image.value.file);
-    formData.append("name.ar", values.ar_name);
-    formData.append("name.en", values.en_name);
-    formData.append("description.ar", values.ar_description);
-    formData.append("description.en", values.en_description);
-
-    submitMethod('/projects' , false , formData , 'POST' , '/projects')
   };
 
 
