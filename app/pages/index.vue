@@ -47,9 +47,9 @@
     layout: "none",
   });
 
-  onMounted(()=>{
-    getMethod('components' , null , false ,  false)
-  })
+  // onMounted(()=>{
+  //   getMethod('components' , null , false ,  false)
+  // })
 </script>
 
 <style lang="scss" scoped>

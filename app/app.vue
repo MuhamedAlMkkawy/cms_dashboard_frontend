@@ -3,6 +3,7 @@
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <Loading v-if="useGlobalStore()?.loading"/>
     <Toast />
   </div>
 </template>

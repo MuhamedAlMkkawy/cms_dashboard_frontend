@@ -53,6 +53,7 @@
   @include displayFlex($direction: column, $justify: start, $align: start);
   // margin-top: 20px;
   max-height: 84vh;
+  height: 100%;
   overflow-y: scroll;
   padding-block: 10px 0px;
 }

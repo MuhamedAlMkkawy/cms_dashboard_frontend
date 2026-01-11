@@ -10,20 +10,25 @@
         </div>
       </div>
       <hr />
-      <div class="components">
+      <!-- <div class="components">
         <div
           v-for="item in sidebarComponents"
           :key="item.type"
           class="component_item"
           draggable="true"
-          @dragstart="onDragStart(item, $event)"
+          @onDragStart="onDragStart(item, $event)"
           @dragend="onDragEnd($event)"
         >
           <i :class="['component_icon pi', item.icon]" />
           <span class="component_title">{{ item.label }}</span>
           <i class="pi pi-equals"></i>
         </div>
-      </div>
+      </div> -->
+    <ComponentItems 
+        draggable="true"
+        @onDragStart="onDragStart"
+        @onDragEnd="onDragEnd"
+      />
       <hr />
       <div class="header_image">
         <div class="image">
@@ -189,122 +194,6 @@
   // -----------------------------
   const { showErrorToast } = useToastMsg();
 
-  // -----------------------------
-  // HANDLE SIDE BAR 'S COMPONENTS
-  // -----------------------------
-  const sidebarComponents = [
-    {
-      type: "card-slider",
-      label: "Card slider",
-      icon: "pi-sliders-h",
-    },
-    {
-      type: "nav-menu",
-      label: "Nav menu",
-      icon: "pi-bars",
-    },
-    {
-      type: "alert",
-      label: "Alert",
-      icon: "pi-exclamation-triangle",
-    },
-    {
-      type: "description-list",
-      label: "Description list",
-      icon: "pi-list",
-    },
-    {
-      type: "divider",
-      label: "Divider",
-      icon: "pi-minus",
-    },
-    {
-      type: "call-to-action",
-      label: "Call to action",
-      icon: "pi-phone",
-    },
-    {
-      type: "card",
-      label: "Card",
-      icon: "pi-id-card",
-    },
-    {
-      type: "pricing-list",
-      label: "Pricing list",
-      icon: "pi-tags",
-    },
-    {
-      type: "data-tables",
-      label: "Data tables",
-      icon: "pi-table",
-    },
-    {
-      type: "buttons",
-      label: "Buttons",
-      icon: "pi-clone",
-    },
-    {
-      type: "modal-module",
-      label: "Modal module",
-      icon: "pi-window-maximize",
-    },
-    {
-      type: "gallery",
-      label: "Gallery",
-      icon: "pi-images",
-    },
-    {
-      type: "timeline",
-      label: "Time line",
-      icon: "pi-clock",
-    },
-    {
-      type: "social-media",
-      label: "Social media",
-      icon: "pi-share-alt",
-    },
-    {
-      type: "custom-html",
-      label: "custom HTML",
-      icon: "pi-code",
-    },
-    {
-      type: "heading",
-      label: "Heading",
-      icon: "pi-info-circle",
-    },
-    {
-      type: "accordion",
-      label: "Accordion",
-      icon: "pi-align-justify",
-    },
-    {
-      type: "contact-info",
-      label: "Contact Info",
-      icon: "pi-envelope",
-    },
-    {
-      type: "tabs",
-      label: "Tabs",
-      icon: "pi-folder-open",
-    },
-    {
-      type: "logo",
-      label: "Logo",
-      icon: "pi-star",
-    },
-    {
-      type: "language",
-      label: "Language",
-      icon: "pi-language",
-    },
-    {
-      type: "back-to-top",
-      label: "Back to top",
-      icon: "pi-arrow-up",
-    },
-  ];
-
   // ----------------------------
   // HANDLE PAGE ITEM 'S MENU
   // ----------------------------
@@ -398,9 +287,10 @@
 
   const isDragging = ref(false);
 
-  const onDragStart = (item, e) => {
-    draggedComponent.value = structuredClone(item); // CLONE DATA
-    isDragging.value = true;
+const onDragStart = (item, e) => {
+  // SAFE CLONE (no DataCloneError)
+  draggedComponent.value = JSON.parse(JSON.stringify(item))
+  isDragging.value = true
 
     // Create custom preview node
     const clone = e.target.cloneNode(true);
@@ -411,10 +301,11 @@
     clone.style.top = "-9999px";
 
     document.body.appendChild(clone);
-    e.dataTransfer.setDragImage(clone, 0, 0);
 
-    e.target.classList.add("dragging");
-  };
+  e.dataTransfer.setDragImage(clone, 0, 0)
+  e.target.classList.add('dragging')
+}
+
 
   const onDragEnd = (e) => {
     draggedComponent.value = null;
