@@ -95,7 +95,6 @@
       showErrorToast("Please fill all accordion titles and contents")
       return
     }
-
     emit("handleSubmitFields", accordions.value)
     emit("handleCloseComponentPopup")
   }

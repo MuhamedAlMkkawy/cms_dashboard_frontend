@@ -334,16 +334,16 @@
 
     // Add new component to this section
     section.components.push({
-      id: Date.now(),
       ...draggedComponent.value,
     });
 
+    
     draggedComponent.value = null;
     section.isDragOver = false;
   };
 
   // ---------------------------
-  // HANDLE ADD THE COMPONENT POPUP
+  // HANDLE ADD THE COMPONENT POPUP 
   // ---------------------------
   const componentData = ref({});
 
@@ -371,7 +371,7 @@
 
     // 3️⃣ Add / replace content  
     targetComponent.content = data.content;
-    // console.log(targetComponent)
+    console.log(targetComponent)
     // console.log(data.content)
   };
 
