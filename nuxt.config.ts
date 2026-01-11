@@ -7,7 +7,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      // apiBase: "https://mazadaty-app.com/api/",
+      apiBase: "http://127.0.0.1:3000/",
       // secretKey : "9e810ce4d7b9e83d7aaf208b3ecfd0488d6a1e5c67a6a72f384a1d3bcb40c012"
     },
   },

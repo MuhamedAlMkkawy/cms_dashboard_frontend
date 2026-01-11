@@ -1,8 +1,8 @@
 import { useRouter } from 'vue-router';
-import { useGlobalStore } from '~/stores/globalStore';
-import { useAuthStore } from '~/stores/authStore';
+import { useGlobalStore } from '@/stores/globalStore';
+import { useAuthStore } from '@/stores/authStore';
 import { useToastMsg } from '@/composables/useToastMsg';
-import { useApiAsyncData , submitApiForm } from '@/composables/useApiFetch';
+import { fetchApiData , submitApiForm } from '@/composables/useApiFetch';
 import { ref } from 'vue';
 
 export function useApiMethods() {
@@ -10,7 +10,10 @@ export function useApiMethods() {
   const globalStore = useGlobalStore();
 
   // define auth store
-  const auth = useAuthStore();
+  const authStore = useAuthStore();
+
+  // define route
+  const route = useRoute();
 
   // define router
   const router = useRouter();
@@ -42,6 +45,7 @@ export function useApiMethods() {
   // define handle the toast message and its type
   const handleToastMsg = (type , message) => {
     // to stop the loading while showing the message
+    globalStore.switchLoading(false);
     if(type == 'success'){
       showSuccessToast(message);
     }else if(type == 'info'){
@@ -53,70 +57,116 @@ export function useApiMethods() {
     }
   }
 
+  // Fetch Data 
+  const getResult = ref(null);
+  const getMethod = async (apiUrl , pageNumber ,authed , showToast) => {
+    globalStore.switchLoading(true);
+    getResult.value = null
+    const { data, error } = await fetchApiData(`${apiUrl}${pageNumber ? `${apiUrl.includes('?') ? '&' : '?'}page=${pageNumber}` : ''}`, authed);
+
+    // ${authStore?.userData ? `?device_id=${globalStore.device_id}&` : apiUrl.startsWith('search?') ? '&' : '?' }
+    if (error) {
+      handleToastMsg('error' , error?.response?._data?.message)
+      if(
+        error?.response?._data?.status == 'unauthenticated'||
+        error?.response?._data?.status == 'unauthorized'||
+        error?.response?._data?.status == 'not_approved' ||
+        error?.response?._data?.status == 'blocked'
+      ){
+        setTimeout(() => {
+          location.reload()
+        }, 500);
+        useCookie('authStore').value = ''
+        window.sessionStorage.clear();
+      }
+    } else {
+      if (data.status == 'success') {
+        getResult.value = data;
+      }
+      else if (
+        data.status == 'unauthenticated' ||
+        data.status == 'unauthorized' ||
+        data.status == 'not_approved' ||
+        data.status == 'blocked'
+      ) {
+        setTimeout(() => {
+          location.reload()
+        }, 500);
+        useCookie('authStore').value = ''
+        window.sessionStorage.clear();
+      }
+      if(showToast){
+        handleToastMsg(data?.status , data?.message)
+      }
+      globalStore.switchLoading(false)
+    }
+  }
+
 
   // submit form function
   const submitResult = ref(null)
   const submitMethod = async (endPoint, authed , payload , method  , nextRoute , refetchApi) => {
-    globalStore.switchLoading();
+    globalStore.switchLoading(true);
     const {data , error} = await submitApiForm(endPoint, authed ,  payload , method);
     
-    // if (error) {
-    //   handleToastMsg('error' , error?.response?._data?.message)
-    //   if(
-    //     error?.response?._data?.key == 'unauthenticated'||
-    //     error?.response?._data?.key == 'unauthorized'||
-    //     error?.response?._data?.key == 'not_approved' ||
-    //     error?.response?._data?.key == 'blocked'
-    //   ){
-    //     useCookie('authStore').value = ''
-    //     window.sessionStorage.clear();
-    //     setTimeout(() => {
-    //       handleNextRoute('/auth/login')
-    //     }, 500);
-    //   }
-    //   else if(error?.response?._data?.key == 'needActive'){
-    //     setTimeout(() => {
-    //       handleNextRoute('/auth/activation_code')
-    //     }, 500);
-    //   }
-    // } else {
-    //   if (data.key == 'success' || data.key == 'needActive') {
-    //     handleNextRoute(nextRoute);
-    //     if (refetchApi) {
-    //       getMethod(refetchApi , '' , authStore ? true : false , false)
-    //     }
-    //     if(
-    //       endPoint == 'activate' || 
-    //       endPoint == 'signin' || 
-    //       endPoint == 'notify' || 
-    //       endPoint == 'update-provider-profile'
-    //     ){
-    //       // console.log(data?.data)
-    //       useCookie('authStore').value = data?.data
-    //       window.sessionStorage.setItem('authStore' , JSON.stringify(data?.data))
-    //       // authStore.handleUserData(data.data);
-    //     }
-    //   }else if (
-    //     data.key == 'unauthenticated' || 
-    //     data.key == 'not_approved'
-    //   ){
-    //     handleNextRoute('/')
-    //     useCookie('authStore').value = ''
-    //     window.sessionStorage.clear();
-    //   }
-    //   else if(data?.key == 'needActive'){
-    //     setTimeout(() => {
-    //       handleNextRoute('/auth/activation_code')
-    //     }, 500);
-    //   }
-    //   submitResult.value = {data , endPoint};
-    //   handleToastMsg(data?.key , data?.message)
-    //   globalStore.switchLoading()
-    // }
+    if (error) {
+      handleToastMsg('error' , error?.response?._data?.message)
+      if(
+        error?.response?._data?.status == 'unauthenticated'||
+        error?.response?._data?.status == 'unauthorized'||
+        error?.response?._data?.status == 'not_approved' ||
+        error?.response?._data?.status == 'blocked'
+      ){
+        useCookie('authStore').value = ''
+        window.sessionStorage.clear();
+        setTimeout(() => {
+          handleNextRoute('/auth/login')
+        }, 500);
+      }
+      else if(error?.response?._data?.status == 'needActive'){
+        setTimeout(() => {
+          handleNextRoute('/auth/activation_code')
+        }, 500);
+      }
+    } else {
+      if (data.status == 'success' || data.status == 'needActive') {
+        handleNextRoute(nextRoute);
+        if (refetchApi) {
+          getMethod(refetchApi , '' , authStore ? true : false , false)
+        }
+        if(
+          endPoint == 'activate' || 
+          endPoint == 'signin' || 
+          endPoint == 'notify' || 
+          endPoint == 'update-provider-profile'
+        ){
+          // console.log(data?.data)
+          useCookie('authStore').value = data?.data
+          window.sessionStorage.setItem('authStore' , JSON.stringify(data?.data))
+          // authStore.handleUserData(data.data);
+        }
+      }else if (
+        data.status == 'unauthenticated' || 
+        data.status == 'not_approved'
+      ){
+        handleNextRoute('/')
+        useCookie('authStore').value = ''
+        window.sessionStorage.clear();
+      }
+      else if(data?.status == 'needActive'){
+        setTimeout(() => {
+          handleNextRoute('/auth/activation_code')
+        }, 500);
+      }
+      submitResult.value = {data , endPoint};
+      handleToastMsg(data?.status , data?.message)
+      globalStore.switchLoading(false)
+    }
   };  
 
-
   return {
+    getMethod,
+    getResult,
     submitMethod,
     submitResult,
     showErrorToast,
