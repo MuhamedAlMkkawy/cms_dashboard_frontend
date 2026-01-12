@@ -185,9 +185,14 @@
 
 <script setup>
 // -----------------------------
-// HANDLE ERROR TOAST
+// DEFINE ROUTE
 // -----------------------------
-const { showErrorToast } = useToastMsg();
+const route = useRoute();
+
+// -----------------------------
+// HANDLE API Methods
+// -----------------------------
+const { submitMethod, showErrorToast } = useApiMethods();
 
 // ----------------------------
 // HANDLE PAGE ITEM 'S MENU
@@ -377,6 +382,50 @@ const onDrop = (section) => {
 };
 
 // ---------------------------
+// NORMALIZE THE MENU ITEMS TO MATCH THE DTO OF CREATION
+// ---------------------------
+const normalizeMenuItems = (items = []) => {
+  return items.map(item => {
+    const normalized = {
+      title: item.title,
+    };
+
+    // icon → only if exists
+    if (item.icon && item.icon.trim() !== '') {
+      normalized.icon = item.icon;
+    }
+
+    const hasChildren =
+      item.hasChilds == true &&
+      Array.isArray(item.children) &&
+      item.children.length > 0;
+
+    // hasChilds → only if exists
+    if (item.hasChilds !== undefined) {
+      normalized.hasChilds = item.hasChilds;
+    }
+
+    // ================= HAS CHILDREN =================
+    if (hasChildren) {
+      normalized.children = normalizeMenuItems(item.children);
+      return normalized;
+    }
+
+    // ================= NO CHILDREN =================
+    if (item.link) {
+      normalized.link = item.link;
+
+      if (item.target) {
+        normalized.target = item.target;
+      }
+    }
+
+    return normalized;
+  });
+};
+
+
+// ---------------------------
 // HANDLE ADD THE COMPONENT POPUP
 // ---------------------------
 const componentData = ref({});
@@ -404,9 +453,17 @@ const handleAddComponentContent = (data) => {
   if (!targetComponent) return showErrorToast("Component not found");
 
   // 3️⃣ Add / replace content
-  targetComponent.content = data.content;
-  // console.log(targetComponent)
-  // console.log(data.content)
+  if(targetComponent.type == 'nav-menu'){
+    const normalizedContent = {
+      ...data.content,
+      items: normalizeMenuItems(data.content?.items || []),
+    };
+    
+    targetComponent.content = normalizedContent
+    // console.log(normalizedContent)
+  }else{
+    targetComponent.content = data.content;
+  }
 };
 
 // ----------------------------
@@ -421,7 +478,11 @@ const changeLayout = (section) => {
 // HANDLE SAVE PAGE CONTENT
 // ----------------------------
 const handleSavePageContent = () => {
-  console.log(pages.value);
+  if(!pages.value[0].sections.length){
+    showErrorToast('You have to add data for the page to be added...')
+  }else{
+    submitMethod(`/projects/${route.params.id}/pages` , false , pages.value[0] , 'POST' , '')
+  }
 };
 </script>
 

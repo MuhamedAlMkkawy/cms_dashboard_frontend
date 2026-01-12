@@ -83,7 +83,6 @@
           <div class="input" v-if="!subItem.hasChilds">
             <label>Sub Menu Target</label>
             <select v-model="subItem.target">
-              <option value="">Item Target</option>
               <option value="_self">Same Tab</option>
               <option value="_blank">New Tab</option>
             </select>
@@ -129,14 +128,14 @@ const body = ref({
       icon : "",
       title: "", 
       link: "", 
-      target : "" , 
+      target : "_self" , 
       hasChilds: false, 
       children: [
         {
           icon : "",
           title : "" , 
           link : "",
-          target : ""
+          target : "_self"
         }
       ]
     }
@@ -151,7 +150,7 @@ const addMenuItem = () => {
     { 
       title: "", 
       link: "", 
-      target : "" , 
+      target : "_self" , 
       hasChilds: false, 
       children: [] 
     }
@@ -175,7 +174,7 @@ const onToggle = (index) => {
     if (!item.children) item.children = [];
     item.link = "";
   } else {
-    item.children = [{title : "" , link : "" , target : ""}];
+    item.children = [{title : "" , link : "" , target : "_self"}];
   }
 };
 
@@ -183,7 +182,7 @@ const onToggle = (index) => {
 // HANDLE SUB MENU ITEMS
 // -----------------------------
 const addSubMenuItem = (index) => {
-  body.value.items[index].children.push({ title: "", link: "" , target : ""});
+  body.value.items[index].children.push({ title: "", link: "" , target : "_self"});
 };
 
 const removeSubMenuItem = (i, sIndex) => {

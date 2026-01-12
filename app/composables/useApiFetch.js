@@ -9,7 +9,7 @@ const createFetchOptions = (authed , options = {}) => {
 
   const headers = {
     ...(authed ? { authorization: `Bearer ${token}` } : {}),
-    'accept-language': lang,
+    'accept-language': lang || 'en',
     secretKey: secretKey,
     ...options.headers,
   };

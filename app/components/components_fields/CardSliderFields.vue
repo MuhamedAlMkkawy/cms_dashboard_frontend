@@ -23,7 +23,12 @@
     ----------------------------- -->
     <div class="input">
       <label for="autoplay">Autoplay</label>
-      <ToggleButton v-model="slider.autoplay" class="w-24" onLabel="On" offLabel="Off" />
+      <ToggleButton
+        v-model="slider.autoplay"
+        class="w-24"
+        onLabel="On"
+        offLabel="Off"
+      />
     </div>
 
     <!-- -----------------------------
@@ -36,16 +41,11 @@
       </button>
     </div>
 
-
     <!-- -----------------------------
         CARD ITEMS EDITOR
     ----------------------------- -->
     <div class="items_editor">
-      <div 
-        class="item_card" 
-        v-for="(item, index) in slider.items" 
-        :key="index"
-      >
+      <div class="item_card" v-for="(item, index) in slider.items" :key="index">
         <!-- IMAGE UPLOAD -->
         <div class="image_wrapper">
           <input
@@ -61,10 +61,19 @@
               <span>Upload Image</span>
             </template>
             <template v-else>
-              <Image :src="item.url" alt="uploaded image" loading="lazy" preview />
+              <Image
+                :src="item.url"
+                alt="uploaded image"
+                loading="lazy"
+                preview
+              />
             </template>
           </label>
-          <button class="pi pi-trash delete_btn" @click="removeItem(index)"></button>
+          <button
+            class="pi pi-trash delete_btn"
+            v-if="slider.items.length > 1"
+            @click="removeItem(index)"
+          ></button>
         </div>
 
         <!-- TITLE INPUT -->
@@ -92,7 +101,6 @@
       </div>
     </div>
 
-
     <slot></slot>
 
     <!-- -----------------------------
@@ -108,12 +116,12 @@
 // -----------------------------
 // TOAST
 // -----------------------------
-const { showErrorToast } = useToastMsg()
+const { showErrorToast } = useToastMsg();
 
 // -----------------------------
 // EMITS
 // -----------------------------
-const emit = defineEmits(['handleSubmitFields', 'handleCloseComponentPopup'])
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
 // -----------------------------
 // SLIDER STATE
@@ -121,14 +129,16 @@ const emit = defineEmits(['handleSubmitFields', 'handleCloseComponentPopup'])
 const slider = ref({
   itemsToShow: 1,
   autoplay: false,
-  items: [{
-    url: null,
-    file: null,
-    title: '',
-    text: '',
-    link: ''
-  }]
-})
+  items: [
+    {
+      url: null,
+      file: null,
+      title: "",
+      text: "",
+      link: "",
+    },
+  ],
+});
 
 // -----------------------------
 // ADD NEW CARD
@@ -137,41 +147,41 @@ const addNewCard = () => {
   slider.value.items.push({
     url: null,
     file: null,
-    title: '',
-    text: '',
-    link: ''
-  })
-}
+    title: "",
+    text: "",
+    link: "",
+  });
+};
 
 // -----------------------------
 // HANDLE CARD IMAGE UPLOAD
 // -----------------------------
 const handleCardImageUpload = (event, index) => {
-  const file = event.target.files[0]
-  if (!file) return
-  slider.value.items[index].url = URL.createObjectURL(file)
-  slider.value.items[index].file = file
-}
+  const file = event.target.files[0];
+  if (!file) return;
+  slider.value.items[index].url = URL.createObjectURL(file);
+  slider.value.items[index].file = file;
+};
 
 // -----------------------------
 // REMOVE CARD ITEM
 // -----------------------------
 const removeItem = (index) => {
-  slider.value.items.splice(index, 1)
-}
+  slider.value.items.splice(index, 1);
+};
 
 // -----------------------------
 // HANDLE SUBMIT
 // -----------------------------
 const handleSubmitCardSlider = () => {
   if (!slider.value.items.length) {
-    showErrorToast('You should add at least one card.')
-    return
+    showErrorToast("You should add at least one card.");
+    return;
   }
 
-  emit('handleSubmitFields', slider.value)
-  emit('handleCloseComponentPopup')
-}
+  emit("handleSubmitFields", slider.value);
+  emit("handleCloseComponentPopup");
+};
 </script>
 
 <style lang="scss" scoped>
@@ -194,7 +204,6 @@ const handleSubmitCardSlider = () => {
       font-weight: 600;
     }
   }
-
 
   .items_editor {
     display: flex;
