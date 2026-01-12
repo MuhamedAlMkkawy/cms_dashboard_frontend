@@ -190,23 +190,48 @@ const removeSubMenuItem = (i, sIndex) => {
 };
 
 
+// ----------------------------------------
+// NORMALIZE THE MENU ITEMS TO MATCH THE DTO OF CREATION
+// ----------------------------------------
+const normalizeMenuItems = (items = []) => {
+  return items.map((item) => {
+    const normalized = {
+      title: item.title,
+    };
 
-// -----------------------------
-// HANDLE THE ICON PICKER POPUP
-// -----------------------------
-// const iconPickerOpen = ref(false);
-// const currentIconTarget = ref(null);
+    // icon → only if exists
+    if (item.icon && item.icon.trim() !== "") {
+      normalized.icon = item.icon;
+    }
 
+    const hasChildren =
+      item.hasChilds == true &&
+      Array.isArray(item.children) &&
+      item.children.length > 0;
 
-// const openIconPicker = (target) => {
-//   currentIconTarget.value = target;
-//   iconPickerOpen.value = true;
-// };
+    // hasChilds → only if exists
+    if (item.hasChilds !== undefined) {
+      normalized.hasChilds = item.hasChilds;
+    }
 
-// const setIcon = (icon) => {
-//   currentIconTarget.value.icon = icon;
-// };
+    // ================= HAS CHILDREN =================
+    if (hasChildren) {
+      normalized.children = normalizeMenuItems(item.children);
+      return normalized;
+    }
 
+    // ================= NO CHILDREN =================
+    if (item.link) {
+      normalized.link = item.link;
+
+      if (item.target) {
+        normalized.target = item.target;
+      }
+    }
+
+    return normalized;
+  });
+};
 // -----------------------------
 // HANDLE SUBMIT ACTION
 // -----------------------------
@@ -222,7 +247,7 @@ const handleSubmitNavMenu = () => {
     return;
   }
 
-  emit("handleSubmitFields", body.value);
+  emit("handleSubmitFields", normalizeMenuItems(body.value.items));
   emit("handleCloseComponentPopup");
 };
 </script>
