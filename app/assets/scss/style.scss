@@ -149,7 +149,10 @@ span[role="alert"] {
 .hidden_element {
   background: grey !important;
   border-color: grey;
-  color: #fff;
+  color: #fff !important;
   max-height: 98px;
   overflow: hidden;
+  &.active{
+    background: $textColor !important;
+  }
 }

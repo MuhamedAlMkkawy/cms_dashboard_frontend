@@ -33,22 +33,25 @@
           :key="page"
           :class="[
             'page_item',
-            { active: activePage === page?.id, hidden_element: !page.visible },
+            { active: activePage === page?._id, hidden_element: !page.visible },
           ]"
-          @click="activePage = page?.id"
+          @click="activePage = page?._id"
         >
           <span>{{ page?.name }}</span>
+
           <Button
             type="button"
             icon="pi pi-ellipsis-v"
-            @click.stop="(event) => menu[page?.id - 1].toggle(event)"
+            @click.stop="openMenu(page._id, $event)"
             aria-haspopup="true"
-            :aria-controls="`${page?.id}`"
+            :aria-controls="`menu_${page._id}`"
+            v-if="page == currentPage"
           />
+
           <Menu
-            ref="menu"
-            :id="`${page.id}_0_0`"
-            :model="getPageMenuItems(page.id)"
+            :ref="(el) => (menuRefs[page._id] = el)"
+            :id="`menu_${page._id}`"
+            :model="getPageMenuItems(page._id)"
             :popup="true"
           />
         </div>
@@ -192,39 +195,40 @@ const route = useRoute();
 // -----------------------------
 // HANDLE API Methods
 // -----------------------------
-const { submitMethod, showErrorToast } = useApiMethods();
+const { getMethod, getResult, submitMethod, showErrorToast } = useApiMethods();
 
 // ----------------------------
 // HANDLE PAGE ITEM 'S MENU
 // ----------------------------
-const menu = ref();
-const getPageMenuItems = (pageId) => [
-  {
-    label: "Options",
-    items: [
-      {
-        label: pages.value.find((p) => p.id === pageId)?.visible
-          ? "Hide"
-          : "Show",
-        icon: pages.value.find((p) => p.id === pageId)?.visible
-          ? "pi pi-eye-slash"
-          : "pi pi-eye",
-        command: () => handleHidePage(pageId),
-      },
-      // {
-      //   label: "Delete",
-      //   icon: "pi pi-trash",
-      //   command: () => router.push("/introduction"),
-      // },
-      {
-        label: "Edit",
-        icon: "pi pi-pen-to-square",
-        command: () => handleEditPage(pageId),
-        visible: pages.value.find((p) => p.id === pageId)?.visible,
-      },
-    ],
-  },
-];
+const menuRefs = reactive({}); // كل Menu لكل صفحة
+
+const openMenu = (pageId, event) => {
+  const menu = menuRefs[pageId];
+  if (menu) menu.toggle(event); // هذا يفتح popup
+};
+
+const getPageMenuItems = (pageId) => {
+  const page = pages.value.find((p) => p._id === pageId);
+  if (!page) return [];
+
+  return [
+    {
+      label: page.visible ? "Hide" : "Show",
+      icon: page.visible ? "pi pi-eye-slash" : "pi pi-eye",
+      command: () => handleHidePage(pageId),
+    },
+    {
+      label: "Edit",
+      icon: "pi pi-pencil",
+      command: () => handleEditPage(pageId),
+    },
+    // {
+    //   label: "Delete",
+    //   icon: "pi pi-trash",
+    //   command: () => handleDeletePage(pageId),
+    // }
+  ];
+};
 
 // ----------------------------
 // HANDLE PAGES CONTENT
@@ -241,9 +245,9 @@ const pages = ref([
 // ----------------------------
 // HANDLE ACTIVE PAGE
 // ----------------------------
-const activePage = ref(1);
+const activePage = ref();
 const currentPage = computed(() =>
-  pages.value.find((p) => p.id === activePage.value)
+  pages.value.find((p) => p._id === activePage.value)
 );
 
 // ----------------------------
@@ -295,7 +299,7 @@ const showControlPagePopup = ref(false);
 const handleControlPage = (page) => {
   if (modifiedPage.value) {
     const targetPage = pages?.value?.find(
-      (item) => item.id === modifiedPage.value.id
+      (item) => item._id === modifiedPage.value._id 
     );
     targetPage.name = page?.name;
   } else {
@@ -310,13 +314,13 @@ const handleControlPage = (page) => {
 };
 
 const handleHidePage = (id) => {
-  const targetPage = pages?.value?.find((item) => item.id === id);
+  const targetPage = pages?.value?.find((item) => item._id === id);
   targetPage.visible = !targetPage.visible;
 };
 
 const handleEditPage = (id) => {
   showControlPagePopup.value = true;
-  const targetPage = pages?.value?.find((item) => item.id === id);
+  const targetPage = pages?.value?.find((item) => item._id == id);
   modifiedPage.value = targetPage;
 };
 
@@ -385,13 +389,13 @@ const onDrop = (section) => {
 // NORMALIZE THE MENU ITEMS TO MATCH THE DTO OF CREATION
 // ---------------------------
 const normalizeMenuItems = (items = []) => {
-  return items.map(item => {
+  return items.map((item) => {
     const normalized = {
       title: item.title,
     };
 
     // icon → only if exists
-    if (item.icon && item.icon.trim() !== '') {
+    if (item.icon && item.icon.trim() !== "") {
       normalized.icon = item.icon;
     }
 
@@ -424,7 +428,6 @@ const normalizeMenuItems = (items = []) => {
   });
 };
 
-
 // ---------------------------
 // HANDLE ADD THE COMPONENT POPUP
 // ---------------------------
@@ -453,15 +456,15 @@ const handleAddComponentContent = (data) => {
   if (!targetComponent) return showErrorToast("Component not found");
 
   // 3️⃣ Add / replace content
-  if(targetComponent.type == 'nav-menu'){
+  if (targetComponent.type == "nav-menu") {
     const normalizedContent = {
       ...data.content,
       items: normalizeMenuItems(data.content?.items || []),
     };
-    
-    targetComponent.content = normalizedContent
+
+    targetComponent.content = normalizedContent;
     // console.log(normalizedContent)
-  }else{
+  } else {
     targetComponent.content = data.content;
   }
 };
@@ -478,12 +481,41 @@ const changeLayout = (section) => {
 // HANDLE SAVE PAGE CONTENT
 // ----------------------------
 const handleSavePageContent = () => {
-  if(!pages.value[0].sections.length){
-    showErrorToast('You have to add data for the page to be added...')
-  }else{
-    submitMethod(`/projects/${route.params.id}/pages` , false , pages.value[0] , 'POST' , '')
+  if (!currentPage?.value?.sections?.length) {
+    showErrorToast("You have to add data for the page to be added...");
+  } else {
+    // GET THE CURRENT PAGE ID TO EDIT IF HAS THE PROJECT HAS PAGES 
+    const pageId = getResult?.value ? currentPage.value?._id : "";
+    
+    // DETECT THE ENDPOINT BASED ON THE METHOD 
+    const url = pageId 
+      ? `/projects/${route.params.id}/pages/${pageId}` 
+      : `/projects/${route.params.id}/pages`;
+
+
+          
+    // DETECT WHICH API METHOD DEBEND ON THE PAGE VALUE
+    const method = getResult?.value && pageId ? "PATCH" : "POST";
+
+    // SUBMIT THE METHOD
+    submitMethod(url, false, currentPage?.value , method, "");
+
   }
 };
+
+watch(
+  () => getResult?.value,
+  (newValue) => {
+    if (newValue) {
+      pages.value = newValue?.data?.pages;
+      activePage.value = newValue?.data?.pages[0]?._id;
+    }
+  }
+);
+
+onMounted(() => {
+  getMethod(`/projects/${route.params.id}`, null, false, false);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -508,6 +540,7 @@ const handleSavePageContent = () => {
       cursor: pointer;
       text-transform: capitalize;
       width: 120px;
+      min-height: 50px;
       span {
         max-width: 70px;
         white-space: nowrap;
