@@ -55,7 +55,11 @@
             :popup="true"
           />
         </div>
-        <button class="add_page" @click="showControlPagePopup = true">
+        <button
+          class="add_page"
+          @click="showControlPagePopup = true"
+          title="Add Page"
+        >
           <i class="pi pi-plus"></i>
         </button>
       </div>
@@ -151,7 +155,11 @@
           </div>
         </div>
       </div>
-      <div class="section add_section" @click="showControlSectionPopup = true">
+      <div
+        class="section add_section"
+        title="Add Section"
+        @click="showControlSectionPopup = true"
+      >
         <i class="pi pi-plus"></i>
         <span>Add Section</span>
       </div>
@@ -233,14 +241,16 @@ const getPageMenuItems = (pageId) => {
 // ----------------------------
 // HANDLE PAGES CONTENT
 // ----------------------------
-const pages = ref([
-  {
-    id: 1,
-    name: "home",
-    visible: true,
-    sections: [],
-  },
-]);
+const pages = ref([]);
+  // {
+  //   id: 1,
+  //   name: "home",
+  //   visible: true,
+  //   sections: [],
+  // },
+
+
+
 
 // ----------------------------
 // HANDLE ACTIVE PAGE
@@ -251,7 +261,7 @@ const currentPage = computed(() =>
 );
 
 // ----------------------------
-// HANDLE ADD SECTION POPUP
+// HANDLE CONTROL SECTION POPUP
 // ----------------------------
 const modifiedSection = ref(null);
 const showControlSectionPopup = ref(false);
@@ -291,26 +301,29 @@ const getSlotsCount = (section) => {
 };
 
 // ----------------------------
-// HANDLE ADD PAGE POPUP
+// HANDLE CONTROL PAGE POPUP
 // ----------------------------
 const modifiedPage = ref();
 const showControlPagePopup = ref(false);
 
 const handleControlPage = (page) => {
   if (modifiedPage.value) {
-    const targetPage = pages?.value?.find(
-      (item) => item._id === modifiedPage.value._id 
+    const targetPage = pages.value.find(
+      (item) => item._id === modifiedPage.value._id
     );
-    targetPage.name = page?.name;
+    if (targetPage) targetPage.name = page.name;
   } else {
-    pages?.value?.push({
-      id: pages?.value?.length + 1,
-      name: page?.name,
+    const newPage = {
+      // _id: (pages.value.length + 1).toString(),
+      name: page.name,
       visible: true,
       sections: [],
-    });
+    };
+    pages.value.push(newPage);
+    activePage.value = newPage._id;
   }
   showControlPagePopup.value = false;
+  modifiedPage.value = null;
 };
 
 const handleHidePage = (id) => {
@@ -428,9 +441,9 @@ const normalizeMenuItems = (items = []) => {
   });
 };
 
-// ---------------------------
+// ----------------------------------
 // HANDLE ADD THE COMPONENT POPUP
-// ---------------------------
+// ----------------------------------
 const componentData = ref({});
 
 const removeComponent = (section, index) => {
@@ -484,25 +497,23 @@ const handleSavePageContent = () => {
   if (!currentPage?.value?.sections?.length) {
     showErrorToast("You have to add data for the page to be added...");
   } else {
-    // GET THE CURRENT PAGE ID TO EDIT IF HAS THE PROJECT HAS PAGES 
+    // GET THE CURRENT PAGE ID TO EDIT IF HAS THE PROJECT HAS PAGES
     const pageId = getResult?.value ? currentPage.value?._id : "";
-    
-    // DETECT THE ENDPOINT BASED ON THE METHOD 
-    const url = pageId 
-      ? `/projects/${route.params.id}/pages/${pageId}` 
+
+    // DETECT THE ENDPOINT BASED ON THE METHOD
+    const url = pageId
+      ? `/projects/${route.params.id}/pages/${pageId}`
       : `/projects/${route.params.id}/pages`;
 
-
-          
     // DETECT WHICH API METHOD DEBEND ON THE PAGE VALUE
     const method = getResult?.value && pageId ? "PATCH" : "POST";
 
     // SUBMIT THE METHOD
-    submitMethod(url, false, currentPage?.value , method, "");
-
+    submitMethod(url, false, currentPage?.value, method, "");
   }
 };
 
+// CHECK IF THE PROJECT HAS PAGES 
 watch(
   () => getResult?.value,
   (newValue) => {
@@ -512,6 +523,8 @@ watch(
     }
   }
 );
+
+
 
 onMounted(() => {
   getMethod(`/projects/${route.params.id}`, null, false, false);
@@ -560,24 +573,24 @@ onMounted(() => {
         background: $mainColor;
         color: #fff;
       }
-      + .add_page {
-        margin-inline-start: auto;
-        @include circle(40px);
-        border: 1px solid $mainColor;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $mainColor;
-        transition: 0.6s;
-        i.pi {
-          font-size: 15px;
-          font-weight: 600;
-          color: inherit;
-        }
-        &:hover {
-          background: $mainColor;
-          color: #fff;
-        }
+    }
+    .add_page {
+      margin-inline-start: auto;
+      @include circle(40px);
+      border: 1px solid $mainColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $mainColor;
+      transition: 0.6s;
+      i.pi {
+        font-size: 15px;
+        font-weight: 600;
+        color: inherit;
+      }
+      &:hover {
+        background: $mainColor;
+        color: #fff;
       }
     }
     + hr {

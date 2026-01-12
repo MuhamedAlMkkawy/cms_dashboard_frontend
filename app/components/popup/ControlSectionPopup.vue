@@ -86,7 +86,7 @@ const handleSubmit = () => {
     return
   }
 
-  emit('handleSectionPopup', { ...section.value })
+  emit('handleSectionPopup', section.value )
 
   handleClose()
 }
