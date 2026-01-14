@@ -41,7 +41,6 @@
         </div>
       </div>
 
-
       <!-- Delete -->
       <button
         v-if="timeline.length > 1"
@@ -95,7 +94,44 @@ const timeline = ref([
   }
 ])
 
-// Add item
+// ----------------------------
+// DEFINE PROPS FOR EXISTING DATA
+// ----------------------------
+const props = defineProps({
+  values: Object, 
+})
+
+// -----------------------------
+// RENDER DATA FROM PROPS
+// -----------------------------
+watch(
+  () => props.values,
+  (values) => {
+    if (!values) return
+
+    timeline.value =
+      values?.items?.map((item) => ({
+        date: item.date ?? '',
+        icon: item.icon ?? '',
+        title: item.title ?? '',
+        description: item.description ?? '',
+        classes: item.classes ?? '',
+      })) || [
+        {
+          date: '',
+          icon: '',
+          title: '',
+          description: '',
+          classes: '',
+        },
+      ]
+  },
+  { immediate: true }
+)
+
+// -----------------------------
+// ADD / REMOVE ITEMS
+// -----------------------------
 const addItem = () => {
   timeline.value.push({
     date: '',
@@ -106,7 +142,6 @@ const addItem = () => {
   })
 }
 
-// Remove item
 const removeItem = (index) => {
   if (timeline.value.length > 1) {
     timeline.value.splice(index, 1)
@@ -115,7 +150,9 @@ const removeItem = (index) => {
   }
 }
 
-// Submit
+// -----------------------------
+// SUBMIT ITEMS
+// -----------------------------
 const handleSubmitTimeline = () => {
   const invalid = timeline.value.some(
     i => !i.date || !i.title.trim() || !i.description.trim()
@@ -126,7 +163,21 @@ const handleSubmitTimeline = () => {
     return
   }
 
-  emit('handleSubmitFields', timeline.value)
+  // Map timeline items and omit `icon` if empty
+  const submittedItems = timeline.value.map((i) => {
+    const itemData = {
+      date: i.date,
+      title: i.title.trim(),
+      description: i.description.trim(),
+      classes: i.classes ?? '',
+    }
+    if (i.icon?.trim()) {
+      itemData.icon = i.icon.trim()
+    }
+    return itemData
+  })
+
+  emit('handleSubmitFields', submittedItems)
   emit('handleCloseComponentPopup')
 }
 </script>
@@ -143,14 +194,13 @@ const handleSubmitTimeline = () => {
     position: relative;
   }
 
-  input{
-    border: none ;
+  input {
+    border: none;
   }
 
-  .inputs{
+  .inputs {
     display: flex;
     gap: 10px;
   }
-
 }
 </style>
