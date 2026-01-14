@@ -8,7 +8,7 @@
         <NuxtLink
           v-for="(project, index) in getResult?.data"
           :key="project._id"
-          :to="`/projects/${project._id}`"
+          :to="project.visible ? $localeRoute(`/projects/${project._id}`) : ''"
           :class="['content_item', { drafted_item: !project.visible }]"
         >
           <div class="image">
@@ -119,6 +119,9 @@
           .item_control {
             opacity: 1;
           }
+        }
+        &.drafted_item{
+          cursor: default;
         }
       }
     }
