@@ -207,7 +207,7 @@ watch(
           title: item.title ?? "",
           text: item.text ?? "",
           link: item.link ?? "",
-        })) || [],
+        })),
     };
   },
   { immediate: true }

@@ -34,9 +34,9 @@
   import CustomHtml from '../components_fields/CustomHtml.vue'
   import LogoField from '../components_fields/LogoField.vue'
   import MenuFields from '../components_fields/MenuFields.vue'
-  import TimelineFields from '../components_fields/TimelineFields.vue'
   import SocialFields from '../components_fields/SocialFields.vue'
   import TabsFields from '../components_fields/TabsFields.vue'
+  import TimelineFields from '../components_fields/TimelineFields.vue'
 
 
   // props for dynamic rendering

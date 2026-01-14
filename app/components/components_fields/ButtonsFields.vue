@@ -112,9 +112,7 @@ watch(
       link: btn.link ?? "",
       target: btn.target ?? "_self",
       reversed: btn.reversed ?? false,
-    })) || [
-      { icon: "", title: "", link: "", target: "_self", reversed: false },
-    ];
+    }))
   },
   { immediate: true }
 );

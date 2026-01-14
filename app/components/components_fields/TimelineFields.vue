@@ -3,11 +3,7 @@
     <h4 class="centered">Timeline</h4>
 
     <!-- Timeline Items -->
-    <div
-      class="timeline_item"
-      v-for="(item, index) in timeline"
-      :key="index"
-    >
+    <div class="timeline_item" v-for="(item, index) in timeline" :key="index">
       <!-- Index -->
       <h6 class="item_index">
         Item <span>#{{ index + 1 }}</span>
@@ -17,14 +13,11 @@
         <!-- Icon -->
         <div class="input icon_input">
           <label>Icon</label>
-          <button
-            class="icon_select_btn"
-            @click="emit('openIconPicker', item)"
-          >
+          <button class="icon_select_btn" @click="emit('openIconPicker', item)">
             <i :class="item.icon || 'pi pi-circle'"></i>
           </button>
         </div>
-  
+
         <!-- Date -->
         <div class="input">
           <label>Date</label>
@@ -65,41 +58,37 @@
 
     <!-- Actions -->
     <div class="flex_buttons">
-      <button class="main-btn reversed" @click="addItem">
-        Add Item
-      </button>
-      <button class="main-btn" @click="handleSubmitTimeline">
-        Submit
-      </button>
+      <button class="main-btn reversed" @click="addItem">Add Item</button>
+      <button class="main-btn" @click="handleSubmitTimeline">Submit</button>
     </div>
   </div>
 </template>
 
 <script setup>
-const { showErrorToast } = useToastMsg()
+const { showErrorToast } = useToastMsg();
 
 const emit = defineEmits([
-  'handleSubmitFields',
-  'handleCloseComponentPopup',
-  'openIconPicker'
-])
+  "handleSubmitFields",
+  "handleCloseComponentPopup",
+  "openIconPicker",
+]);
 
 const timeline = ref([
   {
-    date: '',
-    icon: '',
-    title: '',
-    description: '',
-    classes: ''
-  }
-])
+    date: "",
+    icon: "",
+    title: "",
+    description: "",
+    classes: "",
+  },
+]);
 
 // ----------------------------
 // DEFINE PROPS FOR EXISTING DATA
 // ----------------------------
 const props = defineProps({
-  values: Object, 
-})
+  values: Object,
+});
 
 // -----------------------------
 // RENDER DATA FROM PROPS
@@ -107,60 +96,51 @@ const props = defineProps({
 watch(
   () => props.values,
   (values) => {
-    if (!values) return
-
-    timeline.value =
-      values?.items?.map((item) => ({
-        date: item.date ?? '',
-        icon: item.icon ?? '',
-        title: item.title ?? '',
-        description: item.description ?? '',
-        classes: item.classes ?? '',
-      })) || [
-        {
-          date: '',
-          icon: '',
-          title: '',
-          description: '',
-          classes: '',
-        },
-      ]
+    if (!values) return;
+    // console.log(timeline.value);
+    timeline.value = values?.items?.map((item) => ({
+      date: item.date ? new Date(item.date).toLocaleDateString() : "",
+      icon: item.icon ?? "",
+      title: item.title ?? "",
+      description: item.description ?? "",
+      classes: item.classes ?? "",
+    }))
   },
   { immediate: true }
-)
+);
 
 // -----------------------------
 // ADD / REMOVE ITEMS
 // -----------------------------
 const addItem = () => {
   timeline.value.push({
-    date: '',
-    icon: '',
-    title: '',
-    description: '',
-    classes: ''
-  })
-}
+    date: "",
+    icon: "",
+    title: "",
+    description: "",
+    classes: "",
+  });
+};
 
 const removeItem = (index) => {
   if (timeline.value.length > 1) {
-    timeline.value.splice(index, 1)
+    timeline.value.splice(index, 1);
   } else {
-    showErrorToast('At least one timeline item is required')
+    showErrorToast("At least one timeline item is required");
   }
-}
+};
 
 // -----------------------------
 // SUBMIT ITEMS
 // -----------------------------
 const handleSubmitTimeline = () => {
   const invalid = timeline.value.some(
-    i => !i.date || !i.title.trim() || !i.description.trim()
-  )
+    (i) => !i.date || !i.title.trim() || !i.description.trim()
+  );
 
   if (invalid) {
-    showErrorToast('Please fill all timeline fields')
-    return
+    showErrorToast("Please fill all timeline fields");
+    return;
   }
 
   // Map timeline items and omit `icon` if empty
@@ -169,17 +149,17 @@ const handleSubmitTimeline = () => {
       date: i.date,
       title: i.title.trim(),
       description: i.description.trim(),
-      classes: i.classes ?? '',
-    }
+      classes: i.classes ?? "",
+    };
     if (i.icon?.trim()) {
-      itemData.icon = i.icon.trim()
+      itemData.icon = i.icon.trim();
     }
-    return itemData
-  })
+    return itemData;
+  });
 
-  emit('handleSubmitFields', submittedItems)
-  emit('handleCloseComponentPopup')
-}
+  emit("handleSubmitFields", { items: submittedItems });
+  emit("handleCloseComponentPopup");
+};
 </script>
 
 <style scoped lang="scss">
