@@ -19,7 +19,7 @@
 
     <!-- Preview -->
     <div v-if="body.image" class="preview">
-      <Image :src="body.image.url" alt="logo image" loading="lazy" preview />
+      <img :src="body.image" alt="logo image" loading="lazy" preview />
 
       <button class="pi pi-trash delete_btn" @click="removeImage"></button>
     </div>
@@ -51,58 +51,107 @@
     <!-- CSS classes -->
     <slot></slot>
 
-  
-    <button class="main-btn" @click="handleSubmitLogo">
-      Submit
-    </button>
+    <button class="main-btn" @click="handleSubmitLogo">Submit</button>
   </div>
 </template>
 
 <script setup>
-  // --------------
-  // DEFINE EMITS
-  // --------------
-  const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"])
-  
-  
-  // --------------
-  // HANDLE ERROR TOAST
-  // --------------
-  const { showErrorToast } = useToastMsg()
+// --------------
+// DEFINE EMITS
+// --------------
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
-  // --------------
-  // HANDLE BODY
-  // --------------
-  const body = ref({
-    image: null,
-    width: "",
-    height: "",
-  })
+// --------------
+// HANDLE API METHODS
+// --------------
+const { submitMethod, submitResult, showErrorToast } = useApiMethods();
+
+// --------------
+// HANDLE BODY
+// --------------
+const body = ref({
+  image: null,
+  width: "",
+  height: "",
+});
+
+
+  // ----------------------------
+  // DEFINE PROPS
+  // ----------------------------
+  const props = defineProps({
+    values: Object, // existing buttons data passed in
+  });
+
+  // -----------------------------
+  // HANDLE VIEWING THE RENDERED VALUES
+  // -----------------------------
+  watch(
+    () => props.values,
+    (values) => {
+      if (!values) return;
+
+      body.value = {
+        image: values.image ?? null,
+        width: values.width ?? "",
+        height: values.height ?? "",
+      };
+    },
+    { immediate: true }
+  );
+
 
 // -------- HANDLE IMAGE UPLOAD ----------
 const handleImageUpload = (e) => {
-  const file = e.target.files?.[0]
-  if (!file) return
-  body.value.image = {
-    url: URL.createObjectURL(file),
-    file
+  const file = e.target.files?.[0];
+
+  // 1️⃣ No file selected
+  if (!file) {
+    showErrorToast("No file selected");
+    return;
   }
-}
+
+  // 2️⃣ Allowed image types (including SVG)
+  const allowedTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+    'image/svg+xml'
+  ]
+
+  if (!allowedTypes.includes(file.type)) {
+    showErrorToast('Only JPG, PNG, WEBP, GIF, or SVG images are allowed')
+    e.target.value = ''
+    return
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  submitMethod("/uploads/single", false, formData, "POST", null);
+};
+
+watchEffect(() => {
+  if (submitResult?.value) {
+    body.value.image = submitResult?.value?.data?.path;
+  }
+});
 
 const removeImage = () => {
-  body.value.image = null
-}
+  body.value.image = null;
+};
 
 // -------- SUBMIT ----------
 const handleSubmitLogo = () => {
   if (!body.value.image) {
-    showErrorToast("Logo image is required")
-    return
+    showErrorToast("Logo image is required");
+    return;
   }
 
-  emit("handleSubmitFields", body.value)
-  emit("handleCloseComponentPopup")
-}
+  emit("handleSubmitFields", body.value);
+  emit("handleCloseComponentPopup");
+};
 </script>
 
 <style scoped lang="scss">
@@ -118,7 +167,7 @@ const handleSubmitLogo = () => {
       flex-shrink: 0;
     }
 
-    input{
+    input {
       border: 0.5px solid #e4e4e4;
       max-width: 150px;
       padding: 8px 10px;
