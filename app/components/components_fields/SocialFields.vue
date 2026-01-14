@@ -11,7 +11,6 @@
       <!-- Icon -->
       <div class="input icon_input">
         <label>Icon</label>
-
         <button
           type="button"
           class="icon_select_btn"
@@ -19,12 +18,10 @@
         >
           <i
             :class="item.icon || 'pi pi-share-alt'"
-            :style="{ color : item.color }"
+            :style="{ color: item.color + ' !important' }"
           ></i>
         </button>
       </div>
-
-
 
       <!-- Color -->
       <div class="input icon_input">
@@ -76,25 +73,41 @@ const emit = defineEmits([
 ])
 
 const socials = ref([
-  {
-    icon: '',
-    link: '',
-    color : '#000',
-    classes: ''
-  }
+  { icon: '', link: '', color: '#000000' }
 ])
 
-// Add social link
+// ----------------------------
+// DEFINE PROPS FOR EXISTING DATA
+// ----------------------------
+const props = defineProps({
+  values: Object, 
+})
+
+// -----------------------------
+// RENDER DATA FROM PROPS
+// -----------------------------
+watch(
+  () => props.values,
+  (values) => {
+    if (!values) return
+
+    socials.value =
+      values?.items?.map((item) => ({
+        icon: item.icon ?? '',
+        link: item.link ?? '',
+        color: item.color ?? '#000000',
+      }))
+  },
+  { immediate: true }
+)
+
+// -----------------------------
+// ADD / REMOVE ITEMS
+// -----------------------------
 const addItem = () => {
-  socials.value.push({
-    icon: '',
-    link: '',
-    color : '#000',
-    classes: ''
-  })
+  socials.value.push({ icon: '', link: '', color: '#000000' })
 }
 
-// Remove social link
 const removeItem = (index) => {
   if (socials.value.length > 1) {
     socials.value.splice(index, 1)
@@ -103,18 +116,29 @@ const removeItem = (index) => {
   }
 }
 
-// Submit
+// -----------------------------
+// SUBMIT ITEMS
+// -----------------------------
 const handleSubmitSocials = () => {
-  const invalid = socials.value.some(
-    s => !s.icon || !s.link.trim()
-  )
-
+  const invalid = socials.value.some(s => !s.link.trim())
   if (invalid) {
-    showErrorToast('Please select an icon and enter a link for each item')
+    showErrorToast('Please enter a link for each item')
     return
   }
 
-  emit('handleSubmitFields', socials.value)
+  // Map socials and omit `icon` if empty
+  const submittedItems = socials.value.map((s) => {
+    const itemData = {
+      link: s.link.trim(),
+      color: s.color ?? '#000000',
+    }
+    if (s.icon?.trim()) {
+      itemData.icon = s.icon.trim()
+    }
+    return itemData
+  })
+
+  emit('handleSubmitFields', {items : submittedItems})
   emit('handleCloseComponentPopup')
 }
 </script>
@@ -132,7 +156,8 @@ const handleSubmitSocials = () => {
     padding: 10px;
     margin-bottom: 10px;
     position: relative;
-    .input{
+
+    .input {
       margin-bottom: 0;
     }
   }
