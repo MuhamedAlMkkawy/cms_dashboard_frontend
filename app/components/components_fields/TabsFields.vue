@@ -51,45 +51,72 @@
 </template>
 
 <script setup>
-const { showErrorToast } = useToastMsg()
-const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"])
+  const { showErrorToast } = useToastMsg()
+  const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"])
 
-const tabs = ref([
-  {
-    title: "",
-    description: "",
-  },
-])
+  const tabs = ref([
+    {
+      title: "",
+      description: "",
+    },
+  ])
 
-// Add tab
-const addTab = () => {
-  tabs.value.push({
-    title: "",
-    description: "",
-  })
-}
+  // ----------------------------
+  // DEFINE PROPS
+  // ----------------------------
+  const props = defineProps({
+    values: Object, // existing buttons data passed in
+  });
 
-// Remove tab
-const removeTab = (index) => {
-  if (tabs.value.length > 1) {
-    tabs.value.splice(index, 1)
-  } else {
-    showErrorToast("At least one tab is required")
+  // -----------------------------
+  // HANDLE VIEWING THE RENDERED VALUES
+  // -----------------------------
+  watch(
+    () => props.values,
+    (values) => {
+
+      if (!values) return;
+
+      // Render buttons from props or fallback to default
+      tabs.value = values?.items?.map((item) => ({
+        title: item.title ?? "",
+        description : item.description ?? ""
+      }))
+    },
+    { immediate: true }
+  );
+
+
+
+  // Add tab
+  const addTab = () => {
+    tabs.value.push({
+      title: "",
+      description: "",
+    })
   }
-}
 
-// Submit tabs
-const handleSubmitTabs = () => {
-  const invalid = tabs.value.some(
-    t => !t?.title?.trim() || !t?.description?.trim()
-  )
-  if (invalid) {
-    showErrorToast("Please fill all tab titles and descriptions")
-    return
+  // Remove tab
+  const removeTab = (index) => {
+    if (tabs.value.length > 1) {
+      tabs.value.splice(index, 1)
+    } else {
+      showErrorToast("At least one tab is required")
+    }
   }
-  emit("handleSubmitFields", tabs.value)
-  emit("handleCloseComponentPopup")
-}
+
+  // Submit tabs
+  const handleSubmitTabs = () => {
+    const invalid = tabs.value.some(
+      t => !t?.title?.trim() || !t?.description?.trim()
+    )
+    if (invalid) {
+      showErrorToast("Please fill all tab titles and descriptions")
+      return
+    }
+    emit("handleSubmitFields", {items : tabs.value})
+    emit("handleCloseComponentPopup")
+  }
 </script>
 
 <style scoped lang="scss">

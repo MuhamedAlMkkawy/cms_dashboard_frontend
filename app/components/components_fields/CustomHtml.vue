@@ -32,6 +32,27 @@ const body = ref({
 })
 
 
+// ----------------------------
+// DEFINE PROPS
+// ----------------------------
+const props = defineProps({
+  values: Object, // existing buttons data passed in
+});
+
+// -----------------------------
+// HANDLE VIEWING THE RENDERED VALUES
+// -----------------------------
+watch(
+  () => props.values,
+  (values) => {
+
+    if (!values) return;
+
+    body.value.html = values.html
+  },
+  { immediate: true }
+);
+
 // ----------------
 // HANDLE SUBMIT 
 // ----------------

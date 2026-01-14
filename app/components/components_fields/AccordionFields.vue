@@ -68,6 +68,32 @@
     }
   ])
 
+
+  // ----------------------------
+  // DEFINE PROPS
+  // ----------------------------
+  const props = defineProps({
+    values: Object, // existing buttons data passed in
+  });
+
+  // -----------------------------
+  // HANDLE VIEWING THE RENDERED VALUES
+  // -----------------------------
+  watch(
+    () => props.values,
+    (values) => {
+
+      if (!values) return;
+
+      // Render buttons from props or fallback to default
+      accordions.value = values?.items?.map((item) => ({
+        title: item.title ?? "",
+        content : item.content ?? ""
+      }))
+    },
+    { immediate: true }
+  );
+
   // Add accordion
   const addAccordion = () => {
     accordions.value.push({
@@ -95,7 +121,7 @@
       showErrorToast("Please fill all accordion titles and contents")
       return
     }
-    emit("handleSubmitFields", accordions.value)
+    emit("handleSubmitFields", {items : accordions.value})
     emit("handleCloseComponentPopup")
   }
 </script>
