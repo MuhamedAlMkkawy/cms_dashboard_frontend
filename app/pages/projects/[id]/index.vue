@@ -132,7 +132,8 @@
                 @click="
                   handleSectionContent(
                     section.id,
-                    section.components[index].type
+                    section.components[index].type,
+                    section.components[index].content
                   )
                 "
               >
@@ -167,316 +168,317 @@
         Save
       </button>
     </div>
-    <!-- #################### Add Section Popup ###################-->
+    <!-- #################### Control Section Popup ###################-->
     <ControlSectionPopup
       v-if="showControlSectionPopup"
       :modifiedSection="modifiedSection"
       @handleShowControlSectionPopup="showControlSectionPopup = false"
       @handleSectionPopup="handleSectionPopup"
     />
-    <!-- ################# Add Section  Popup #####################-->
-    <!-- ##################### Add Page Popup #####################-->
+    <!-- ################# Control Section  Popup #####################-->
+    <!-- ##################### Control Page Popup #####################-->
     <ControlPagePopup
       v-if="showControlPagePopup"
       :modifiedPage="modifiedPage"
       @handleShowControlPagePopup="showControlPagePopup = false"
       @handleControlPage="handleControlPage"
     />
-    <!-- ################### Add Page  Popup ######################-->
-    <!-- ############## Add Component Content  Popup ##############-->
+    <!-- ################### Control Page  Popup ######################-->
+    <!-- ############## Control Component Content  Popup ##############-->
     <ComponentPopup
       v-if="componentData.type"
       :componentData="componentData"
       @handleCloseComponentPopup="componentData = {}"
       @handleAddComponentContent="handleAddComponentContent"
     />
-    <!-- ############## Add Component Content  Popup ##############-->
+    <!-- ############## Control Component Content  Popup ##############-->
   </div>
 </template>
 
 <script setup>
-// -----------------------------
-// DEFINE ROUTE
-// -----------------------------
-const route = useRoute();
+  // -----------------------------
+  // DEFINE ROUTE
+  // -----------------------------
+  const route = useRoute();
 
-// -----------------------------
-// HANDLE API Methods
-// -----------------------------
-const { getMethod, getResult, submitMethod, showErrorToast } = useApiMethods();
+  // -----------------------------
+  // HANDLE API Methods
+  // -----------------------------
+  const { getMethod, getResult, submitMethod, showErrorToast } = useApiMethods();
 
-// ----------------------------
-// HANDLE PAGE ITEM 'S MENU
-// ----------------------------
-const menuRefs = reactive({}); // كل Menu لكل صفحة
+  // ----------------------------
+  // HANDLE PAGE ITEM 'S MENU
+  // ----------------------------
+  const menuRefs = reactive({}); // كل Menu لكل صفحة
 
-const openMenu = (pageId, event) => {
-  const menu = menuRefs[pageId];
-  if (menu) menu.toggle(event); // هذا يفتح popup
-};
+  const openMenu = (pageId, event) => {
+    const menu = menuRefs[pageId];
+    if (menu) menu.toggle(event); // هذا يفتح popup
+  };
 
-const getPageMenuItems = (pageId) => {
-  const page = pages.value.find((p) => p._id === pageId);
-  if (!page) return [];
+  const getPageMenuItems = (pageId) => {
+    const page = pages.value.find((p) => p._id === pageId);
+    if (!page) return [];
 
-  return [
-    {
-      label: page.visible ? "Hide" : "Show",
-      icon: page.visible ? "pi pi-eye-slash" : "pi pi-eye",
-      command: () => handleHidePage(pageId),
-    },
-    {
-      label: "Edit",
-      icon: "pi pi-pencil",
-      command: () => handleEditPage(pageId),
-    },
+    return [
+      {
+        label: page.visible ? "Hide" : "Show",
+        icon: page.visible ? "pi pi-eye-slash" : "pi pi-eye",
+        command: () => handleHidePage(pageId),
+      },
+      {
+        label: "Edit",
+        icon: "pi pi-pencil",
+        command: () => handleEditPage(pageId),
+      },
+      // {
+      //   label: "Delete",
+      //   icon: "pi pi-trash",
+      //   command: () => handleDeletePage(pageId),
+      // }
+    ];
+  };
+
+  // ----------------------------
+  // HANDLE PAGES CONTENT
+  // ----------------------------
+  const pages = ref([]);
     // {
-    //   label: "Delete",
-    //   icon: "pi pi-trash",
-    //   command: () => handleDeletePage(pageId),
-    // }
-  ];
-};
-
-// ----------------------------
-// HANDLE PAGES CONTENT
-// ----------------------------
-const pages = ref([]);
-  // {
-  //   id: 1,
-  //   name: "home",
-  //   visible: true,
-  //   sections: [],
-  // },
+    //   id: 1,
+    //   name: "home",
+    //   visible: true,
+    //   sections: [],
+    // },
 
 
 
 
-// ----------------------------
-// HANDLE ACTIVE PAGE
-// ----------------------------
-const activePage = ref();
-const currentPage = computed(() =>
-  pages.value.find((p) => p._id === activePage.value)
-);
+  // ----------------------------
+  // HANDLE ACTIVE PAGE
+  // ----------------------------
+  const activePage = ref();
+  const currentPage = computed(() =>
+    pages.value.find((p) => p._id === activePage.value)
+  );
 
-// ----------------------------
-// HANDLE CONTROL SECTION POPUP
-// ----------------------------
-const modifiedSection = ref(null);
-const showControlSectionPopup = ref(false);
+  // ----------------------------
+  // HANDLE CONTROL SECTION POPUP
+  // ----------------------------
+  const modifiedSection = ref(null);
+  const showControlSectionPopup = ref(false);
 
-const handleSectionPopup = (section) => {
-  if (modifiedSection.value) {
-    // EDIT MODE
-    const targetSection = currentPage.value.sections.find(
-      (item) => item.id === modifiedSection.value.id
-    );
+  const handleSectionPopup = (section) => {
+    if (modifiedSection.value) {
+      // EDIT MODE
+      const targetSection = currentPage.value.sections.find(
+        (item) => item.id === modifiedSection.value.id
+      );
 
-    if (targetSection) {
-      targetSection.name = section.name;
-      targetSection.visible = section.visible;
-      targetSection.layout_items = section.layout_items;
-      targetSection.components = section.components;
+      if (targetSection) {
+        targetSection.name = section.name;
+        targetSection.visible = section.visible;
+        targetSection.layout_items = section.layout_items;
+        targetSection.components = section.components;
+      }
+    } else {
+      // ADD MODE
+      currentPage.value.sections.push({
+        id: currentPage.value.sections.length + 1,
+        ...section,
+      });
     }
-  } else {
-    // ADD MODE
-    currentPage.value.sections.push({
-      id: currentPage.value.sections.length + 1,
-      ...section,
+
+    showControlSectionPopup.value = false;
+    modifiedSection.value = null;
+  };
+
+  const handleEditSection = (section) => {
+    modifiedSection.value = section;
+    showControlSectionPopup.value = true;
+  };
+
+  const getSlotsCount = (section) => {
+    return section.components.length + 1; // always add 1 empty slot
+  };
+
+  // ----------------------------
+  // HANDLE CONTROL PAGE POPUP
+  // ----------------------------
+  const modifiedPage = ref();
+  const showControlPagePopup = ref(false);
+
+  const handleControlPage = (page) => {
+    if (modifiedPage.value) {
+      const targetPage = pages.value.find(
+        (item) => item._id === modifiedPage.value._id
+      );
+      if (targetPage) targetPage.name = page.name;
+    } else {
+      const newPage = {
+        // _id: (pages.value.length + 1).toString(),
+        name: page.name,
+        visible: true,
+        sections: [],
+      };
+      pages.value.push(newPage);
+      activePage.value = newPage._id;
+    }
+    showControlPagePopup.value = false;
+    modifiedPage.value = null;
+  };
+
+  const handleHidePage = (id) => {
+    const targetPage = pages?.value?.find((item) => item._id === id);
+    targetPage.visible = !targetPage.visible;
+  };
+
+  const handleEditPage = (id) => {
+    showControlPagePopup.value = true;
+    const targetPage = pages?.value?.find((item) => item._id == id);
+    modifiedPage.value = targetPage;
+  };
+
+  // ------------------------------
+  // HANDLE DRAG & DROP COMPONENTS
+  // ------------------------------
+  const draggedComponent = ref(null);
+
+  const isDragging = ref(false);
+
+  const onDragStart = (item, e) => {
+    // SAFE CLONE (no DataCloneError)
+    draggedComponent.value = JSON.parse(JSON.stringify(item));
+    isDragging.value = true;
+
+    // Create custom preview node
+    const clone = e.target.cloneNode(true);
+    clone.style.width = `${e.target.offsetWidth}px`;
+    clone.style.height = `${e.target.offsetHeight}px`;
+    clone.classList.add("drag-preview");
+    clone.style.position = "fixed";
+    clone.style.top = "-9999px";
+
+    document.body.appendChild(clone);
+
+    e.dataTransfer.setDragImage(clone, 0, 0);
+    e.target.classList.add("dragging");
+  };
+
+  const onDragEnd = (e) => {
+    draggedComponent.value = null;
+    isDragging.value = false;
+    e.target.classList.remove("dragging");
+
+    const ghost = document.querySelector(".drag-preview");
+    if (ghost) ghost.remove();
+  };
+
+  const onDragEnter = (section, e) => {
+    section.isDragOver = true;
+    const placeholder = e.currentTarget.querySelector(".empty_placeholder");
+    if (placeholder && draggedComponent.value) {
+      placeholder.classList.add("is-dragging");
+    }
+  };
+
+  const onDragLeave = (section, e) => {
+    section.isDragOver = false;
+    const placeholder = e.currentTarget.querySelector(".empty_placeholder");
+    if (placeholder) placeholder.classList.remove("is-dragging");
+  };
+
+  const onDrop = (section) => {
+    if (!draggedComponent.value) return;
+
+    // Add new component to this section
+    section.components.push({
+      ...draggedComponent.value,
     });
-  }
 
-  showControlSectionPopup.value = false;
-  modifiedSection.value = null;
-};
+    draggedComponent.value = null;
+    section.isDragOver = false;
+  };
 
-const handleEditSection = (section) => {
-  modifiedSection.value = section;
-  showControlSectionPopup.value = true;
-};
 
-const getSlotsCount = (section) => {
-  return section.components.length + 1; // always add 1 empty slot
-};
+  // ----------------------------------
+  // HANDLE ADD THE COMPONENT POPUP
+  // ----------------------------------
+  const componentData = ref({});
 
-// ----------------------------
-// HANDLE CONTROL PAGE POPUP
-// ----------------------------
-const modifiedPage = ref();
-const showControlPagePopup = ref(false);
+  const removeComponent = (section, index) => {
+    section.components.splice(index, 1);
+  };
 
-const handleControlPage = (page) => {
-  if (modifiedPage.value) {
-    const targetPage = pages.value.find(
-      (item) => item._id === modifiedPage.value._id
+  const handleSectionContent = (sectionID, type , values) => {
+    componentData.value.sectionID = sectionID;
+    componentData.value.type = type;
+    componentData.value.values = values;
+  };
+
+  const handleAddComponentContent = (data) => {
+    // 1️⃣ Find section
+    const targetedSection = currentPage?.value.sections.find(
+      (item) => item.id == data.sectionID
     );
-    if (targetPage) targetPage.name = page.name;
-  } else {
-    const newPage = {
-      // _id: (pages.value.length + 1).toString(),
-      name: page.name,
-      visible: true,
-      sections: [],
-    };
-    pages.value.push(newPage);
-    activePage.value = newPage._id;
-  }
-  showControlPagePopup.value = false;
-  modifiedPage.value = null;
-};
+    if (!targetedSection) return showErrorToast("Section not found");
 
-const handleHidePage = (id) => {
-  const targetPage = pages?.value?.find((item) => item._id === id);
-  targetPage.visible = !targetPage.visible;
-};
+    // 2️⃣ Find component inside section
+    const targetComponent = targetedSection.components.find(
+      (comp) => comp.type === data.type
+    );
+    if (!targetComponent) return showErrorToast("Component not found");
 
-const handleEditPage = (id) => {
-  showControlPagePopup.value = true;
-  const targetPage = pages?.value?.find((item) => item._id == id);
-  modifiedPage.value = targetPage;
-};
+    // 3️⃣ Add / replace content
+    targetComponent.content = data.content;
+  };
 
-// ------------------------------
-// HANDLE DRAG & DROP COMPONENTS
-// ------------------------------
-const draggedComponent = ref(null);
+  // ----------------------------
+  // HANDLE CHANGE SECTION LAYOUT
+  // ----------------------------
+  const changeLayout = (section) => {
+    section.layout_items =
+      section.layout_items < 3 ? section.layout_items + 1 : 1;
+  };
 
-const isDragging = ref(false);
+  // ----------------------------
+  // HANDLE SAVE PAGE CONTENT
+  // ----------------------------
+  const handleSavePageContent = () => {
+    if (!currentPage?.value?.sections?.length) {
+      showErrorToast("You have to add data for the page to be added...");
+    } else {
+      // GET THE CURRENT PAGE ID TO EDIT IF HAS THE PROJECT HAS PAGES
+      const pageId = getResult?.value ? currentPage.value?._id : "";
 
-const onDragStart = (item, e) => {
-  // SAFE CLONE (no DataCloneError)
-  draggedComponent.value = JSON.parse(JSON.stringify(item));
-  isDragging.value = true;
+      // DETECT THE ENDPOINT BASED ON THE METHOD
+      const url = pageId
+        ? `/projects/${route.params.id}/pages/${pageId}`
+        : `/projects/${route.params.id}/pages`;
 
-  // Create custom preview node
-  const clone = e.target.cloneNode(true);
-  clone.style.width = `${e.target.offsetWidth}px`;
-  clone.style.height = `${e.target.offsetHeight}px`;
-  clone.classList.add("drag-preview");
-  clone.style.position = "fixed";
-  clone.style.top = "-9999px";
+      // DETECT WHICH API METHOD DEBEND ON THE PAGE VALUE
+      const method = getResult?.value && pageId ? "PATCH" : "POST";
 
-  document.body.appendChild(clone);
-
-  e.dataTransfer.setDragImage(clone, 0, 0);
-  e.target.classList.add("dragging");
-};
-
-const onDragEnd = (e) => {
-  draggedComponent.value = null;
-  isDragging.value = false;
-  e.target.classList.remove("dragging");
-
-  const ghost = document.querySelector(".drag-preview");
-  if (ghost) ghost.remove();
-};
-
-const onDragEnter = (section, e) => {
-  section.isDragOver = true;
-  const placeholder = e.currentTarget.querySelector(".empty_placeholder");
-  if (placeholder && draggedComponent.value) {
-    placeholder.classList.add("is-dragging");
-  }
-};
-
-const onDragLeave = (section, e) => {
-  section.isDragOver = false;
-  const placeholder = e.currentTarget.querySelector(".empty_placeholder");
-  if (placeholder) placeholder.classList.remove("is-dragging");
-};
-
-const onDrop = (section) => {
-  if (!draggedComponent.value) return;
-
-  // Add new component to this section
-  section.components.push({
-    ...draggedComponent.value,
-  });
-
-  draggedComponent.value = null;
-  section.isDragOver = false;
-};
-
-
-// ----------------------------------
-// HANDLE ADD THE COMPONENT POPUP
-// ----------------------------------
-const componentData = ref({});
-
-const removeComponent = (section, index) => {
-  section.components.splice(index, 1);
-};
-
-const handleSectionContent = (sectionID, type) => {
-  componentData.value.sectionID = sectionID;
-  componentData.value.type = type;
-};
-
-const handleAddComponentContent = (data) => {
-  // 1️⃣ Find section
-  const targetedSection = currentPage?.value.sections.find(
-    (item) => item.id == data.sectionID
-  );
-  if (!targetedSection) return showErrorToast("Section not found");
-
-  // 2️⃣ Find component inside section
-  const targetComponent = targetedSection.components.find(
-    (comp) => comp.type === data.type
-  );
-  if (!targetComponent) return showErrorToast("Component not found");
-
-  // 3️⃣ Add / replace content
-  targetComponent.content = data.content;
-};
-
-// ----------------------------
-// HANDLE CHANGE SECTION LAYOUT
-// ----------------------------
-const changeLayout = (section) => {
-  section.layout_items =
-    section.layout_items < 3 ? section.layout_items + 1 : 1;
-};
-
-// ----------------------------
-// HANDLE SAVE PAGE CONTENT
-// ----------------------------
-const handleSavePageContent = () => {
-  if (!currentPage?.value?.sections?.length) {
-    showErrorToast("You have to add data for the page to be added...");
-  } else {
-    // GET THE CURRENT PAGE ID TO EDIT IF HAS THE PROJECT HAS PAGES
-    const pageId = getResult?.value ? currentPage.value?._id : "";
-
-    // DETECT THE ENDPOINT BASED ON THE METHOD
-    const url = pageId
-      ? `/projects/${route.params.id}/pages/${pageId}`
-      : `/projects/${route.params.id}/pages`;
-
-    // DETECT WHICH API METHOD DEBEND ON THE PAGE VALUE
-    const method = getResult?.value && pageId ? "PATCH" : "POST";
-
-    // SUBMIT THE METHOD
-    submitMethod(url, false, currentPage?.value, method, "");
-  }
-};
-
-// CHECK IF THE PROJECT HAS PAGES 
-watch(
-  () => getResult?.value,
-  (newValue) => {
-    if (newValue) {
-      pages.value = newValue?.data?.pages;
-      activePage.value = newValue?.data?.pages[0]?._id;
+      // SUBMIT THE METHOD
+      submitMethod(url, false, currentPage?.value, method, "");
     }
-  }
-);
+  };
+
+  // CHECK IF THE PROJECT HAS PAGES 
+  watch(
+    () => getResult?.value,
+    (newValue) => {
+      if (newValue) {
+        pages.value = newValue?.data?.pages;
+        activePage.value = newValue?.data?.pages[0]?._id;
+      }
+    }
+  );
 
 
 
-onMounted(() => {
-  getMethod(`/projects/${route.params.id}`, null, false, false);
-});
+  onMounted(() => {
+    getMethod(`/projects/${route.params.id}`, null, false, false);
+  });
 </script>
 
 <style lang="scss" scoped>

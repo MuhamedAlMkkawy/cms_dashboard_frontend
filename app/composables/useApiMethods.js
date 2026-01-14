@@ -129,36 +129,39 @@ export function useApiMethods() {
         }, 500);
       }
     } else {
-      if (data.status == 'success' || data.status == 'needActive') {
+      if (nextRoute) {
         handleNextRoute(nextRoute);
-        if (refetchApi) {
-          getMethod(refetchApi , '' , authStore ? true : false , false)
-        }
-        if(
-          endPoint == 'activate' || 
-          endPoint == 'signin' || 
-          endPoint == 'notify' || 
-          endPoint == 'update-provider-profile'
-        ){
-          // console.log(data?.data)
-          useCookie('authStore').value = data?.data
-          window.sessionStorage.setItem('authStore' , JSON.stringify(data?.data))
-          // authStore.handleUserData(data.data);
-        }
-      }else if (
-        data.status == 'unauthenticated' || 
-        data.status == 'not_approved'
-      ){
-        handleNextRoute('/')
-        useCookie('authStore').value = ''
-        window.sessionStorage.clear();
       }
-      else if(data?.status == 'needActive'){
-        setTimeout(() => {
-          handleNextRoute('/auth/activation_code')
-        }, 500);
+      if (refetchApi) {
+        getMethod(refetchApi , '' , authStore ? true : false , false)
       }
-      submitResult.value = {data , endPoint};
+      // if (data.status == 'success' || data.status == 'needActive') {
+      //   if(
+      //     endPoint == 'activate' || 
+      //     endPoint == 'signin' || 
+      //     endPoint == 'notify' || 
+      //     endPoint == 'update-provider-profile'
+      //   ){
+      //     // console.log(data?.data)
+      //     useCookie('authStore').value = data?.data
+      //     window.sessionStorage.setItem('authStore' , JSON.stringify(data?.data))
+      //     // authStore.handleUserData(data.data);
+      //   }
+      // }
+      // else if (
+      //   data.status == 'unauthenticated' || 
+      //   data.status == 'not_approved'
+      // ){
+      //   handleNextRoute('/')
+      //   useCookie('authStore').value = ''
+      //   window.sessionStorage.clear();
+      // }
+      // else if(data?.status == 'needActive'){
+      //   setTimeout(() => {
+      //     handleNextRoute('/auth/activation_code')
+      //   }, 500);
+      // }
+      submitResult.value = data;
       handleToastMsg(data?.status , data?.message)
       globalStore.switchLoading(false)
     }

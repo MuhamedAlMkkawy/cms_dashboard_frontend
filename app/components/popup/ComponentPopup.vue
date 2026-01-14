@@ -9,6 +9,7 @@
       <!-- Dynamic component -->
       <component
         :is="componentMap[props.componentData.type.toLowerCase().replace(/\s+/g, '-')]"
+        :values="componentData?.values"
         @handleCloseComponentPopup="emit('handleCloseComponentPopup')"
         @openIconPicker="openIconPicker"
         @handleSubmitFields="handleFieldsSubmit"
@@ -78,6 +79,18 @@
   const setIcon = (icon) => {
     currentIconTarget.value.icon = icon;
   };
+
+
+  // --------------------------
+  // HANDLE THE COMPONENT DATA CUSTOM CLASSES 
+  // --------------------------
+  watch(
+  () => props.componentData?.values,
+    (values) => {
+      customClasses.value = values?.customClasses ?? '';
+    },
+    { immediate: true }
+  );
 
 
   // called when child emits handleSubmitFields

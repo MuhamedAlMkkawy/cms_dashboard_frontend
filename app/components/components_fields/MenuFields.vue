@@ -6,13 +6,12 @@
         LOOP PARENT + CHILD AS ONE UNIT
     ------------------------------ -->
     <div class="menu_group" v-for="(item, index) in body.items" :key="index">
-
       <!-- Parent -->
-      <div :class="['menu_item ' , {has_childs : item?.hasChilds}]">
+      <div :class="['menu_item ', { has_childs: item?.hasChilds }]">
         <div class="input icon_input">
           <label>Icon</label>
 
-          <button class="icon_select_btn" @click="emit('openIconPicker' , item)">
+          <button class="icon_select_btn" @click="emit('openIconPicker', item)">
             <i :class="item.icon || 'pi pi-stop'"></i>
             <!-- <span>{{ item.icon ? 'Change Icon' : 'Choose Icon' }}</span> -->
           </button>
@@ -31,7 +30,6 @@
         <div class="input" v-if="!item.hasChilds">
           <label>Target</label>
           <select v-model="item.target">
-            <option value="">Item Target</option>
             <option value="_self">Same Tab</option>
             <option value="_blank">New Tab</option>
           </select>
@@ -52,33 +50,47 @@
       <!-- Childs Block -->
       <div v-if="item.hasChilds" class="submenu_block">
         <div class="submenu_block_header">
-          <h5>Sub Menu for: <span>{{ item.title }}</span></h5>
+          <h5>
+            Sub Menu for: <span>{{ item.title }}</span>
+          </h5>
           <button class="add_sub_menu" @click="addSubMenuItem(index)">
             <i class="pi pi-plus"></i>
           </button>
         </div>
-        <div class="submenu_item"
-            v-for="(subItem, subIndex) in item.children"
-            :key="`child-${index}-${subIndex}`">
+        <div
+          class="submenu_item"
+          v-for="(subItem, subIndex) in item.children"
+          :key="`child-${index}-${subIndex}`"
+        >
           <!-- <h4>( {{ subIndex+1 }} ) </h4> -->
 
           <div class="icon_input input">
             <label for="icon">icon</label>
-            <button class="icon_select_btn" @click="emit('openIconPicker' , subItem)">
+            <button
+              class="icon_select_btn"
+              @click="emit('openIconPicker', subItem)"
+            >
               <i :class="subItem.icon || 'pi pi-stop'"></i>
             </button>
           </div>
 
           <div class="input">
             <label>Sub Menu Title</label>
-            <input type="text" v-model="subItem.title" placeholder="Sub Menu title" />
+            <input
+              type="text"
+              v-model="subItem.title"
+              placeholder="Sub Menu title"
+            />
           </div>
 
           <div class="input">
             <label>Sub Menu link</label>
-            <input type="text" v-model="subItem.link" placeholder="Sub Menu link" />
+            <input
+              type="text"
+              v-model="subItem.link"
+              placeholder="Sub Menu link"
+            />
           </div>
-
 
           <div class="input" v-if="!subItem.hasChilds">
             <label>Sub Menu Target</label>
@@ -95,66 +107,103 @@
           ></button>
         </div>
       </div>
-
     </div>
 
     <slot></slot>
 
     <div class="flex_buttons">
-      <button class="main-btn reversed" @click="addMenuItem">Add Menu Item</button>
+      <button class="main-btn reversed" @click="addMenuItem">
+        Add Menu Item
+      </button>
       <button class="main-btn" @click="handleSubmitNavMenu">Submit</button>
     </div>
 
-<!--     
+    <!--     
   <IconPicker
     v-model="iconPickerOpen"
     @select="setIcon"
   /> -->
-
   </div>
 </template>
 
-
 <script setup>
 const { showErrorToast } = useToastMsg();
-const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup" , "openIconPicker"]);
+const emit = defineEmits([
+  "handleSubmitFields",
+  "handleCloseComponentPopup",
+  "openIconPicker",
+]);
 
 // -----------------------------
 // SETUP DEFAULT DATA MODEL
 // -----------------------------
 const body = ref({
   items: [
-    { 
-      icon : "",
-      title: "", 
-      link: "", 
-      target : "_self" , 
-      hasChilds: false, 
+    {
+      icon: "",
+      title: "",
+      link: "",
+      target: "_self",
+      hasChilds: false,
       children: [
         {
-          icon : "",
-          title : "" , 
-          link : "",
-          target : "_self"
-        }
-      ]
-    }
+          icon: "",
+          title: "",
+          link: "",
+          target: "_self",
+        },
+      ],
+    },
   ],
 });
+
+// ----------------------------
+// DEFINE PROPS
+// ----------------------------
+const props = defineProps({
+  values : Object
+})
+
+
+// -----------------------------
+// HANDLE SHOWING THE VALUES OF THE FIELDS
+// -----------------------------
+watch(
+  () => props.values,
+  (values) => {
+    body.value.items = values.items.map((item) => ({
+      icon: item.icon ?? "",
+      title: item.title ?? "",
+      link: item.link ?? "",
+      target: item.target ?? "_self",
+      hasChilds: item.hasChilds ?? false,
+      children: item.hasChilds
+        ? (item.children ?? []).map((child) => ({
+            icon: child.icon ?? "",
+            title: child.title ?? "",
+            link: child.link ?? "",
+            target: child.target ?? "_self",
+          }))
+        : [],
+    }));
+
+  },
+  { immediate: true }
+);
+
+
 
 // -----------------------------
 // ADD / REMOVE PARENT MENU ITEMS
 // -----------------------------
 const addMenuItem = () => {
-  body.value.items.push(
-    { 
-      title: "", 
-      link: "", 
-      target : "_self" , 
-      hasChilds: false, 
-      children: [] 
-    }
-  );
+  body.value.items.push({
+    title: "",
+    link: "",
+    target: "_self",
+    hasChilds: false,
+    children: [],
+  });
 };
 
 const removeMenuItem = (index) => {
@@ -174,7 +223,7 @@ const onToggle = (index) => {
     if (!item.children) item.children = [];
     item.link = "";
   } else {
-    item.children = [{title : "" , link : "" , target : "_self"}];
+    item.children = [{ title: "", link: "", target: "_self" }];
   }
 };
 
@@ -182,13 +231,16 @@ const onToggle = (index) => {
 // HANDLE SUB MENU ITEMS
 // -----------------------------
 const addSubMenuItem = (index) => {
-  body.value.items[index].children.push({ title: "", link: "" , target : "_self"});
+  body.value.items[index].children.push({
+    title: "",
+    link: "",
+    target: "_self",
+  });
 };
 
 const removeSubMenuItem = (i, sIndex) => {
   body.value.items[i].children.splice(sIndex, 1);
 };
-
 
 // ----------------------------------------
 // NORMALIZE THE MENU ITEMS TO MATCH THE DTO OF CREATION
@@ -232,6 +284,9 @@ const normalizeMenuItems = (items = []) => {
     return normalized;
   });
 };
+
+
+
 // -----------------------------
 // HANDLE SUBMIT ACTION
 // -----------------------------
@@ -254,8 +309,7 @@ const handleSubmitNavMenu = () => {
 
 <style scoped lang="scss">
 .nav_menu_fields {
-  .menu_group{
-    
+  .menu_group {
     &:not(:last-of-type) {
       margin-bottom: 18px;
     }
@@ -267,8 +321,8 @@ const handleSubmitNavMenu = () => {
       padding-inline: 0 8px;
       border-radius: 8px;
       position: relative;
-      
-      &.has_childs{
+
+      &.has_childs {
         margin-bottom: 0px;
         border-radius: 6px 6px 0 0;
         padding-inline: 10px;
@@ -292,8 +346,8 @@ const handleSubmitNavMenu = () => {
       text-align: start;
       width: 100%;
     }
-    &:first-of-type{
-      label{
+    &:first-of-type {
+      label {
         text-align: center;
       }
     }
@@ -305,10 +359,9 @@ const handleSubmitNavMenu = () => {
       border-radius: 4px;
     }
 
-    select{
+    select {
       font-size: 14px;
     }
-    
 
     &.toggle_input {
       flex-direction: row;
@@ -321,12 +374,10 @@ const handleSubmitNavMenu = () => {
       padding-bottom: 0;
       margin-bottom: 0;
     }
-
-
   }
-  .icon_input{
+  .icon_input {
     flex-grow: 0;
-    .icon_select_btn{
+    .icon_select_btn {
       border: 1px solid #e4e4e4;
       padding: 6px;
       border-radius: 4px;
@@ -335,7 +386,7 @@ const handleSubmitNavMenu = () => {
       transition: 0.3s;
       flex-grow: unset;
       max-width: 55px;
-      &:hover{
+      &:hover {
         background: #e4e4e4;
       }
     }
@@ -363,10 +414,10 @@ const handleSubmitNavMenu = () => {
   margin-bottom: 20px;
   counter-reset: submenu-counter; // initialize the counter
   box-shadow: 0 1px 10px #e4e4e4;
-  &::-webkit-scrollbar{
+  &::-webkit-scrollbar {
     width: 2px;
   }
-  .submenu_block_header{
+  .submenu_block_header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -375,12 +426,12 @@ const handleSubmitNavMenu = () => {
       font-weight: 600;
       font-size: 14px;
       text-align: start;
-      span{
-        color: $secColor
+      span {
+        color: $secColor;
       }
     }
-    .add_sub_menu{
-      @include circle(35px , 4px);
+    .add_sub_menu {
+      @include circle(35px, 4px);
       margin-inline-start: auto;
       background: $mainColor;
       color: #fff;
@@ -389,7 +440,7 @@ const handleSubmitNavMenu = () => {
       align-items: center;
       justify-content: center;
       transition: 0.4s;
-      &:hover{
+      &:hover {
         background: #fff;
         color: $mainColor;
       }

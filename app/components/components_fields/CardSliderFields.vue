@@ -9,11 +9,7 @@
       <label for="cardItems">Items To Show</label>
       <div class="input-wrap">
         <select name="card_items" v-model="slider.itemsToShow" id="card_items">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
+          <option v-for="i in 5" :key="i" :value="i">{{ i }}</option>
         </select>
       </div>
     </div>
@@ -56,13 +52,13 @@
             @change="handleCardImageUpload($event, index)"
           />
           <label :for="`card_image_${index}`" class="upload_placeholder">
-            <template v-if="!item.url">
+            <template v-if="!item.file">
               <i class="pi pi-upload"></i>
               <span>Upload Image</span>
             </template>
             <template v-else>
-              <Image
-                :src="item.url"
+              <img
+                :src="item.file"
                 alt="uploaded image"
                 loading="lazy"
                 preview
@@ -114,9 +110,9 @@
 
 <script setup>
 // -----------------------------
-// TOAST
+// DEFINE API METHODS
 // -----------------------------
-const { showErrorToast } = useToastMsg();
+const { submitMethod, submitResult, showErrorToast } = useApiMethods();
 
 // -----------------------------
 // EMITS
@@ -131,7 +127,6 @@ const slider = ref({
   autoplay: false,
   items: [
     {
-      url: null,
       file: null,
       title: "",
       text: "",
@@ -145,7 +140,6 @@ const slider = ref({
 // -----------------------------
 const addNewCard = () => {
   slider.value.items.push({
-    url: null,
     file: null,
     title: "",
     text: "",
@@ -154,14 +148,33 @@ const addNewCard = () => {
 };
 
 // -----------------------------
+// DETECT THE INDEX OF THE ITEM TO RETURN THE PATH OF ITS UPLOADED IMAGE
+// -----------------------------
+const itemIndex = ref()
+
+
+// -----------------------------
 // HANDLE CARD IMAGE UPLOAD
 // -----------------------------
 const handleCardImageUpload = (event, index) => {
   const file = event.target.files[0];
-  if (!file) return;
-  slider.value.items[index].url = URL.createObjectURL(file);
-  slider.value.items[index].file = file;
+  if (!file) return showErrorToast('No file found to upload');
+
+  itemIndex.value = slider.value.items[index]
+
+
+  const formData = new FormData()
+  formData.append('file' , file)
+
+  submitMethod('/uploads/single' , false , formData , 'POST' , null)
 };
+
+watchEffect(()=>{
+  if(submitResult?.value){
+    itemIndex.value.file = submitResult?.value?.data?.path;
+  }
+})
+
 
 // -----------------------------
 // REMOVE CARD ITEM
@@ -169,6 +182,36 @@ const handleCardImageUpload = (event, index) => {
 const removeItem = (index) => {
   slider.value.items.splice(index, 1);
 };
+
+// ----------------------------
+// DEFINE PROPS
+// ----------------------------
+const props = defineProps({
+  values: Object,
+});
+
+// -----------------------------
+// HADNLE VIEWING THE RENDERED VALUES
+// -----------------------------
+watch(
+  () => props.values,
+  (values) => {
+    if (!values) return;
+
+    slider.value = {
+      itemsToShow: values.itemsToShow ?? 1,
+      autoplay: values.autoplay ?? false,
+      items:
+        values.items?.map((item) => ({
+          file: item.file,
+          title: item.title ?? "",
+          text: item.text ?? "",
+          link: item.link ?? "",
+        })) || [],
+    };
+  },
+  { immediate: true }
+);
 
 // -----------------------------
 // HANDLE SUBMIT
@@ -179,7 +222,34 @@ const handleSubmitCardSlider = () => {
     return;
   }
 
-  emit("handleSubmitFields", slider.value);
+  // Validate each card
+  const invalidIndex = slider.value.items.findIndex((item) => {
+    return (
+      !item.file || // file missing
+      !item.title?.trim() || // title empty
+      !item.text?.trim() || // text empty
+      !item.link?.trim() // link empty
+    );
+  });
+
+  if (invalidIndex !== -1) {
+    showErrorToast(`Please fill all fields for card #${invalidIndex + 1}`);
+    return;
+  }
+
+  // All fields have its own values
+  const validatedSlider = {
+    itemsToShow: slider.value.itemsToShow,
+    autoplay: slider.value.autoplay,
+    items: slider.value.items.map((item) => ({
+      file: item.file,
+      title: item.title.trim(),
+      text: item.text.trim(),
+      link: item.link.trim(),
+    })),
+  };
+
+  emit("handleSubmitFields", validatedSlider);
   emit("handleCloseComponentPopup");
 };
 </script>
