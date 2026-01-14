@@ -4,7 +4,6 @@
 
     <!-- Loop through buttons -->
     <div class="button_item" v-for="(btn, index) in buttons" :key="index">
-
       <!-- Icon -->
       <div class="input icon_input">
         <label>Icon</label>
@@ -29,7 +28,6 @@
       <div class="input">
         <label>Target</label>
         <select v-model="btn.target">
-          <option value="">Item Target</option>
           <option value="_self">Same Tab</option>
           <option value="_blank">New Tab</option>
         </select>
@@ -57,21 +55,30 @@
       <button class="main-btn reversed" @click="addButton">Add Button</button>
       <button class="main-btn" @click="handleSubmitButtons">Submit</button>
     </div>
-
   </div>
 </template>
 
 <script setup>
 const { showErrorToast } = useToastMsg();
-const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup", "openIconPicker"]);
+const emit = defineEmits([
+  "handleSubmitFields",
+  "handleCloseComponentPopup",
+  "openIconPicker",
+]);
 
 const buttons = ref([
-  { icon: "", title: "", link: "", target: "", reversed: false }
+  { icon: "", title: "", link: "", target: "_self", reversed: false },
 ]);
 
 // Add / Remove Buttons
 const addButton = () => {
-  buttons.value.push({ icon: "", title: "", link: "", target: "", reversed: false });
+  buttons.value.push({
+    icon: "",
+    title: "",
+    link: "",
+    target: "_self",
+    reversed: false,
+  });
 };
 
 const removeButton = (index) => {
@@ -82,14 +89,61 @@ const removeButton = (index) => {
   }
 };
 
+// ----------------------------
+// DEFINE PROPS
+// ----------------------------
+const props = defineProps({
+  values: Object, // existing buttons data passed in
+});
+
+// -----------------------------
+// HANDLE VIEWING THE RENDERED VALUES
+// -----------------------------
+watch(
+  () => props.values,
+  (values) => {
+
+    if (!values) return;
+
+    // Render buttons from props or fallback to default
+    buttons.value = values?.items?.map((btn) => ({
+      icon: btn.icon ?? "",
+      title: btn.title ?? "",
+      link: btn.link ?? "",
+      target: btn.target ?? "_self",
+      reversed: btn.reversed ?? false,
+    })) || [
+      { icon: "", title: "", link: "", target: "_self", reversed: false },
+    ];
+  },
+  { immediate: true }
+);
+
+
 // Submit
 const handleSubmitButtons = () => {
-  const invalid = buttons.value.some((b) => !b.title || !b.link);
-  if (invalid) {
-    showErrorToast("Please fill all titles and links to continue");
+  // Filter buttons that have at least title and link
+  const validButtons = buttons.value
+    .filter((b) => b.title?.trim() && b.link?.trim())
+    .map((b) => {
+      // Only include icon if it has a value
+      const buttonData = {
+        title: b.title.trim(),
+        link: b.link.trim(),
+        target: b.target,
+        reversed: b.reversed,
+      };
+      if (b.icon?.trim()) {
+        buttonData.icon = b.icon.trim();
+      }
+      return buttonData;
+    });
+
+  if (!validButtons.length) {
+    showErrorToast("Please fill title and link for at least one button");
     return;
   }
-  emit("handleSubmitFields", buttons.value);
+  emit("handleSubmitFields", { items: validButtons });
   emit("handleCloseComponentPopup");
 };
 </script>
@@ -107,9 +161,6 @@ const handleSubmitButtons = () => {
     // &:not(:last-of-type){
     //   margin-bottom: 6px;
     // }
-
-
   }
-
 }
 </style>

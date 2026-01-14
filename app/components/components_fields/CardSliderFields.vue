@@ -42,6 +42,11 @@
     ----------------------------- -->
     <div class="items_editor">
       <div class="item_card" v-for="(item, index) in slider.items" :key="index">
+          <button
+            class="pi pi-trash delete_btn"
+            v-if="slider.items.length > 1"
+            @click="removeItem(index)"
+          ></button>
         <!-- IMAGE UPLOAD -->
         <div class="image_wrapper">
           <input
@@ -65,11 +70,6 @@
               />
             </template>
           </label>
-          <button
-            class="pi pi-trash delete_btn"
-            v-if="slider.items.length > 1"
-            @click="removeItem(index)"
-          ></button>
         </div>
 
         <!-- TITLE INPUT -->
@@ -290,6 +290,25 @@ const handleSubmitCardSlider = () => {
       flex-grow: 1;
       gap: 8px;
       background: #fff;
+      position: relative;
+
+      .delete_btn {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background: $dangerColor;
+        color: white;
+        border: 1px solid $dangerColor;
+        border-radius: 3px;
+        font-size: 12px;
+        z-index: 9;
+        cursor: pointer;
+        &:hover {
+          background: #fff;
+          color: $dangerColor;
+        }
+      }
+
 
       .image_wrapper {
         position: relative;
@@ -322,24 +341,7 @@ const handleSubmitCardSlider = () => {
         img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
-        }
-
-        .delete_btn {
-          position: absolute;
-          top: 2px;
-          right: 2px;
-          background: $dangerColor;
-          color: white;
-          border: 1px solid $dangerColor;
-          border-radius: 3px;
-          font-size: 12px;
-          padding: 5px;
-          cursor: pointer;
-          &:hover {
-            background: #fff;
-            color: $dangerColor;
-          }
+          object-fit: contain;
         }
       }
 
