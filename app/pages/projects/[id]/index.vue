@@ -416,19 +416,19 @@ const handleSectionContent = (sectionID, type, values) => {
 };
 
 const handleAddComponentContent = (data) => {
-  // 1️⃣ Find section
+  // 1 Find section
   const targetedSection = currentPage?.value.sections.find(
     (item) => item.id == data.sectionID
   );
   if (!targetedSection) return showErrorToast("Section not found");
 
-  // 2️⃣ Find component inside section
+  // 2 Find component inside section
   const targetComponent = targetedSection.components.find(
     (comp) => comp.type === data.type
   );
   if (!targetComponent) return showErrorToast("Component not found");
 
-  // 3️⃣ Add / replace content
+  // 3 Add / replace content
   targetComponent.content = data.content;
 };
 
@@ -440,26 +440,37 @@ const changeLayout = (section) => {
     section.layout_items < 3 ? section.layout_items + 1 : 1;
 };
 
-const originalPage = ref(null);
+const originalPages = ref({});
 
 watch(
   () => getResult?.value,
   (newValue) => {
-    if (newValue) {
-      pages.value = newValue?.data?.pages;
-      activePage.value = newValue?.data?.pages[0]?._id;
+    if (!newValue) return;
 
-      // 👇 snapshot deep clone
-      originalPage.value = JSON.parse(JSON.stringify(newValue?.data?.pages[0]));
-    }
-  }
+    pages.value = newValue.data.pages;
+    activePage.value = newValue.data.pages[0]?._id;
+
+    // snapshot لكل صفحة بالـ id
+    newValue.data.pages.forEach((page) => {
+      originalPages.value[page._id] = JSON.parse(
+        JSON.stringify(page)
+      );
+    });
+  },
+  { immediate: true }
 );
 
+
 const isPageChanged = computed(() => {
-  if (!currentPage.value || !originalPage.value) return false;
+  if (!currentPage.value) return false;
+
+  const pageId = currentPage.value._id;
+  const original = originalPages.value[pageId];
+
+  if (!original) return false;
 
   return (
-    JSON.stringify(currentPage.value) !== JSON.stringify(originalPage.value)
+    JSON.stringify(currentPage.value) !== JSON.stringify(original)
   );
 });
 
