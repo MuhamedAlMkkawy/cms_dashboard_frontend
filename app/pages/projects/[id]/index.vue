@@ -19,7 +19,7 @@
       <div class="header_image">
         <div class="image">
           <img
-            src="@/assets/images/board.svg"
+            :src="currentPage?.logo"
             alt="logo_image"
             loading="lazy"
           />
@@ -74,8 +74,8 @@
         <div class="section_header">
           <h3>{{ section.name }}</h3>
           <div class="buttons">
+            <!-- v-if="section.visible" -->
             <button
-              v-if="section.visible"
               @click="handleEditSection(section)"
               class="section_control pi pi-pen-to-square"
             ></button>

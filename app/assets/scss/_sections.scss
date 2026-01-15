@@ -65,8 +65,9 @@
     // gap: 10px;
     // justify-content: flex-start;
     flex-wrap: wrap;
-    margin-top: 20px;
     width: 100%;
+    margin-top: 20px;
+    gap: 10px 0;
     .section_component {
       position: relative;
       min-height: 66px;
@@ -81,15 +82,19 @@
       min-width: 80px;
       cursor: move;
       &.empty_placeholder {
-        min-width: 100px;
-        background: #eee;
-        border: 2px dashed #ccc;
+        min-width: 200px;
+        // border: 2px dashed #ccc;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
         font-size: 14px;
-        color: $mainColor;
+        background: linear-gradient(
+          135deg,
+          lighten($mainColor, 15%),
+          darken($mainColor, 5%)
+        ) !important;
+        color: #fff !important;
       }
 
       .component_block {

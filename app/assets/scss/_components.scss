@@ -43,6 +43,11 @@
     &:last-of-type{
       padding: 10px 0 15px;
       background: #fff;
+      position: absolute;
+      bottom: 0;
+      margin-bottom: 0;
+      width: 100%;
+      min-height: 74px;
     }
   }
 
