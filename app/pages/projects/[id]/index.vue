@@ -11,10 +11,10 @@
       </div>
       <hr />
       <ComponentItems
-        draggable="true"
-        @onDragStart="onDragStart"
-        @onDragEnd="onDragEnd"
+        @dragStart="onDragStartComponentFromSidebar"
+        @dragEnd="onDragEndComponentFromSidebar"
       />
+
       <hr />
       <div class="header_image">
         <div class="image">
@@ -69,90 +69,74 @@
       <div
         v-for="section in currentPage?.sections"
         :key="section.id"
-        :class="['section ', { hidden_element: !section.visible }]"
+        class="section"
       >
         <div class="section_header">
-          <h3 class="section_title">{{ section.name }}</h3>
-          <div class="buttons">
-            <!-- layout design button -->
-            <button
-              class="layout_design section_control"
-              v-if="section.visible"
-              @click="changeLayout(section)"
-            >
-              <i
-                class="pi pi-stop"
-                v-for="i in section.layout_items === 3
-                  ? 1
-                  : section.layout_items === 1
-                  ? 2
-                  : 3"
-                :key="i"
-              ></i>
-            </button>
-
-            <button
-              v-if="section.visible"
-              @click="handleEditSection(section)"
-              class="section_control pi pi-pen-to-square"
-            ></button>
-            <button
-              @click="section.visible = !section.visible"
-              :class="[
-                'section_control pi',
-                `pi-eye${section.visible ? '' : '-slash'}`,
-              ]"
-            ></button>
-          </div>
+          <h3>{{ section.name }}</h3>
         </div>
 
-        <hr />
-
-        <div :class="['content_items', `items_${section.layout_items}`]">
+        <div
+          class="section_content flex flex-row w-full gap-3"
+          @dragover.prevent
+        >
           <div
-            v-for="(slot, index) in getSlotsCount(section)"
-            :key="index"
-            class="content_item section_component"
-            :class="{ 'drag-over': section.isDragOver }"
+            v-for="(component, index) in section.components"
+            :key="component.id"
+            class="section_component flex-shrink-0 relative"
+            :style="{ width: component.width + '%' }"
+            draggable="true"
+            @dragstart="onDragStartComponent(section, component, index, $event)"
             @dragover.prevent
-            @dragenter="onDragEnter(section, $event)"
-            @dragleave="onDragLeave(section, $event)"
-            @drop="onDrop(section)"
+            @drop="onDropComponent(section, $event)"
           >
-            <!-- Slot contains a component -->
-            <template v-if="section.components[index]">
-              <div class="section_block">
-                <div class="section_info">
-                  <i :class="['pi ', section.components[index].icon]"></i>
-                  <span>{{ section.components[index].label }}</span>
-                </div>
-              </div>
+            <!-- Component content -->
+            <div class="component_block">
+              <i :class="'pi ' + component.icon"></i>
+              <span>{{ component.label }}</span>
+            </div>
+
+            <!-- Control buttons -->
+            <div class="component_buttons">
+              <!-- Edit -->
               <button
-                class="section_button control_component"
+                class="edit_component"
                 @click="
                   handleSectionContent(
                     section.id,
-                    section.components[index].type,
-                    section.components[index].content
+                    component.type,
+                    component.content
                   )
                 "
+                title="Edit Component"
               >
                 <i class="pi pi-pen-to-square"></i>
               </button>
+
+              <!-- Remove -->
               <button
-                class="section_button remove_component"
-                @click.stop="removeComponent(section, index)"
+                class="remove_component"
+                @click="removeComponent(section, index)"
+                title="Remove Component"
               >
                 <i class="pi pi-trash"></i>
               </button>
-            </template>
+            </div>
 
-            <!-- Empty slot -->
-            <template v-else>
-              <div class="section_component empty_placeholder">
-                Drag components here
-              </div>
-            </template>
+            <!-- Resize handle -->
+            <div
+              class="resize_handle"
+              @mousedown.prevent="startResize(section, component, $event)"
+            ></div>
+          </div>
+
+          <!-- Empty placeholder for new components -->
+          <div
+            v-if="draggedComponent && draggedComponent.fromSection !== section"
+            class="section_component empty_placeholder"
+            @dragover.prevent
+            @drop="onDropComponent(section, $event)"
+          >
+            Drop here
           </div>
         </div>
       </div>
@@ -164,14 +148,8 @@
         <i class="pi pi-plus"></i>
         <span>Add Section</span>
       </div>
-      <button
-        class="main-btn savePageButton"
-        :disabled="!isPageChanged"
-        @click="handleSavePageContent"
-      >
-        Save
-      </button>
     </div>
+
     <!-- #################### Control Section Popup ###################-->
     <ControlSectionPopup
       v-if="showControlSectionPopup"
@@ -343,61 +321,104 @@ const handleEditPage = (id) => {
 // HANDLE DRAG & DROP COMPONENTS
 // ------------------------------
 const draggedComponent = ref(null);
-
-const isDragging = ref(false);
-
-const onDragStart = (item, e) => {
-  // SAFE CLONE (no DataCloneError)
-  draggedComponent.value = JSON.parse(JSON.stringify(item));
-  isDragging.value = true;
-
-  // Create custom preview node
-  const clone = e.target.cloneNode(true);
-  clone.style.width = `${e.target.offsetWidth}px`;
-  clone.style.height = `${e.target.offsetHeight}px`;
-  clone.classList.add("drag-preview");
-  clone.style.position = "fixed";
-  clone.style.top = "-9999px";
-
-  document.body.appendChild(clone);
-
-  e.dataTransfer.setDragImage(clone, 0, 0);
-  e.target.classList.add("dragging");
+// Parent JS
+const onDragStartComponentFromSidebar = ({ item, index, event }) => {
+  draggedComponent.value = { component: item, fromSidebar: true };
+  event.dataTransfer.effectAllowed = "copy"; // Because it's coming from sidebar
+  event.dataTransfer.setData("text/plain", "dragging"); // needed for Firefox
 };
 
-const onDragEnd = (e) => {
+const onDragEndComponentFromSidebar = (event) => {
   draggedComponent.value = null;
-  isDragging.value = false;
-  e.target.classList.remove("dragging");
-
-  const ghost = document.querySelector(".drag-preview");
-  if (ghost) ghost.remove();
 };
 
-const onDragEnter = (section, e) => {
-  section.isDragOver = true;
-  const placeholder = e.currentTarget.querySelector(".empty_placeholder");
-  if (placeholder && draggedComponent.value) {
-    placeholder.classList.add("is-dragging");
-  }
+// ---------------------
+// Drag & Drop
+// ---------------------
+const onDragStartComponent = (section, component, index, e) => {
+  draggedComponent.value = { component, fromSection: section, index };
+  e.dataTransfer.effectAllowed = "move";
+  e.dataTransfer.setData("text/plain", "dragging"); // needed for Firefox
 };
 
-const onDragLeave = (section, e) => {
-  section.isDragOver = false;
-  const placeholder = e.currentTarget.querySelector(".empty_placeholder");
-  if (placeholder) placeholder.classList.remove("is-dragging");
-};
-
-const onDrop = (section) => {
+const onDropComponent = (targetSection, e) => {
   if (!draggedComponent.value) return;
 
-  // Add new component to this section
-  section.components.push({
-    ...draggedComponent.value,
-  });
+  const { component, fromSidebar, fromSection } = draggedComponent.value;
+
+  // Determine container and children for drop index
+  const container = e.currentTarget.closest(".section_content");
+  const children = Array.from(
+    container.querySelectorAll(".section_component")
+  ).filter((c) => !c.classList.contains("empty_placeholder"));
+
+  let dropIndex = children.length; // default append
+  for (let i = 0; i < children.length; i++) {
+    const rect = children[i].getBoundingClientRect();
+    if (e.clientX < rect.left + rect.width / 2) {
+      dropIndex = i;
+      break;
+    }
+  }
+
+  if (fromSidebar) {
+    // Add new component
+    const newComponent = { ...component, id: Date.now(), width: 30 };
+    targetSection.components.splice(dropIndex, 0, newComponent);
+  } else {
+    // Remove from original section
+    const removeIndex = fromSection.components.findIndex(
+      (c) => c.id === component.id
+    );
+    if (removeIndex !== -1) fromSection.components.splice(removeIndex, 1);
+
+    // Insert into target section
+    targetSection.components.splice(dropIndex, 0, component);
+  }
 
   draggedComponent.value = null;
-  section.isDragOver = false;
+};
+
+// ---------------------
+// Resize
+// ---------------------
+let resizing = null;
+let startX = 0;
+let startWidth = 0;
+let containerWidth = 0;
+
+const startResize = (section, component, e) => {
+  resizing = component;
+  startX = e.clientX;
+
+  const componentEl = e.target.closest(".section_component");
+  const containerEl = componentEl.parentElement;
+
+  startWidth = componentEl.offsetWidth;
+  containerWidth = containerEl.offsetWidth;
+
+  window.addEventListener("mousemove", resizeMove);
+  window.addEventListener("mouseup", stopResize);
+};
+
+const resizeMove = (e) => {
+  if (!resizing) return;
+
+  const deltaX = e.clientX - startX;
+  let newWidth = ((startWidth + deltaX) / containerWidth) * 100;
+
+  // allow full width
+  newWidth = Math.max(5, Math.min(100, newWidth));
+
+  resizing.content.customClasses = +newWidth.toFixed(2);
+  conosle.log(resizing)
+  conosle.log('-------------------')
+};
+
+const stopResize = () => {
+  resizing = null;
+  window.removeEventListener("mousemove", resizeMove);
+  window.removeEventListener("mouseup", stopResize);
 };
 
 // ----------------------------------
@@ -452,14 +473,11 @@ watch(
 
     // snapshot لكل صفحة بالـ id
     newValue.data.pages.forEach((page) => {
-      originalPages.value[page._id] = JSON.parse(
-        JSON.stringify(page)
-      );
+      originalPages.value[page._id] = JSON.parse(JSON.stringify(page));
     });
   },
   { immediate: true }
 );
-
 
 const isPageChanged = computed(() => {
   if (!currentPage.value) return false;
@@ -469,9 +487,7 @@ const isPageChanged = computed(() => {
 
   if (!original) return false;
 
-  return (
-    JSON.stringify(currentPage.value) !== JSON.stringify(original)
-  );
+  return JSON.stringify(currentPage.value) !== JSON.stringify(original);
 });
 
 // ----------------------------

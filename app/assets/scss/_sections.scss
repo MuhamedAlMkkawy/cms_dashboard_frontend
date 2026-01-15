@@ -1,28 +1,33 @@
 .project_sections {
-  @include displayFlex($direction: column , $justify : flex-start);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   margin-top: 20px;
   min-height: 80vh;
   height: 100%;
 }
+
 .section {
   border: 1px dashed $mainColor;
-  width: 100%;
-  min-height: 50px;
-  padding-block: 20px;
   border-radius: 4px;
-  padding-inline: 20px;
+  padding: 20px;
+  width: 100%;
+
   .section_header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     padding-bottom: 15px;
+
     .section_title {
       font-size: clamp(20px, 2.5vw, 30px);
       font-weight: 500;
-      padding-block: 8px;
     }
+
     .buttons {
-      @include displayFlex($gap: 10px);
+      display: flex;
+      gap: 10px;
+
       button.section_control {
         min-width: 40px;
         height: 40px;
@@ -30,147 +35,150 @@
         border: 1px solid $mainColor;
         font-size: 20px;
         color: $mainColor;
-        padding-inline: 5px;
-        &.layout_design{
-          display: flex;
-          align-items: center;  
-          justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.layout_design {
+          gap: 5px;
         }
-        &.pi-eye{
+
+        &.pi-eye {
           border-color: $dangerColor;
           color: $dangerColor;
         }
-        &:hover{
+
+        &:hover {
           background: $mainColor;
           color: #fff;
-          &.pi-eye{
+
+          &.pi-eye {
             background: $dangerColor;
           }
         }
       }
     }
   }
-  .content_items{
+
+  .section_content {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
     width: 100%;
-    margin-block-start: 30px;
-    max-width: unset;
-    .section_component{
-      min-height: 66px;
-      border: 1px solid #e4e4e4;
-      border-radius: 8px;
-      transition: 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .section_component {
       position: relative;
-      background: $mainColor;
-      color: #fff;
+      min-height: 66px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #f9f9f9;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      cursor: move;
+      // transition: 0.3s;
+
       &.empty_placeholder {
-        width: 100%;
-        padding: 12px;
-        border: 1px dashed $mainColor;
-        border-radius: 6px;
+        min-width: 100px;
+        background: #eee;
+        border: 2px dashed #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
         font-size: 14px;
         color: $mainColor;
-        background:#f1f1f1;
       }
-      .section_block{
-        width: 100%;
-        height: 100%;
-        position: relative;
+
+      .component_block {
         display: flex;
         align-items: center;
-        cursor: default;
-        .section_info{
-          @include displayFlex( $justify : start , $gap : 8px);
-          width: 200px;
-          margin: 0 auto;
+        gap: 5px;
+        margin-bottom: 5px;
+
+        .section_info {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex: 1;
           i {
-            font-size: 20px;  
+            font-size: 20px;
           }
-          span{
+
+          span {
             font-size: 18px;
           }
         }
       }
-      button.section_button {
-        padding-inline: 0px;
-        height: 100%;
-        // border: 1px solid;
-        width: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition: 0.5s;
-        i.pi{
-          font-size: 20px;
-        }
-        &.control_component{
-          background: #fff;
-          border-color: #fff;
-          color: $mainColor;
-          font-weight: 600;
-          &:hover{
-            background: $mainColor;
-            color: #fff;
+
+      .component_buttons {
+        display: flex;
+        gap: 5px;
+        justify-content: flex-end;
+
+        button {
+          background: #eee;
+          border: none;
+          padding: 3px 6px;
+          border-radius: 4px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          i {
+            font-size: 14px;
           }
-        }
-        &.remove_component{
-          background: $dangerColor;
-          border-color: $dangerColor;
-          color: #fff;
-          border-radius: 0 4px 4px 0;
-          transition-delay: 0.2s;
-          &:hover{
-            background: #fff;
-            color: $dangerColor;
+
+          &:hover {
+            background: #ccc;
           }
         }
       }
 
-      &:hover{
-        button.section_button{
-          width: 80px;
-          opacity: 1;
-          // padding-inline: 25px;
-          &:hover{
-            border: 1px solid ;
-          }
-        }
+      .resize_handle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 5px;
+        height: 100%;
+        cursor: ew-resize;
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      &:hover .section_button {
+        width: 80px;
+        opacity: 1;
       }
     }
   }
-  // .drag-over {
-  //   border: 2px dashed $mainColor;
-  //   background: red;
-  // }
+
   &.add_section {
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: unset;
     gap: 8px;
-    font-size: 18px;
+    font-size: 16px;
+    transition: 0.3s;
+
     i.pi {
-      @include circle(30px);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: $mainColor;
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: $mainColor;
-      color: #fff;
     }
-    span{
-      font-size: 16px;
-    }
-    transition: 0.5s;
+
     &:hover {
       background: $mainColor;
       color: #fff;
     }
   }
 }
-
 
 .is-dragging {
   background: linear-gradient(135deg, lighten($mainColor, 15%), darken($mainColor, 5%)) !important;
