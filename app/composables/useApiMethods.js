@@ -62,6 +62,8 @@ export function useApiMethods() {
   const getMethod = async (apiUrl , pageNumber ,authed , showToast) => {
     globalStore.switchLoading(true);
     getResult.value = null
+
+    console.log(apiUrl)
     const { data, error } = await fetchApiData(`${apiUrl}${pageNumber ? `${apiUrl.includes('?') ? '&' : '?'}page=${pageNumber}` : ''}`, authed);
 
     // ${authStore?.userData ? `?device_id=${globalStore.device_id}&` : apiUrl.startsWith('search?') ? '&' : '?' }
