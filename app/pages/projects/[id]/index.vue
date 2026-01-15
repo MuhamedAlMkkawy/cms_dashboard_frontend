@@ -80,6 +80,10 @@
               class="section_control pi pi-pen-to-square"
             ></button>
             <button
+              @click="currentPage.sections.splice(currentPage.sections.indexOf(section), 1)"
+              class="section_control pi pi-trash"
+            ></button>
+            <button
               @click="section.visible = !section.visible"
               :class="[
                 'section_control pi',
