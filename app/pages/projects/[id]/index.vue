@@ -69,22 +69,39 @@
       <div
         v-for="section in currentPage?.sections"
         :key="section.id"
-        class="section"
+        :class="['section ', { hidden_element: !section.visible }]"
       >
         <div class="section_header">
           <h3>{{ section.name }}</h3>
+          <div class="buttons">
+            <button
+              v-if="section.visible"
+              @click="handleEditSection(section)"
+              class="section_control pi pi-pen-to-square"
+            ></button>
+            <button
+              @click="section.visible = !section.visible"
+              :class="[
+                'section_control pi',
+                `pi-eye${section.visible ? '' : '-slash'}`,
+              ]"
+            ></button>
+          </div>
         </div>
 
         <div
           class="section_content flex flex-row w-full"
           @dragover.prevent
+          @drop="onDropComponent(section, $event)"
         >
           <div
             v-for="(component, index) in section.components"
             :key="component.id"
             class="section_component flex-shrink-0 relative"
             :class="component.content.customClasses"
-            :style="{ width: component.content.customClasses.match(/w-\[(.*?)\]/)?.[1] }"
+            :style="{
+              width: component.content.customClasses.match(/w-\[(.*?)\]/)?.[1],
+            }"
             draggable="true"
             @dragstart="onDragStartComponent(section, component, index, $event)"
             @dragover.prevent
@@ -151,6 +168,14 @@
         <span>Add Section</span>
       </div>
     </div>
+
+    <button
+      class="main-btn"
+      :disabled="!isPageChanged"
+      @click="handleSavePageContent"
+    >
+      Save
+    </button>
 
     <!-- #################### Control Section Popup ###################-->
     <ControlSectionPopup
@@ -227,12 +252,6 @@ const getPageMenuItems = (pageId) => {
 // HANDLE PAGES CONTENT
 // ----------------------------
 const pages = ref([]);
-// {
-//   id: 1,
-//   name: "home",
-//   visible: true,
-//   sections: [],
-// },
 
 // ----------------------------
 // HANDLE ACTIVE PAGE
@@ -323,7 +342,7 @@ const handleEditPage = (id) => {
 // HANDLE DRAG & DROP COMPONENTS
 // ------------------------------
 const draggedComponent = ref(null);
-// Parent JS
+
 const onDragStartComponentFromSidebar = ({ item, index, event }) => {
   draggedComponent.value = { component: item, fromSidebar: true };
   event.dataTransfer.effectAllowed = "copy"; // Because it's coming from sidebar
@@ -368,19 +387,28 @@ const onDropComponent = (targetSection, e) => {
     const newComponent = { ...component, id: Date.now(), width: 30 };
     targetSection.components.splice(dropIndex, 0, newComponent);
   } else {
-    // Remove from original section
-    const removeIndex = fromSection.components.findIndex(
-      (c) => c.id === component.id
-    );
-    if (removeIndex !== -1) fromSection.components.splice(removeIndex, 1);
+    const fromComponents = fromSection.components;
+    const toComponents = targetSection.components;
 
-    // Insert into target section
-    targetSection.components.splice(dropIndex, 0, component);
+    // 1️⃣ Find source index
+    const fromIndex = fromComponents.findIndex((c) => c._id === component._id);
+    if (fromIndex === -1) return;
+
+    // 2️⃣ Remove FIRST (IMPORTANT)
+    const [movedComponent] = fromComponents.splice(fromIndex, 1);
+
+    // 3️⃣ Fix index when moving inside same section
+    let finalIndex = dropIndex;
+    if (fromSection.id === targetSection.id && dropIndex > fromIndex) {
+      finalIndex -= 1;
+    }
+
+    // 4️⃣ Insert without replacement
+    toComponents.splice(finalIndex, 0, movedComponent);
   }
 
   draggedComponent.value = null;
 };
-
 // ---------------------
 // Resize
 // ---------------------
@@ -413,11 +441,13 @@ const resizeMove = (e) => {
   newWidth = Math.max(5, Math.min(100, newWidth));
 
   // Remove old width class if exists
-  let classes = resizing.content.customClasses || '';
-  classes = classes.replace(/w-\[.*?\]/, '').trim();
+  let classes = resizing.content.customClasses || "";
+  classes = classes.replace(/w-\[.*?\]/, "").trim();
 
   // Store width in Tailwind class format
-  resizing.content.customClasses = `${classes} w-[${Math.floor(newWidth.toFixed(2))}%]`.trim();
+  resizing.content.customClasses = `${classes} w-[${Math.floor(
+    newWidth.toFixed(2)
+  )}%]`.trim();
 };
 
 const stopResize = () => {
@@ -602,14 +632,6 @@ onMounted(() => {
     + hr {
       background: #333;
       height: 3px;
-    }
-  }
-  button.savePageButton {
-    margin-top: auto;
-    &:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-      user-select: none;
     }
   }
 }

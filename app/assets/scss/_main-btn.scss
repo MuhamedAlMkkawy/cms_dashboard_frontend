@@ -81,11 +81,15 @@
 		}
 	}
 	
-	&.disabled {
-		pointer-events: none;
-		background: $secColor;
+	&:disabled {
 		user-select: none;
-		
+		cursor: not-allowed;
+		animation: unset;	
+		background: #e4e4e4;
+		border: unset !important;
+		&:hover{
+			color: #fff;
+		}	
 		&::after,
 		&::before {
 			display: none !important;
