@@ -62,7 +62,8 @@
 
   .section_content {
     display: flex;
-    gap: 10px;
+    // gap: 10px;
+    justify-content: space-between;
     flex-wrap: wrap;
     margin-top: 20px;
     width: 100%;
@@ -75,9 +76,8 @@
       padding: 10px;
       display: flex;
       flex-direction: column;
+      // align-items: center;
       cursor: move;
-      // transition: 0.3s;
-
       &.empty_placeholder {
         min-width: 100px;
         background: #eee;
@@ -115,7 +115,12 @@
         display: flex;
         gap: 5px;
         justify-content: flex-end;
-
+        align-items: center;
+        small{
+          margin-inline-end: auto;
+          font-size: 10px;
+          color: grey;
+        }
         button {
           background: #eee;
           border: none;

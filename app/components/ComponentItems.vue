@@ -19,7 +19,7 @@
 const { getMethod, getResult } = useApiMethods()
 
 // 👇 MATCH PARENT EVENT NAMES EXACTLY
-const emit = defineEmits(['onDragStart', 'onDragEnd'])
+const emit = defineEmits(['dragStart', 'dragEnd'])
 
 const dragStart = (item, index, e) => {
   emit("dragStart", { item, index, event: e });

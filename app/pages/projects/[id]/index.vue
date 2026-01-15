@@ -76,14 +76,15 @@
         </div>
 
         <div
-          class="section_content flex flex-row w-full gap-3"
+          class="section_content flex flex-row w-full"
           @dragover.prevent
         >
           <div
             v-for="(component, index) in section.components"
             :key="component.id"
             class="section_component flex-shrink-0 relative"
-            :style="{ width: component.width + '%' }"
+            :class="component.content.customClasses"
+            :style="{ width: component.content.customClasses.match(/w-\[(.*?)\]/)?.[1] }"
             draggable="true"
             @dragstart="onDragStartComponent(section, component, index, $event)"
             @dragover.prevent
@@ -97,6 +98,7 @@
 
             <!-- Control buttons -->
             <div class="component_buttons">
+              <small>{{ component.content.customClasses }}</small>
               <!-- Edit -->
               <button
                 class="edit_component"
@@ -407,12 +409,15 @@ const resizeMove = (e) => {
   const deltaX = e.clientX - startX;
   let newWidth = ((startWidth + deltaX) / containerWidth) * 100;
 
-  // allow full width
+  // Clamp width between 5% and 100%
   newWidth = Math.max(5, Math.min(100, newWidth));
 
-  resizing.content.customClasses = +newWidth.toFixed(2);
-  conosle.log(resizing)
-  conosle.log('-------------------')
+  // Remove old width class if exists
+  let classes = resizing.content.customClasses || '';
+  classes = classes.replace(/w-\[.*?\]/, '').trim();
+
+  // Store width in Tailwind class format
+  resizing.content.customClasses = `${classes} w-[${Math.floor(newWidth.toFixed(2))}%]`.trim();
 };
 
 const stopResize = () => {
