@@ -10,25 +10,23 @@
           :to="$localeRoute('/projects')"
           class="stat_item content_item"
         >
-          <h3>12</h3>
+          <h3>{{getResult?.data?.projects}}</h3>
           <h4>Projects</h4>
         </NuxtLink>
-        <NuxtLink :to="$localeRoute('/pages')" class="stat_item content_item">
-          <h3>20</h3>
+        <NuxtLink class="stat_item content_item">
+          <h3>{{getResult?.data?.pages}}</h3>
           <h4>Pages</h4>
         </NuxtLink>
         <NuxtLink
-          :to="$localeRoute('/sections')"
           class="stat_item content_item"
         >
-          <h3>40</h3>
+          <h3>{{getResult?.data?.sections}}</h3>
           <h4>Sections</h4>
         </NuxtLink>
         <NuxtLink
-          :to="$localeRoute('/components')"
           class="stat_item content_item"
         >
-          <h3>9</h3>
+          <h3>{{getResult?.data?.components}}</h3>
           <h4>Components</h4>
         </NuxtLink>
       </div>
@@ -47,9 +45,9 @@
     layout: "none",
   });
 
-  // onMounted(()=>{
-  //   getMethod('components' , null , false ,  false)
-  // })
+  onMounted(()=>{
+    getMethod('statistics' , null , false ,  false)
+  })
 </script>
 
 <style lang="scss" scoped>

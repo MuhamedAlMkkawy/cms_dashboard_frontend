@@ -1,7 +1,7 @@
 <template>
   <div class="empty">
     <NotFoundEyes />
-    <h3 class="mt-5">{{ emptyText }}</h3>
+    <h3 class="mt-5 text-center">{{ emptyText }}</h3>
   </div>
 </template>
 

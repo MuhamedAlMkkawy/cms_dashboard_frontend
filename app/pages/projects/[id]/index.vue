@@ -1,6 +1,6 @@
 <template>
-  <div class="project_page page">
-    <div class="side_bar">
+  <div class="project_page page" :style="pages.length === 0 ? 'margin: 0' : ''">
+    <div class="side_bar" v-if="pages.length">
       <div class="header_image">
         <button class="back_btn" @click="$router.back()">
           <i class="pi pi-angle-left"></i>
@@ -18,11 +18,7 @@
       <hr />
       <div class="header_image">
         <div class="image">
-          <img
-            :src="currentPage?.logo"
-            alt="logo_image"
-            loading="lazy"
-          />
+          <img :src="currentPage?.logo" alt="logo_image" loading="lazy" />
         </div>
       </div>
     </div>
@@ -56,16 +52,17 @@
           />
         </div>
         <button
-          class="add_page"
+          class="add_page gradient_background"
           @click="showControlPagePopup = true"
           title="Add Page"
         >
           <i class="pi pi-plus"></i>
+          Add New Page
         </button>
       </div>
     </div>
     <hr />
-    <div class="project_sections">
+    <div :class="['project_sections ', { 'justify-center': !pages.length }]">
       <div
         v-for="section in currentPage?.sections"
         :key="section.id"
@@ -80,7 +77,12 @@
               class="section_control pi pi-pen-to-square"
             ></button>
             <button
-              @click="currentPage.sections.splice(currentPage.sections.indexOf(section), 1)"
+              @click="
+                currentPage.sections.splice(
+                  currentPage.sections.indexOf(section),
+                  1
+                )
+              "
               class="section_control pi pi-trash"
             ></button>
             <button
@@ -102,9 +104,9 @@
             v-for="(component, index) in section.components"
             :key="component.id"
             class="section_component flex-shrink-0 relative"
-            :class="component.content.customClasses"
+            :class="component?.content?.customClasses"
             :style="{
-              width: component.content.customClasses.match(/w-\[(.*?)\]/)?.[1],
+              width: component?.content?.customClasses.match(/w-\[(.*?)\]/)?.[1],
             }"
             draggable="true"
             @dragstart="onDragStartComponent(section, component, index, $event)"
@@ -113,13 +115,13 @@
           >
             <!-- Component content -->
             <div class="component_block">
-              <i :class="'pi ' + component.icon"></i>
-              <span>{{ component.label }}</span>
+              <!-- <i :class="'pi ' + component.icon"></i> -->
+              <span>{{ component.type }}</span>
             </div>
 
             <!-- Control buttons -->
             <div class="component_buttons">
-              <small>{{ component.content.customClasses }}</small>
+              <small>{{ component?.content?.customClasses }}</small>
               <!-- Edit -->
               <button
                 class="edit_component"
@@ -167,10 +169,12 @@
         class="section add_section"
         title="Add Section"
         @click="showControlSectionPopup = true"
+        v-if="pages.length"
       >
         <i class="pi pi-plus"></i>
         <span>Add Section</span>
       </div>
+      <Empty v-else />
     </div>
 
     <button
@@ -319,7 +323,7 @@ const handleControlPage = (page) => {
     if (targetPage) targetPage.name = page.name;
   } else {
     const newPage = {
-      // _id: (pages.value.length + 1).toString(),
+      _id: (pages.value.length + 1).toString(),
       name: page.name,
       visible: true,
       sections: [],
@@ -394,20 +398,20 @@ const onDropComponent = (targetSection, e) => {
     const fromComponents = fromSection.components;
     const toComponents = targetSection.components;
 
-    // 1️⃣ Find source index
+    // Find source index
     const fromIndex = fromComponents.findIndex((c) => c._id === component._id);
     if (fromIndex === -1) return;
 
-    // 2️⃣ Remove FIRST (IMPORTANT)
+    // Remove FIRST (IMPORTANT)
     const [movedComponent] = fromComponents.splice(fromIndex, 1);
 
-    // 3️⃣ Fix index when moving inside same section
+    // Fix index when moving inside same section
     let finalIndex = dropIndex;
     if (fromSection.id === targetSection.id && dropIndex > fromIndex) {
       finalIndex -= 1;
     }
 
-    // 4️⃣ Insert without replacement
+    // Insert without replacement
     toComponents.splice(finalIndex, 0, movedComponent);
   }
 
@@ -426,13 +430,18 @@ const startResize = (section, component, e) => {
   startX = e.clientX;
 
   const componentEl = e.target.closest(".section_component");
+  if (!componentEl) return;
+
   const containerEl = componentEl.parentElement;
+  if (!containerEl) return;
 
   startWidth = componentEl.offsetWidth;
   containerWidth = containerEl.offsetWidth;
 
   window.addEventListener("mousemove", resizeMove);
   window.addEventListener("mouseup", stopResize);
+
+  e.preventDefault(); // prevent text selection while resizing
 };
 
 const resizeMove = (e) => {
@@ -444,14 +453,19 @@ const resizeMove = (e) => {
   // Clamp width between 5% and 100%
   newWidth = Math.max(5, Math.min(100, newWidth));
 
-  // Remove old width class if exists
+  // Ensure content and customClasses exist
+  if (!resizing.content) resizing.content = {};
   let classes = resizing.content.customClasses || "";
-  classes = classes.replace(/w-\[.*?\]/, "").trim();
 
-  // Store width in Tailwind class format
-  resizing.content.customClasses = `${classes} w-[${Math.floor(
-    newWidth.toFixed(2)
-  )}%]`.trim();
+  // Remove old width class
+  classes = classes.replace(/w-\[\d+%?\]/g, "").trim();
+
+  // Add new width class
+  resizing.content.customClasses = `${classes} w-[${Math.floor(newWidth)}%]`.trim();
+
+  // Optional: force re-render if using reactive framework
+  // e.g., in Vue: trigger reactivity by replacing the object
+  // resizing.content = { ...resizing.content };
 };
 
 const stopResize = () => {
@@ -459,6 +473,7 @@ const stopResize = () => {
   window.removeEventListener("mousemove", resizeMove);
   window.removeEventListener("mouseup", stopResize);
 };
+
 
 // ----------------------------------
 // HANDLE ADD THE COMPONENT POPUP
@@ -526,7 +541,7 @@ const isPageChanged = computed(() => {
 
   if (!original) return false;
 
-  return JSON.stringify(currentPage.value) !== JSON.stringify(original);
+  return JSON.stringify(currentPage.value) != JSON.stringify(original);
 });
 
 // ----------------------------
@@ -583,7 +598,7 @@ onMounted(() => {
     .page_item {
       background: #e4e4e450;
       color: $mainColor;
-      padding: 5px 10px;
+      padding: 0px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -593,7 +608,7 @@ onMounted(() => {
       cursor: pointer;
       text-transform: capitalize;
       width: 120px;
-      min-height: 50px;
+      min-height: 42px;
       span {
         max-width: 70px;
         white-space: nowrap;
@@ -604,33 +619,47 @@ onMounted(() => {
         background: transparent;
         border: none;
         color: inherit;
-        transform: rotate(90deg);
+        width: fit-content;
+        // transform: rotate(180deg);
+      }
+
+      &.hidden_element{
+        background: grey !important;
+        border-color: grey !important;
+        cursor: default;
       }
       &:not(.active):hover {
         background: #e4e4e4;
       }
       &.active {
-        background: $mainColor;
-        color: #fff;
+        background: rgb(240 93 42 / 15%);
+        border: 1px solid rgb(240 93 42);
+        color: rgb(240 93 42);
       }
     }
     .add_page {
       margin-inline-start: auto;
-      @include circle(40px);
+      // @include circle(40px);
       border: 1px solid $mainColor;
       display: flex;
-      align-items: center;
+      // align-items: center;
       justify-content: center;
-      color: $mainColor;
+      gap: 8px;
+      color: #fff;
       transition: 0.6s;
+      padding: 4px 8px;
+      border-radius: 4px;
+      // background: $mainColor;
+      min-height: 42px;
+      animation : pulse-m infinite 1s linear;
       i.pi {
         font-size: 15px;
         font-weight: 600;
         color: inherit;
       }
       &:hover {
-        background: $mainColor;
-        color: #fff;
+        background: #fff;
+        color: $mainColor;
       }
     }
     + hr {
