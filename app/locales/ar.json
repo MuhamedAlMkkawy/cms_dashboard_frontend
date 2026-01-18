@@ -17,5 +17,66 @@
         "min": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل"
       }
     }
+  },
+  "home": {
+    "welcome": "👋 مرحبًا بعودتك، المدير",
+    "stats": {
+      "projects": "المشاريع",
+      "pages": "الصفحات",
+      "sections": "الأقسام",
+      "components": "العناصر"
+    },
+    "logoAlt": "صورة الشعار"
+  },
+  "projects": {
+    "draft": "أرشفة المشروع",
+    "undraft": "إظهار المشروع",
+    "addProject": "إضافة مشروع",
+    "logoAlt": "صورة الشعار"
+  },
+  "project": {
+    "uploadLogo": "رفع الشعار",
+    "submit": "إرسال",
+    "errors": {
+      "logoRequired": "يجب رفع الشعار للمتابعة..."
+    },
+    "fields": {
+      "arName": "اسم المشروع باللغة العربية",
+      "enName": "اسم المشروع باللغة الإنجليزية",
+      "arDescription": "وصف المشروع باللغة العربية",
+      "enDescription": "وصف المشروع باللغة الإنجليزية"
+    }
+  },
+  "projectEditor": {
+    "back": "رجوع",
+    "addPage": "إضافة صفحة",
+    "addNewPage": "إضافة صفحة جديدة",
+    "addSection": "إضافة قسم",
+    "save": "حفظ",
+    "menu": {
+      "hide": "إخفاء",
+      "show": "إظهار",
+      "edit": "تعديل"
+    },
+    "errors": {
+      "sectionNotFound": "القسم غير موجود",
+      "componentNotFound": "المكون غير موجود",
+      "pageContentRequired": "يجب إضافة بيانات للصفحة قبل الحفظ..."
+    },
+    "placeholders": {
+      "dropHere": "اسحب هنا"
+    },
+
+    "buttons": {
+      "editSection": "تعديل القسم",
+      "deleteSection": "حذف القسم",
+      "toggleVisibility": "إظهار / إخفاء",
+      "editComponent": "تعديل المكون",
+      "removeComponent": "حذف المكون"
+    },
+
+    "alts": {
+      "logo": "صورة الشعار"
+    }
   }
 }

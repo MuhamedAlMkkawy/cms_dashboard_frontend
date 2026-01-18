@@ -5,7 +5,6 @@
         :validation-schema="modifyProjectSchema"
         class="form"
         @submit="handleSubmit"
-        v-slot="{ meta }"
       >
         <label for="upload_img" class="upload_image_icon image">
           <img
@@ -16,7 +15,11 @@
           />
           <i v-else class="pi pi-upload"></i>
         </label>
-        <label for="upload_img">Upload Logo</label>
+
+        <label for="upload_img">
+          {{ t("project.uploadLogo") }}
+        </label>
+
         <input
           type="file"
           accept="image/*"
@@ -24,84 +27,86 @@
           id="upload_img"
           hidden
         />
+
         <div class="inputs">
           <CustomField
             name="ar_name"
             type="text"
-            placeholder="Project Name in Arabic"
+            :placeholder="t('project.fields.arName')"
           />
           <CustomField
             name="en_name"
             type="text"
-            placeholder="Project Name in English"
+            :placeholder="t('project.fields.enName')"
           />
         </div>
+
         <div class="inputs">
           <CustomTextarea
             name="ar_description"
-            placeholder="Project Description in Arabic"
+            :placeholder="t('project.fields.arDescription')"
             :rows="10"
           />
           <CustomTextarea
             name="en_description"
-            placeholder="Project Description in English"
+            :placeholder="t('project.fields.enDescription')"
             :rows="10"
           />
         </div>
-        <button class="main-btn">Submit</button>
+
+        <button class="main-btn">
+          {{ t("project.submit") }}
+        </button>
       </VeeForm>
     </div>
+    <LanguageSwitch />
   </div>
 </template>
 
 <script setup>
   import { modifyProjectSchema } from "../../schemas/modifyProject";
-  const{
-    submitMethod,
-    getMethod,
-    getResult,
-    showErrorToast
-  } = useApiMethods()
+  import { useI18n } from 'vue-i18n';
 
-  // DEFINE PAGE LAYOUT
+  const { t } = useI18n();
+
+  const {
+    submitMethod,
+    showErrorToast
+  } = useApiMethods();
+
   definePageMeta({
     layout: "none",
   });
 
-
-
-
-  // HADNLE THE BODY OF THE
   const image = ref({
     file: null,
     url: null,
   });
 
-  // HANDLE UPLOAD IMAGE
   const handleUploadImage = (file) => {
     image.value.file = file;
     image.value.url = URL.createObjectURL(file);
   };
 
-
-  // HANDLE SUBMIT
   const handleSubmit = (values) => {
-    if(!image.value.file){
-      showErrorToast('You should upload Logo to Continue...')
-    }else{
-      const formData = new FormData();
-      formData.append("logo", image.value.file);
-      formData.append("name.ar", values.ar_name);
-      formData.append("name.en", values.en_name);
-      formData.append("description.ar", values.ar_description);
-      formData.append("description.en", values.en_description);
-  
-      submitMethod('/projects' , true , formData , 'POST' , '/projects')
+    if (!image.value.file) {
+      showErrorToast(t('project.errors.logoRequired'));
+      return;
     }
+
+    const formData = new FormData();
+    formData.append("logo", image.value.file);
+    formData.append("name.ar", values.ar_name);
+    formData.append("name.en", values.en_name);
+    formData.append("description.ar", values.ar_description);
+    formData.append("description.en", values.en_description);
+
+    submitMethod('/projects', true, formData, 'POST', '/projects');
   };
-
-
 </script>
+
+
+
 <style lang="scss" scoped>
 .modify_project_page {
   .modify_project_content {

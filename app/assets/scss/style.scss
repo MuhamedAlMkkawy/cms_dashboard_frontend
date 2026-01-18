@@ -1,4 +1,4 @@
-// import variables 
+// import variables
 // @import "./variables";
 // @import "./generic";
 // @import "./mixins";
@@ -10,69 +10,77 @@
 // @import "./components";
 // @import "./sections";
 
-
-.page{
+.page {
   padding-block: 50px;
 }
-.container{
+.container {
   max-width: clamp(300px, 100%, 1800px);
   margin: 0 auto;
   padding-inline: 20px;
   transition: 1s;
   display: flex;
-  &.page_active{
+  &.page_active {
     // margin-inline-start: 275px !important;
     justify-content: flex-end;
     transition: 1s;
-    @media (max-width : 767px) {
+    @media (max-width: 767px) {
       transition: 1s;
       margin-inline-start: 0 !important;
     }
   }
 }
 
-
 // GRADIENT BACKGROUND
-.gradient_background{
-  background: linear-gradient(84deg, #007593 3.25%, #044D60 96.85%);
+.gradient_background {
+  background: linear-gradient(84deg, #007593 3.25%, #044d60 96.85%);
   color: #fff;
   position: relative;
   overflow: hidden;
   background-size: 200% 200%;
   min-height: 100vh;
   @include displayFlex();
-    /* Subtle floating particles effect */
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: 
-          radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 2%, transparent 5%),
-          radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 2%, transparent 5%),
-          radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 3%, transparent 8%);
-      pointer-events: none;
-    }
+  /* Subtle floating particles effect */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 80%,
+        rgba(255, 255, 255, 0.1) 2%,
+        transparent 5%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(255, 255, 255, 0.1) 2%,
+        transparent 5%
+      ),
+      radial-gradient(
+        circle at 40% 40%,
+        rgba(255, 255, 255, 0.05) 3%,
+        transparent 8%
+      );
+    pointer-events: none;
+  }
 }
 
-// DRAFT ITEM STYLE 
-.drafted_item{
+// DRAFT ITEM STYLE
+.drafted_item {
   background: grey;
   border-color: grey !important;
-  &:hover{
+  &:hover {
     background: grey !important;
-    .image{
+    .image {
       filter: brightness(0) invert(1) !important;
     }
-    .item_control{
+    .item_control {
       opacity: 1 !important;
       pointer-events: visible;
     }
   }
 }
-
 
 // --------------------------
 // ------- Red Msg ----------
@@ -83,17 +91,17 @@ span[role="alert"] {
   margin-bottom: 10px;
   font-weight: 400;
   font-size: 12px;
-  &::before{
-    content: '* ';
+  &::before {
+    content: "* ";
   }
 }
-
 
 // ---------------------------
 // ------> ANIMATION <--------
 // ---------------------------
 @keyframes gradientShift {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -101,7 +109,8 @@ span[role="alert"] {
   }
 }
 @keyframes floatParticles {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) translateX(0px);
   }
   25% {
@@ -115,44 +124,79 @@ span[role="alert"] {
   }
 }
 
-
-
 // Style the spinner for the number input
-::-webkit-inner-spin-button, ::-webkit-outer-spin-button{
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
   display: none;
 }
 
 // STYLE THE TOGGLE BUTTON OF THE SLIDER POPUP
-.p-togglebutton-checked .p-togglebutton-content{
+.p-togglebutton-checked .p-togglebutton-content {
   background: $mainColor !important;
-  color:#fff;
+  color: #fff;
 }
 
-
 // STYLE THE EDITOR COMPONENT IN THE POPUP
-.p-editor{
+.p-editor {
   // min-height: 400px;
   max-height: 500px;
   overflow-y: scroll;
   min-height: 400px !important;
 }
 
-
-.p-editor .p-editor-content .ql-editor{
+.p-editor .p-editor-content .ql-editor {
   min-height: 420px;
-  background: #044D60;
+  background: #044d60;
   color: #fff;
 }
 
-
-// STYLE THE HIDDEN ELEMENT 
+// STYLE THE HIDDEN ELEMENT
 .hidden_element {
   background: grey !important;
   border-color: grey;
   color: #fff !important;
   max-height: 90px;
   overflow: hidden;
-  &.active{
+  &.active {
     background: $textColor !important;
+  }
+}
+
+// style the language switch
+.languages-switch {
+  position: relative;
+  padding: 4px 8px;
+  position: fixed;
+  inset-inline-start: 50px;
+  bottom: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.5s;
+  i.pi {
+    color: #fff;
+    font-size: 18px;
+  }
+
+  a {
+    @include displayFlex($gap: 5px, $direction: row, $justify: flex-start);
+    padding: 3px 5px;
+    height: 30px;
+    overflow: hidden;
+    cursor: pointer;
+    // padding-inline-end: 20px;
+    span {
+      font-size: clamp(14px, 2.5vw, 20px);
+    }
+  }
+  &:hover {
+    a {
+      color: $mainColor;
+      border-radius: 4px;
+      background: #fff;
+    }
+    i.pi {
+      color: $mainColor;
+    }
   }
 }

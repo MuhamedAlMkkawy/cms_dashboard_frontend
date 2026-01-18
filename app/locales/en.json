@@ -11,11 +11,72 @@
         "required": "Email is required",
         "invalid": "Please enter a valid email address"
       },
-      "password" : {
+      "password": {
         "required": "Password is required",
         "invalid": "Please enter a valid Password",
         "min": "Password must be at least 6 characters long"
       }
+    }
+  },
+  "home": {
+    "welcome": "👋 Welcome back, Manager",
+    "stats": {
+      "projects": "Projects",
+      "pages": "Pages",
+      "sections": "Sections",
+      "components": "Components"
+    },
+    "logoAlt": "logo image"
+  },
+  "projects": {
+    "draft": "Draft project",
+    "undraft": "Undraft project",
+    "addProject": "Add project",
+    "logoAlt": "logo image"
+  },
+  "project": {
+    "uploadLogo": "Upload Logo",
+    "submit": "Submit",
+    "errors": {
+      "logoRequired": "You should upload Logo to Continue..."
+    },
+    "fields": {
+      "arName": "Project Name in Arabic",
+      "enName": "Project Name in English",
+      "arDescription": "Project Description in Arabic",
+      "enDescription": "Project Description in English"
+    }
+  },
+  "projectEditor": {
+    "back": "Back",
+    "addPage": "Add Page",
+    "addNewPage": "Add New Page",
+    "addSection": "Add Section",
+    "save": "Save",
+    "menu": {
+      "hide": "Hide",
+      "show": "Show",
+      "edit": "Edit"
+    },
+    "errors": {
+      "sectionNotFound": "Section not found",
+      "componentNotFound": "Component not found",
+      "pageContentRequired": "You have to add data for the page to be added..."
+    },
+    "placeholders": {
+      "dropHere": "Drop here"
+    },
+
+    "buttons": {
+      "editSection": "Edit Section",
+      "deleteSection": "Delete Section",
+      "toggleVisibility": "Toggle Visibility",
+      "editComponent": "Edit Component",
+      "removeComponent": "Remove Component"
+    },
+
+    "alts": {
+      "logo": "logo image"
     }
   }
 }

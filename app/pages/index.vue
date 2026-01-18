@@ -2,52 +2,54 @@
   <div class="page home_page gradient_background">
     <div class="container">
       <div class="image mazaya_logo">
-        <img src="../assets/images/logo.png" alt="logo image" loading="lazy" />
+        <img
+          src="../assets/images/logo.png"
+          :alt="$t('home.logoAlt')"
+          loading="lazy"
+        />
       </div>
-      <h1>👋 Welcome back , Manager</h1>
+
+      <h1>{{ $t("home.welcome") }}</h1>
+
       <div class="stat_items content_items items_4">
         <NuxtLink
           :to="$localeRoute('/projects')"
           class="stat_item content_item"
         >
-          <h3>{{getResult?.data?.projects}}</h3>
-          <h4>Projects</h4>
+          <h3>{{ getResult?.data?.projects }}</h3>
+          <h4>{{ $t("home.stats.projects") }}</h4>
         </NuxtLink>
+
         <NuxtLink class="stat_item content_item">
-          <h3>{{getResult?.data?.pages}}</h3>
-          <h4>Pages</h4>
+          <h3>{{ getResult?.data?.pages }}</h3>
+          <h4>{{ $t("home.stats.pages") }}</h4>
         </NuxtLink>
-        <NuxtLink
-          class="stat_item content_item"
-        >
-          <h3>{{getResult?.data?.sections}}</h3>
-          <h4>Sections</h4>
+
+        <NuxtLink class="stat_item content_item">
+          <h3>{{ getResult?.data?.sections }}</h3>
+          <h4>{{ $t("home.stats.sections") }}</h4>
         </NuxtLink>
-        <NuxtLink
-          class="stat_item content_item"
-        >
-          <h3>{{getResult?.data?.components}}</h3>
-          <h4>Components</h4>
+
+        <NuxtLink class="stat_item content_item">
+          <h3>{{ getResult?.data?.components }}</h3>
+          <h4>{{ $t("home.stats.components") }}</h4>
         </NuxtLink>
       </div>
     </div>
+    <LanguageSwitch />
   </div>
 </template>
 
 <script setup>
-  const{
-    getMethod,
-    getResult
-  } = useApiMethods()
+const { getMethod, getResult } = useApiMethods();
 
+definePageMeta({
+  layout: "none",
+});
 
-  definePageMeta({
-    layout: "none",
-  });
-
-  onMounted(()=>{
-    getMethod('statistics' , null , true ,  false)
-  })
+onMounted(() => {
+  getMethod("statistics", null, true, false);
+});
 </script>
 
 <style lang="scss" scoped>

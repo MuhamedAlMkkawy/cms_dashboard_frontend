@@ -2,11 +2,16 @@
   <div class="page projects_page gradient_background">
     <div class="container">
       <div class="image mazaya_logo">
-        <img src="@/assets/images/logo.png" alt="logo image" loading="lazy" />
+        <img
+          src="@/assets/images/logo.png"
+          :alt="$t('projects.logoAlt')"
+          loading="lazy"
+        />
       </div>
+
       <div class="content_items items_4">
         <NuxtLink
-          v-for="(project, index) in getResult?.data"
+          v-for="project in getResult?.data"
           :key="project._id"
           :to="project.visible ? $localeRoute(`/projects/${project._id}`) : ''"
           :class="['content_item', { drafted_item: !project.visible }]"
@@ -14,45 +19,60 @@
           <div class="image">
             <img :src="project.logo" :alt="project?.name" loading="lazy" />
           </div>
+
           <div class="item_control">
-            <!-- <button class="edit_btn pi pi-pencil" title="edit project"></button> -->
             <button
-              :class="['draft_btn pi', project.visible ? 'pi-eye-slash' : 'pi-eye']"
-              :title="project.visible ? 'draft project' : 'undraft project'"
-              @click.stop.prevent="handleDraftProject(project._id, project.visible)"
+              :class="[
+                'draft_btn pi',
+                project.visible ? 'pi-eye-slash' : 'pi-eye',
+              ]"
+              :title="
+                project.visible ? $t('projects.draft') : $t('projects.undraft')
+              "
+              @click.stop.prevent="
+                handleDraftProject(project._id, project.visible)
+              "
             ></button>
           </div>
         </NuxtLink>
+
         <NuxtLink
           to="/modify_project"
           class="content_item add_project"
-          title="add project"
+          :title="$t('projects.addProject')"
         >
           <i class="pi pi-plus"></i>
         </NuxtLink>
       </div>
     </div>
+    <LanguageSwitch />
   </div>
 </template>
 
 <script setup>
-  const { getMethod , submitMethod , getResult } = useApiMethods();
+const { getMethod, submitMethod, getResult } = useApiMethods();
 
-  definePageMeta({
-    layout: "none",
-  });
+definePageMeta({
+  layout: "none",
+});
 
-  //  HANDLE DRAFT THE PROJECT 
-  const handleDraftProject = (projectID , projectVisible) => {
-    submitMethod(`projects/${projectID}` , false , {
-      visible : !projectVisible
-    }, 'PATCH' , '' , 'projects')
-  }
+//  HANDLE DRAFT THE PROJECT
+const handleDraftProject = (projectID, projectVisible) => {
+  submitMethod(
+    `projects/${projectID}`,
+    false,
+    {
+      visible: !projectVisible,
+    },
+    "PATCH",
+    "",
+    "projects"
+  );
+};
 
-
-  onMounted(() => {
-    getMethod("projects", null, true, false);
-  });
+onMounted(() => {
+  getMethod("projects", null, true, false);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -120,7 +140,7 @@
             opacity: 1;
           }
         }
-        &.drafted_item{
+        &.drafted_item {
           cursor: default;
         }
       }

@@ -6,7 +6,11 @@
           <i class="pi pi-angle-left"></i>
         </button>
         <div class="image">
-          <img src="@/assets/images/logo.png" alt="logo_image" loading="lazy" />
+          <img
+            src="@/assets/images/logo.png"
+            :alt="t('projectEditor.alts.logo')"
+            loading="lazy"
+          />
         </div>
       </div>
       <hr />
@@ -54,11 +58,12 @@
         <button
           class="add_page gradient_background"
           @click="showControlPagePopup = true"
-          title="Add Page"
+          :title="t('projectEditor.addPage')"
         >
           <i class="pi pi-plus"></i>
-          Add New Page
+          {{ t("projectEditor.addNewPage") }}
         </button>
+        <LanguageSwitch />
       </div>
     </div>
     <hr />
@@ -106,7 +111,8 @@
             class="section_component flex-shrink-0 relative"
             :class="component?.content?.customClasses"
             :style="{
-              width: component?.content?.customClasses.match(/w-\[(.*?)\]/)?.[1],
+              width:
+                component?.content?.customClasses.match(/w-\[(.*?)\]/)?.[1],
             }"
             draggable="true"
             @dragstart="onDragStartComponent(section, component, index, $event)"
@@ -125,6 +131,7 @@
               <!-- Edit -->
               <button
                 class="edit_component"
+                :title="t('projectEditor.buttons.editComponent')"
                 @click="
                   handleSectionContent(
                     section.id,
@@ -132,16 +139,14 @@
                     component.content
                   )
                 "
-                title="Edit Component"
               >
                 <i class="pi pi-pen-to-square"></i>
               </button>
 
-              <!-- Remove -->
               <button
                 class="remove_component"
+                :title="t('projectEditor.buttons.removeComponent')"
                 @click="removeComponent(section, index)"
-                title="Remove Component"
               >
                 <i class="pi pi-trash"></i>
               </button>
@@ -158,22 +163,21 @@
           <div
             v-if="draggedComponent && draggedComponent.fromSection !== section"
             class="section_component empty_placeholder"
-            @dragover.prevent
-            @drop="onDropComponent(section, $event)"
           >
-            Drop here
+            {{ t("projectEditor.placeholders.dropHere") }}
           </div>
         </div>
       </div>
       <div
         class="section add_section"
-        title="Add Section"
+        :title="t('projectEditor.addSection')"
         @click="showControlSectionPopup = true"
         v-if="pages.length"
       >
         <i class="pi pi-plus"></i>
-        <span>Add Section</span>
+        <span>{{ t("projectEditor.addSection") }}</span>
       </div>
+
       <Empty v-else />
     </div>
 
@@ -182,7 +186,7 @@
       :disabled="!isPageChanged"
       @click="handleSavePageContent"
     >
-      Save
+      {{ t("projectEditor.save") }}
     </button>
 
     <!-- #################### Control Section Popup ###################-->
@@ -213,6 +217,9 @@
 </template>
 
 <script setup>
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 // -----------------------------
 // DEFINE ROUTE
 // -----------------------------
@@ -239,20 +246,17 @@ const getPageMenuItems = (pageId) => {
 
   return [
     {
-      label: page.visible ? "Hide" : "Show",
+      label: page.visible
+        ? t("projectEditor.menu.hide")
+        : t("projectEditor.menu.show"),
       icon: page.visible ? "pi pi-eye-slash" : "pi pi-eye",
       command: () => handleHidePage(pageId),
     },
     {
-      label: "Edit",
+      label: t("projectEditor.menu.edit"),
       icon: "pi pi-pencil",
       command: () => handleEditPage(pageId),
     },
-    // {
-    //   label: "Delete",
-    //   icon: "pi pi-trash",
-    //   command: () => handleDeletePage(pageId),
-    // }
   ];
 };
 
@@ -461,7 +465,9 @@ const resizeMove = (e) => {
   classes = classes.replace(/w-\[\d+%?\]/g, "").trim();
 
   // Add new width class
-  resizing.content.customClasses = `${classes} w-[${Math.floor(newWidth)}%]`.trim();
+  resizing.content.customClasses = `${classes} w-[${Math.floor(
+    newWidth
+  )}%]`.trim();
 
   // Optional: force re-render if using reactive framework
   // e.g., in Vue: trigger reactivity by replacing the object
@@ -473,7 +479,6 @@ const stopResize = () => {
   window.removeEventListener("mousemove", resizeMove);
   window.removeEventListener("mouseup", stopResize);
 };
-
 
 // ----------------------------------
 // HANDLE ADD THE COMPONENT POPUP
@@ -491,19 +496,18 @@ const handleSectionContent = (sectionID, type, values) => {
 };
 
 const handleAddComponentContent = (data) => {
-  // 1 Find section
   const targetedSection = currentPage?.value.sections.find(
     (item) => item.id == data.sectionID
   );
-  if (!targetedSection) return showErrorToast("Section not found");
+  if (!targetedSection)
+    return showErrorToast(t("projectEditor.errors.sectionNotFound"));
 
-  // 2 Find component inside section
   const targetComponent = targetedSection.components.find(
     (comp) => comp.type === data.type
   );
-  if (!targetComponent) return showErrorToast("Component not found");
+  if (!targetComponent)
+    return showErrorToast(t("projectEditor.errors.componentNotFound"));
 
-  // 3 Add / replace content
   targetComponent.content = data.content;
 };
 
@@ -549,25 +553,21 @@ const isPageChanged = computed(() => {
 // ----------------------------
 const handleSavePageContent = () => {
   if (!currentPage?.value?.sections?.length) {
-    showErrorToast("You have to add data for the page to be added...");
-  } else {
-    // GET THE CURRENT PAGE ID TO EDIT IF HAS THE PROJECT HAS PAGES
-    const pageId = getResult?.value ? currentPage.value?._id : "";
-
-    // DETECT THE ENDPOINT BASED ON THE METHOD
-    const url = pageId
-      ? `/projects/${route.params.id}/pages/${pageId}`
-      : `/projects/${route.params.id}/pages`;
-
-    // DETECT WHICH API METHOD DEBEND ON THE PAGE VALUE
-    const method = getResult?.value && pageId ? "PATCH" : "POST";
-
-    // SUBMIT THE METHOD
-    submitMethod(url, false, currentPage?.value, method, "");
-
-    // AFTER SUBMIT
-    originalPage.value = JSON.parse(JSON.stringify(currentPage.value));
+    showErrorToast(t("projectEditor.errors.pageContentRequired"));
+    return;
   }
+
+  const pageId = getResult?.value ? currentPage.value?._id : "";
+
+  const url = pageId
+    ? `/projects/${route.params.id}/pages/${pageId}`
+    : `/projects/${route.params.id}/pages`;
+
+  const method = getResult?.value && pageId ? "PATCH" : "POST";
+
+  submitMethod(url, false, currentPage?.value, method, "");
+
+  originalPage.value = JSON.parse(JSON.stringify(currentPage.value));
 };
 
 // CHECK IF THE PROJECT HAS PAGES
@@ -582,11 +582,20 @@ watch(
 );
 
 onMounted(() => {
-  getMethod(`/projects/${route.params.id}`, null, true , false);
+  getMethod(`/projects/${route.params.id}`, null, true, false);
 });
 </script>
 
 <style lang="scss" scoped>
+  .languages-switch{
+    position: unset;
+    i.pi{
+      color: red !important;
+    }
+    a{
+      color: $mainColor !important;
+    }
+  }
 .project_page {
   margin-inline-start: 250px;
   padding: 20px;
@@ -623,7 +632,7 @@ onMounted(() => {
         // transform: rotate(180deg);
       }
 
-      &.hidden_element{
+      &.hidden_element {
         background: grey !important;
         border-color: grey !important;
         cursor: default;
@@ -651,7 +660,7 @@ onMounted(() => {
       border-radius: 4px;
       // background: $mainColor;
       min-height: 42px;
-      animation : pulse-m infinite 1s linear;
+      animation: pulse-m infinite 1s linear;
       i.pi {
         font-size: 15px;
         font-weight: 600;
