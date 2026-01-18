@@ -12,9 +12,6 @@ export function useApiMethods() {
   // define auth store
   const authStore = useAuthStore();
 
-  // define route
-  const route = useRoute();
-
   // define router
   const router = useRouter();
 
@@ -68,33 +65,16 @@ export function useApiMethods() {
     // ${authStore?.userData ? `?device_id=${globalStore.device_id}&` : apiUrl.startsWith('search?') ? '&' : '?' }
     if (error) {
       handleToastMsg('error' , error?.response?._data?.message)
-      if(
-        error?.response?._data?.status == 'unauthenticated'||
-        error?.response?._data?.status == 'unauthorized'||
-        error?.response?._data?.status == 'not_approved' ||
-        error?.response?._data?.status == 'blocked'
-      ){
+      if (error?.response?._data?.error === "Forbidden") {
         setTimeout(() => {
-          location.reload()
+          router.push(localeRoute('login'));
         }, 500);
-        useCookie('authStore').value = ''
+        useCookie("authStore").value = "";
         window.sessionStorage.clear();
       }
     } else {
       if (data.status == 'success') {
         getResult.value = data;
-      }
-      else if (
-        data.status == 'unauthenticated' ||
-        data.status == 'unauthorized' ||
-        data.status == 'not_approved' ||
-        data.status == 'blocked'
-      ) {
-        setTimeout(() => {
-          location.reload()
-        }, 500);
-        useCookie('authStore').value = ''
-        window.sessionStorage.clear();
       }
       if(showToast){
         handleToastMsg(data?.status , data?.message)
@@ -113,10 +93,7 @@ export function useApiMethods() {
     if (error) {
       handleToastMsg('error' , error?.response?._data?.message)
       if(
-        error?.response?._data?.status == 'unauthenticated'||
-        error?.response?._data?.status == 'unauthorized'||
-        error?.response?._data?.status == 'not_approved' ||
-        error?.response?._data?.status == 'blocked'
+        error?.response?._data?.message === 'forbidden'
       ){
         useCookie('authStore').value = ''
         window.sessionStorage.clear();
@@ -124,45 +101,17 @@ export function useApiMethods() {
           handleNextRoute('/auth/login')
         }, 500);
       }
-      else if(error?.response?._data?.status == 'needActive'){
-        setTimeout(() => {
-          handleNextRoute('/auth/activation_code')
-        }, 500);
-      }
-    } else {
+    }
+      
+    else {
       if (nextRoute) {
         handleNextRoute(nextRoute);
       }
       if (refetchApi) {
         getMethod(refetchApi , '' , authStore ? true : false , false)
       }
-      // if (data.status == 'success' || data.status == 'needActive') {
-      //   if(
-      //     endPoint == 'activate' || 
-      //     endPoint == 'signin' || 
-      //     endPoint == 'notify' || 
-      //     endPoint == 'update-provider-profile'
-      //   ){
-      //     // console.log(data?.data)
-      //     useCookie('authStore').value = data?.data
-      //     window.sessionStorage.setItem('authStore' , JSON.stringify(data?.data))
-      //     // authStore.handleUserData(data.data);
-      //   }
-      // }
-      // else if (
-      //   data.status == 'unauthenticated' || 
-      //   data.status == 'not_approved'
-      // ){
-      //   handleNextRoute('/')
-      //   useCookie('authStore').value = ''
-      //   window.sessionStorage.clear();
-      // }
-      // else if(data?.status == 'needActive'){
-      //   setTimeout(() => {
-      //     handleNextRoute('/auth/activation_code')
-      //   }, 500);
-      // }
       submitResult.value = data;
+      authStore.handleUserData(data?.data)
       handleToastMsg(data?.status , data?.message)
       globalStore.switchLoading(false)
     }

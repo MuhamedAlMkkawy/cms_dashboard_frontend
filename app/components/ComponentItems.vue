@@ -30,6 +30,6 @@ const dragEnd = (e) => {
 };
 
 onMounted(() => {
-  getMethod('components', null, false, false)
+  getMethod('components', null, true, false)
 })
 </script>

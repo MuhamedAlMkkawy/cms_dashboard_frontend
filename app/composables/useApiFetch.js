@@ -1,16 +1,16 @@
 // Common options configuration function
 const createFetchOptions = (authed , options = {}) => {
-  const token = useAuthStore()?.userData?.token || JSON.parse(window.sessionStorage.getItem('authStore'))?.token; // You can fetch the actual token from auth storage
+  const token = useAuthStore()?.token || useAuthStore()?.user?.token; // You can fetch the actual token from auth storage
   const lang = useGlobalStore().lang;
   const config = useRuntimeConfig();
   const baseURL = options.baseURL || config.public.apiBase;
-  const secretKey = config.public.secretKey;
+  // const secretKey = config.public.secretKey || null;
 
 
   const headers = {
     ...(authed ? { authorization: `Bearer ${token}` } : {}),
     'accept-language': lang || 'en',
-    secretKey: secretKey,
+    // secretKey: secretKey,
     ...options.headers,
   };
 

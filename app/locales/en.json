@@ -1,4 +1,21 @@
 {
-  "title" : "En Title",
-  "description" : "En Description"
+  "login_page": {
+    "title": "Login Page",
+    "email": "Email",
+    "emailPlaceholder": "Your Email",
+    "password": "Password",
+    "passwordPlaceholder": "Your Password",
+    "submit_button": "Submit",
+    "validations": {
+      "email": {
+        "required": "Email is required",
+        "invalid": "Please enter a valid email address"
+      },
+      "password" : {
+        "required": "Password is required",
+        "invalid": "Please enter a valid Password",
+        "min": "Password must be at least 6 characters long"
+      }
+    }
+  }
 }

@@ -46,7 +46,7 @@
   });
 
   onMounted(()=>{
-    getMethod('statistics' , null , false ,  false)
+    getMethod('statistics' , null , true ,  false)
   })
 </script>
 

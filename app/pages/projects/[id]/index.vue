@@ -582,7 +582,7 @@ watch(
 );
 
 onMounted(() => {
-  getMethod(`/projects/${route.params.id}`, null, false, false);
+  getMethod(`/projects/${route.params.id}`, null, true , false);
 });
 </script>
 

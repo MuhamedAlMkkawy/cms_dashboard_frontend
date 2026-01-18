@@ -1,4 +1,21 @@
 {
-  "title" : "Ar Title",
-  "description" : "Ar Description"
+  "login_page": {
+    "title": "تسجيل الدخول",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "كلمة المرور",
+    "submit_button": "تسجيل دخول",
+    "validations": {
+      "email": {
+        "required": "يجب إضافة البريد الالكتروني",
+        "invalid": "الرجاء إدخال بريد إلكتروني صالح"
+      },
+      "password": {
+        "required": "يجب إضافة كلمة المرور",
+        "invalid": "كلمة المرور غير صالحة",
+        "min": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل"
+      }
+    }
+  }
 }

@@ -96,7 +96,7 @@
       formData.append("description.ar", values.ar_description);
       formData.append("description.en", values.en_description);
   
-      submitMethod('/projects' , false , formData , 'POST' , '/projects')
+      submitMethod('/projects' , true , formData , 'POST' , '/projects')
     }
   };
 

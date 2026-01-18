@@ -51,7 +51,7 @@
 
 
   onMounted(() => {
-    getMethod("projects", null, false, false);
+    getMethod("projects", null, true, false);
   });
 </script>
 

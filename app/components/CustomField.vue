@@ -43,7 +43,9 @@
     background: #e4e4e499;
     margin-bottom: 5px;
     border-radius: 5px;
+    max-height: 40px;
   }
+  
 </style>
 
 

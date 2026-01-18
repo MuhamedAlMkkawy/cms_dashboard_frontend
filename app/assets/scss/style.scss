@@ -79,7 +79,7 @@
 // --------------------------
 span[role="alert"] {
   display: block;
-  color: red;
+  color: red !important;
   margin-bottom: 10px;
   font-weight: 400;
   font-size: 12px;
