@@ -40,7 +40,7 @@
         background: #e4e4e4 !important;
       }
     }
-    &:last-of-type{
+    &:last-of-type {
       padding: 10px 0 15px;
       background: #fff;
       position: absolute;
@@ -50,9 +50,7 @@
       min-height: 74px;
     }
   }
-
 }
-
 
 .components {
   @include displayFlex($direction: column, $justify: start, $align: start);
@@ -74,7 +72,7 @@
   transition: 0.5s;
   border-radius: 4px;
   user-select: none;
-  cursor: grab; 
+  cursor: grab;
   &:hover {
     background: #fff;
     color: $mainColor;
@@ -84,11 +82,11 @@
     cursor: grabbing;
     transform: scale(0.95);
     border: 1px dashed $mainColor;
-    background: lighten($mainColor, 20%);
+    background: color-mix(in srgb, $mainColor, white 15%);
     color: $mainColor;
   }
 
-  &.drag-preview{
+  &.drag-preview {
     background: $mainColor;
     opacity: 1;
   }
@@ -98,7 +96,7 @@
     font-size: 15px;
   }
 
-  &:last-of-type{
+  &:last-of-type {
     margin-bottom: 8px;
   }
 }

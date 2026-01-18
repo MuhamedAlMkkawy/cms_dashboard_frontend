@@ -91,8 +91,8 @@
         font-size: 14px;
         background: linear-gradient(
           135deg,
-          lighten($mainColor, 15%),
-          darken($mainColor, 5%)
+          color-mix(in srgb, $mainColor, white 15%),
+          color-mix(in srgb, $mainColor, black 5%)
         ) !important;
         color: #fff !important;
       }
@@ -203,8 +203,8 @@
 .is-dragging {
   background: linear-gradient(
     135deg,
-    lighten($mainColor, 15%),
-    darken($mainColor, 5%)
+    color-mix(in srgb, $mainColor, white 15%),
+    color-mix(in srgb, $mainColor, black 5%)
   ) !important;
   color: #fff !important;
 }
