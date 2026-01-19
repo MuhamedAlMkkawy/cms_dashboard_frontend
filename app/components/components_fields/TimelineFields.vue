@@ -1,18 +1,18 @@
 <template>
   <div class="timeline_fields">
-    <h4 class="centered">Timeline</h4>
+    <h4 class="centered">{{ $t("timeline.title") }}</h4>
 
     <!-- Timeline Items -->
     <div class="timeline_item" v-for="(item, index) in timeline" :key="index">
       <!-- Index -->
       <h6 class="item_index">
-        Item <span>#{{ index + 1 }}</span>
+        {{ $t("timeline.item") }} <span>#{{ index + 1 }}</span>
       </h6>
 
       <div class="inputs">
         <!-- Icon -->
         <div class="input icon_input">
-          <label>Icon</label>
+          <label>{{ $t("timeline.icon") }}</label>
           <button class="icon_select_btn" @click="emit('openIconPicker', item)">
             <i :class="item.icon || 'pi pi-circle'"></i>
           </button>
@@ -20,16 +20,17 @@
 
         <!-- Date -->
         <div class="input">
-          <label>Date</label>
+          <label>{{ $t("timeline.date") }}</label>
           <DatePicker v-model="item.date" />
         </div>
+
         <!-- Title -->
         <div class="input grow_input">
-          <label>Title</label>
+          <label>{{ $t("timeline.titleField") }}</label>
           <input
             type="text"
             v-model="item.title"
-            placeholder="Timeline title"
+            :placeholder="$t('timeline.titlePlaceholder')"
           />
         </div>
       </div>
@@ -45,11 +46,11 @@
 
       <!-- Description -->
       <div class="input full_input">
-        <label>Description</label>
+        <label>{{ $t("timeline.description") }}</label>
         <textarea
           rows="3"
           v-model="item.description"
-          placeholder="Timeline description..."
+          :placeholder="$t('timeline.descriptionPlaceholder')"
         ></textarea>
       </div>
     </div>
@@ -58,15 +59,21 @@
 
     <!-- Actions -->
     <div class="flex_buttons">
-      <button class="main-btn reversed" @click="addItem">Add Item</button>
-      <button class="main-btn" @click="handleSubmitTimeline">Submit</button>
+      <button class="main-btn reversed" @click="addItem">
+        {{ $t("timeline.addItem") }}
+      </button>
+      <button class="main-btn" @click="handleSubmitTimeline">
+        {{ $t("timeline.submit") }}
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-const { showErrorToast } = useToastMsg();
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
+const { showErrorToast } = useToastMsg();
 const emit = defineEmits([
   "handleSubmitFields",
   "handleCloseComponentPopup",
@@ -86,9 +93,7 @@ const timeline = ref([
 // ----------------------------
 // DEFINE PROPS FOR EXISTING DATA
 // ----------------------------
-const props = defineProps({
-  values: Object,
-});
+const props = defineProps({ values: Object });
 
 // -----------------------------
 // RENDER DATA FROM PROPS
@@ -97,14 +102,14 @@ watch(
   () => props.values,
   (values) => {
     if (!values) return;
-    // console.log(timeline.value);
+
     timeline.value = values?.items?.map((item) => ({
       date: item.date ? new Date(item.date).toLocaleDateString() : "",
       icon: item.icon ?? "",
       title: item.title ?? "",
       description: item.description ?? "",
       classes: item.classes ?? "",
-    }))
+    })) || [{ date: "", icon: "", title: "", description: "", classes: "" }];
   },
   { immediate: true }
 );
@@ -126,7 +131,7 @@ const removeItem = (index) => {
   if (timeline.value.length > 1) {
     timeline.value.splice(index, 1);
   } else {
-    showErrorToast("At least one timeline item is required");
+    showErrorToast(t("timeline.minError"));
   }
 };
 
@@ -139,11 +144,10 @@ const handleSubmitTimeline = () => {
   );
 
   if (invalid) {
-    showErrorToast("Please fill all timeline fields");
+    showErrorToast(t("timeline.fillAllError"));
     return;
   }
 
-  // Map timeline items and omit `icon` if empty
   const submittedItems = timeline.value.map((i) => {
     const itemData = {
       date: i.date,
@@ -151,9 +155,7 @@ const handleSubmitTimeline = () => {
       description: i.description.trim(),
       classes: i.classes ?? "",
     };
-    if (i.icon?.trim()) {
-      itemData.icon = i.icon.trim();
-    }
+    if (i.icon?.trim()) itemData.icon = i.icon.trim();
     return itemData;
   });
 

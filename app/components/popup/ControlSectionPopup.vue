@@ -1,41 +1,39 @@
 <template>
   <div class="popup">
     <div class="content">
-      <button
-        class="pi pi-times close_btn"
-        @click="handleClose"
-      ></button>
+      <button class="pi pi-times close_btn" @click="handleClose"></button>
 
-      <h4>Section Name</h4>
+      <h4>{{ $t("sectionPopup.title") }}</h4>
 
       <div class="input">
         <input
           type="text"
-          placeholder="Name"
           v-model.trim="section.name"
+          :placeholder="$t('sectionPopup.placeholder')"
           @keydown.enter="handleSubmit"
         />
       </div>
 
       <button class="main-btn" @click="handleSubmit">
-        Submit
+        {{ $t("sectionPopup.submit") }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { useI18n } from "vue-i18n";
 
-const { showErrorToast } = useApiMethods()
+const { t } = useI18n();
+const { showErrorToast } = useApiMethods();
 
 /* ------------------------
  * EMITS
  * ------------------------ */
 const emit = defineEmits([
-  'handleSectionPopup',
-  'handleShowControlSectionPopup'
-])
+  "handleSectionPopup",
+  "handleShowControlSectionPopup",
+]);
 
 /* ------------------------
  * PROPS (edit mode optional)
@@ -43,20 +41,20 @@ const emit = defineEmits([
 const props = defineProps({
   modifiedSection: {
     type: Object,
-    default: null
-  }
-})
+    default: null,
+  },
+});
 
 /* ------------------------
  * STATE
  * ------------------------ */
 const section = ref({
-  name: '',
+  name: "",
   visible: true,
   layout_items: 1,
   components: [],
-  isDragOver: false
-})
+  isDragOver: false,
+});
 
 /* ------------------------
  * WATCH EDIT MODE
@@ -64,42 +62,41 @@ const section = ref({
 watch(
   () => props.modifiedSection,
   (val) => {
-    if (!val) return
+    if (!val) return;
 
     section.value = {
-      name: val.name ?? '',
+      name: val.name ?? "",
       visible: val.visible ?? true,
       layout_items: val.layout_items ?? 1,
       components: val.components ?? [],
-      isDragOver: false
-    }
+      isDragOver: false,
+    };
   },
   { immediate: true }
-)
+);
 
 /* ------------------------
  * METHODS
  * ------------------------ */
 const handleSubmit = () => {
-  if (!section.value.name) {
-    showErrorToast('You should add the section name to continue!')
-    return
+  if (!section.value.name.trim()) {
+    showErrorToast(t("sectionPopup.emptyError"));
+    return;
   }
 
-  emit('handleSectionPopup', section.value )
-
-  handleClose()
-}
+  emit("handleSectionPopup", section.value);
+  handleClose();
+};
 
 const handleClose = () => {
   section.value = {
-    name: '',
+    name: "",
     visible: true,
     layout_items: 1,
     components: [],
-    isDragOver: false
-  }
+    isDragOver: false,
+  };
 
-  emit('handleShowControlSectionPopup')
-}
+  emit("handleShowControlSectionPopup");
+};
 </script>

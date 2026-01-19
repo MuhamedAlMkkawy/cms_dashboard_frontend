@@ -1,6 +1,6 @@
 <template>
   <div class="logo_fields">
-    <h4 class="centered">Logo Component</h4>
+    <h4 class="centered">{{ $t("logo.title") }}</h4>
 
     <!-- Upload Logo -->
     <div class="input upload_logo">
@@ -13,49 +13,58 @@
       />
       <label for="logo_input" class="upload_logo_btn">
         <i class="pi pi-upload"></i>
-        <span>Upload Logo</span>
+        <span>{{ $t("logo.upload") }}</span>
       </label>
     </div>
 
     <!-- Preview -->
     <div v-if="body.image" class="preview">
-      <img :src="body.image" alt="logo image" loading="lazy" preview />
-
+      <img
+        :src="body.image"
+        :alt="$t('logo.previewAlt')"
+        loading="lazy"
+        preview
+      />
       <button class="pi pi-trash delete_btn" @click="removeImage"></button>
     </div>
 
     <!-- width -->
     <div class="input">
-      <label for="logo_width">Width (px)</label>
+      <label for="logo_width">{{ $t("logo.widthLabel") }}</label>
       <input
         id="logo_width"
         type="number"
         v-model="body.width"
         class="input-wrap"
-        placeholder="Example: 150"
+        :placeholder="$t('logo.widthPlaceholder')"
       />
     </div>
 
     <!-- height -->
     <div class="input">
-      <label for="logo_height">Height (px)</label>
+      <label for="logo_height">{{ $t("logo.heightLabel") }}</label>
       <input
         id="logo_height"
         type="number"
         v-model="body.height"
         class="input-wrap"
-        placeholder="Example: 50"
+        :placeholder="$t('logo.heightPlaceholder')"
       />
     </div>
 
-    <!-- CSS classes -->
+    <!-- CSS classes slot -->
     <slot></slot>
 
-    <button class="main-btn" @click="handleSubmitLogo">Submit</button>
+    <button class="main-btn" @click="handleSubmitLogo">
+      {{ $t("logo.submit") }}
+    </button>
   </div>
 </template>
 
 <script setup>
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
+
 // --------------
 // DEFINE EMITS
 // --------------
@@ -75,55 +84,51 @@ const body = ref({
   height: "",
 });
 
+// ----------------------------
+// DEFINE PROPS
+// ----------------------------
+const props = defineProps({
+  values: Object, // existing buttons data passed in
+});
 
-  // ----------------------------
-  // DEFINE PROPS
-  // ----------------------------
-  const props = defineProps({
-    values: Object, // existing buttons data passed in
-  });
+// -----------------------------
+// HANDLE VIEWING THE RENDERED VALUES
+// -----------------------------
+watch(
+  () => props.values,
+  (values) => {
+    if (!values) return;
 
-  // -----------------------------
-  // HANDLE VIEWING THE RENDERED VALUES
-  // -----------------------------
-  watch(
-    () => props.values,
-    (values) => {
-      if (!values) return;
-
-      body.value = {
-        image: values.image ?? null,
-        width: values.width ?? "",
-        height: values.height ?? "",
-      };
-    },
-    { immediate: true }
-  );
-
+    body.value = {
+      image: values.image ?? null,
+      width: values.width ?? "",
+      height: values.height ?? "",
+    };
+  },
+  { immediate: true }
+);
 
 // -------- HANDLE IMAGE UPLOAD ----------
 const handleImageUpload = (e) => {
   const file = e.target.files?.[0];
 
-  // 1️⃣ No file selected
   if (!file) {
-    showErrorToast("No file selected");
+    showErrorToast(t("logo.noFile"));
     return;
   }
 
-  // 2️⃣ Allowed image types (including SVG)
   const allowedTypes = [
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/gif',
-    'image/svg+xml'
-  ]
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "image/svg+xml",
+  ];
 
   if (!allowedTypes.includes(file.type)) {
-    showErrorToast('Only JPG, PNG, WEBP, GIF, or SVG images are allowed')
-    e.target.value = ''
-    return
+    showErrorToast(t("logo.invalidFile"));
+    e.target.value = "";
+    return;
   }
 
   const formData = new FormData();
@@ -145,7 +150,7 @@ const removeImage = () => {
 // -------- SUBMIT ----------
 const handleSubmitLogo = () => {
   if (!body.value.image) {
-    showErrorToast("Logo image is required");
+    showErrorToast(t("logo.imageRequired"));
     return;
   }
 

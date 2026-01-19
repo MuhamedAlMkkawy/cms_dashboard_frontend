@@ -1,16 +1,12 @@
 <template>
   <div class="social_links_fields">
-    <h4 class="centered">Social Links</h4>
+    <h4 class="centered">{{ $t("social.title") }}</h4>
 
     <!-- Social Items -->
-    <div
-      class="social_item"
-      v-for="(item, index) in socials"
-      :key="index"
-    >
+    <div class="social_item" v-for="(item, index) in socials" :key="index">
       <!-- Icon -->
       <div class="input icon_input">
-        <label>Icon</label>
+        <label>{{ $t("social.icon") }}</label>
         <button
           type="button"
           class="icon_select_btn"
@@ -25,17 +21,17 @@
 
       <!-- Color -->
       <div class="input icon_input">
-        <label for="color">Color</label>
-        <input type="color" name="color" v-model="item.color" id="color">
+        <label>{{ $t("social.color") }}</label>
+        <input type="color" name="color" v-model="item.color" />
       </div>
 
       <!-- Link -->
       <div class="input grow_input">
-        <label>Link</label>
+        <label>{{ $t("social.link") }}</label>
         <input
           type="url"
           v-model="item.link"
-          placeholder="https://example.com"
+          :placeholder="$t('social.linkPlaceholder')"
         />
       </div>
 
@@ -54,34 +50,32 @@
     <!-- Actions -->
     <div class="flex_buttons">
       <button class="main-btn reversed" @click="addItem">
-        Add Link
+        {{ $t("social.addLink") }}
       </button>
       <button class="main-btn" @click="handleSubmitSocials">
-        Submit
+        {{ $t("social.submit") }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-const { showErrorToast } = useToastMsg()
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
+const { showErrorToast } = useToastMsg();
 const emit = defineEmits([
-  'handleSubmitFields',
-  'handleCloseComponentPopup',
-  'openIconPicker'
-])
+  "handleSubmitFields",
+  "handleCloseComponentPopup",
+  "openIconPicker",
+]);
 
-const socials = ref([
-  { icon: '', link: '', color: '#000000' }
-])
+const socials = ref([{ icon: "", link: "", color: "#000000" }]);
 
 // ----------------------------
 // DEFINE PROPS FOR EXISTING DATA
 // ----------------------------
-const props = defineProps({
-  values: Object, 
-})
+const props = defineProps({ values: Object });
 
 // -----------------------------
 // RENDER DATA FROM PROPS
@@ -89,58 +83,51 @@ const props = defineProps({
 watch(
   () => props.values,
   (values) => {
-    if (!values) return
+    if (!values) return;
 
-    socials.value =
-      values?.items?.map((item) => ({
-        icon: item.icon ?? '',
-        link: item.link ?? '',
-        color: item.color ?? '#000000',
-      }))
+    socials.value = values?.items?.map((item) => ({
+      icon: item.icon ?? "",
+      link: item.link ?? "",
+      color: item.color ?? "#000000",
+    })) || [{ icon: "", link: "", color: "#000000" }];
   },
   { immediate: true }
-)
+);
 
 // -----------------------------
 // ADD / REMOVE ITEMS
 // -----------------------------
 const addItem = () => {
-  socials.value.push({ icon: '', link: '', color: '#000000' })
-}
+  socials.value.push({ icon: "", link: "", color: "#000000" });
+};
 
 const removeItem = (index) => {
   if (socials.value.length > 1) {
-    socials.value.splice(index, 1)
+    socials.value.splice(index, 1);
   } else {
-    showErrorToast('At least one social link is required')
+    showErrorToast(t("social.minError"));
   }
-}
+};
 
 // -----------------------------
 // SUBMIT ITEMS
 // -----------------------------
 const handleSubmitSocials = () => {
-  const invalid = socials.value.some(s => !s.link.trim())
+  const invalid = socials.value.some((s) => !s.link.trim());
   if (invalid) {
-    showErrorToast('Please enter a link for each item')
-    return
+    showErrorToast(t("social.fillAllError"));
+    return;
   }
 
-  // Map socials and omit `icon` if empty
   const submittedItems = socials.value.map((s) => {
-    const itemData = {
-      link: s.link.trim(),
-      color: s.color ?? '#000000',
-    }
-    if (s.icon?.trim()) {
-      itemData.icon = s.icon.trim()
-    }
-    return itemData
-  })
+    const itemData = { link: s.link.trim(), color: s.color ?? "#000000" };
+    if (s.icon?.trim()) itemData.icon = s.icon.trim();
+    return itemData;
+  });
 
-  emit('handleSubmitFields', {items : submittedItems})
-  emit('handleCloseComponentPopup')
-}
+  emit("handleSubmitFields", { items: submittedItems });
+  emit("handleCloseComponentPopup");
+};
 </script>
 
 <style scoped lang="scss">

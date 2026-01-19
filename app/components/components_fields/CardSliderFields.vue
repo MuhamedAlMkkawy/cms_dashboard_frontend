@@ -1,53 +1,46 @@
 <template>
   <div class="card_fields">
-    <h4 class="centered">Card Slider</h4>
+    <h4 class="centered">{{ $t("cardSlider.title") }}</h4>
 
-    <!-- -----------------------------
-        ITEMS TO SHOW
-    ----------------------------- -->
+    <!-- ITEMS TO SHOW -->
     <div class="input">
-      <label for="cardItems">Items To Show</label>
+      <label for="cardItems">{{ $t("cardSlider.itemsToShow") }}</label>
       <div class="input-wrap">
-        <select name="card_items" v-model="slider.itemsToShow" id="card_items">
+        <select v-model="slider.itemsToShow">
           <option v-for="i in 5" :key="i" :value="i">{{ i }}</option>
         </select>
       </div>
     </div>
 
-    <!-- -----------------------------
-        AUTOPLAY TOGGLE
-    ----------------------------- -->
+    <!-- AUTOPLAY -->
     <div class="input">
-      <label for="autoplay">Autoplay</label>
+      <label>{{ $t("cardSlider.autoplay") }}</label>
       <ToggleButton
         v-model="slider.autoplay"
         class="w-24"
-        onLabel="On"
-        offLabel="Off"
+        :onLabel="$t('common.on')"
+        :offLabel="$t('common.off')"
       />
     </div>
 
-    <!-- -----------------------------
-        ADD NEW CARD
-    ----------------------------- -->
+    <!-- ADD CARD -->
     <div class="flex_header">
-      <h4>Card Items</h4>
+      <h4>{{ $t("cardSlider.cardItems") }}</h4>
       <button class="main-btn mb-4" @click="addNewCard">
         <i class="pi pi-plus"></i>
       </button>
     </div>
 
-    <!-- -----------------------------
-        CARD ITEMS EDITOR
-    ----------------------------- -->
+    <!-- CARDS -->
     <div class="items_editor">
       <div class="item_card" v-for="(item, index) in slider.items" :key="index">
-          <button
-            class="pi pi-trash delete_btn"
-            v-if="slider.items.length > 1"
-            @click="removeItem(index)"
-          ></button>
-        <!-- IMAGE UPLOAD -->
+        <button
+          class="pi pi-trash delete_btn"
+          v-if="slider.items.length > 1"
+          @click="removeItem(index)"
+        ></button>
+
+        <!-- IMAGE -->
         <div class="image_wrapper">
           <input
             type="file"
@@ -59,15 +52,10 @@
           <label :for="`card_image_${index}`" class="upload_placeholder">
             <template v-if="!item.file">
               <i class="pi pi-upload"></i>
-              <span>Upload Image</span>
+              <span>{{ $t("cardSlider.uploadImage") }}</span>
             </template>
             <template v-else>
-              <img
-                :src="item.file"
-                alt="uploaded image"
-                loading="lazy"
-                preview
-              />
+              <img :src="item.file" loading="lazy" />
             </template>
           </label>
         </div>
@@ -76,14 +64,14 @@
         <input
           type="text"
           v-model="item.title"
-          placeholder="Card Title"
+          :placeholder="$t('cardSlider.placeholders.title')"
           class="card_input"
         />
 
         <!-- TEXT INPUT -->
         <textarea
           v-model="item.text"
-          placeholder="Card Text"
+          :placeholder="$t('cardSlider.placeholders.text')"
           class="card_input"
         ></textarea>
 
@@ -91,26 +79,27 @@
         <input
           type="text"
           v-model="item.link"
-          placeholder="Route / Link"
+          :placeholder="$t('cardSlider.placeholders.link')"
           class="card_input"
         />
       </div>
     </div>
 
-    <slot></slot>
+    <slot />
 
-    <!-- -----------------------------
-        SUBMIT BUTTON
-    ----------------------------- -->
+    <!-- SUBMIT BUTTON -->
     <button class="main-btn mt-4" @click="handleSubmitCardSlider">
-      Submit
+      {{ $t("cardSlider.actions.submit") }}
     </button>
   </div>
 </template>
 
 <script setup>
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 // -----------------------------
-// DEFINE API METHODS
+// API & Toast
 // -----------------------------
 const { submitMethod, submitResult, showErrorToast } = useApiMethods();
 
@@ -125,74 +114,42 @@ const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 const slider = ref({
   itemsToShow: 1,
   autoplay: false,
-  items: [
-    {
-      file: null,
-      title: "",
-      text: "",
-      link: "",
-    },
-  ],
+  items: [{ file: null, title: "", text: "", link: "" }],
 });
 
 // -----------------------------
-// ADD NEW CARD
+// ADD / REMOVE CARD
 // -----------------------------
-const addNewCard = () => {
-  slider.value.items.push({
-    file: null,
-    title: "",
-    text: "",
-    link: "",
-  });
-};
+const addNewCard = () =>
+  slider.value.items.push({ file: null, title: "", text: "", link: "" });
+const removeItem = (index) => slider.value.items.splice(index, 1);
 
 // -----------------------------
-// DETECT THE INDEX OF THE ITEM TO RETURN THE PATH OF ITS UPLOADED IMAGE
+// IMAGE UPLOAD
 // -----------------------------
-const itemIndex = ref()
+const itemIndex = ref();
 
-
-// -----------------------------
-// HANDLE CARD IMAGE UPLOAD
-// -----------------------------
 const handleCardImageUpload = (event, index) => {
   const file = event.target.files[0];
-  if (!file) return showErrorToast('No file found to upload');
+  if (!file) return showErrorToast(t("cardSlider.errors.noFile"));
 
-  itemIndex.value = slider.value.items[index]
+  itemIndex.value = slider.value.items[index];
 
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const formData = new FormData()
-  formData.append('file' , file)
-
-  submitMethod('/uploads/single' , false , formData , 'POST' , null)
+  submitMethod("/uploads/single", false, formData, "POST", null);
 };
 
-watchEffect(()=>{
-  if(submitResult?.value){
-    itemIndex.value.file = submitResult?.value?.data?.path;
-  }
-})
-
-
-// -----------------------------
-// REMOVE CARD ITEM
-// -----------------------------
-const removeItem = (index) => {
-  slider.value.items.splice(index, 1);
-};
-
-// ----------------------------
-// DEFINE PROPS
-// ----------------------------
-const props = defineProps({
-  values: Object,
+watchEffect(() => {
+  if (submitResult?.value) itemIndex.value.file = submitResult.value.data.path;
 });
 
 // -----------------------------
-// HADNLE VIEWING THE RENDERED VALUES
+// HANDLE PROPS VALUES
 // -----------------------------
+const props = defineProps({ values: Object });
+
 watch(
   () => props.values,
   (values) => {
@@ -201,55 +158,50 @@ watch(
     slider.value = {
       itemsToShow: values.itemsToShow ?? 1,
       autoplay: values.autoplay ?? false,
-      items:
-        values.items?.map((item) => ({
-          file: item.file,
-          title: item.title ?? "",
-          text: item.text ?? "",
-          link: item.link ?? "",
-        })),
+      items: values.items?.map((item) => ({
+        file: item.file,
+        title: item.title ?? "",
+        text: item.text ?? "",
+        link: item.link ?? "",
+      })),
     };
   },
   { immediate: true }
 );
 
 // -----------------------------
-// HANDLE SUBMIT
+// SUBMIT
 // -----------------------------
 const handleSubmitCardSlider = () => {
   if (!slider.value.items.length) {
-    showErrorToast("You should add at least one card.");
-    return;
+    return showErrorToast(t("cardSlider.errors.minCard"));
   }
 
-  // Validate each card
-  const invalidIndex = slider.value.items.findIndex((item) => {
-    return (
-      !item.file || // file missing
-      !item.title?.trim() || // title empty
-      !item.text?.trim() || // text empty
-      !item.link?.trim() // link empty
-    );
-  });
+  const invalidIndex = slider.value.items.findIndex(
+    (item) =>
+      !item.file ||
+      !item.title?.trim() ||
+      !item.text?.trim() ||
+      !item.link?.trim()
+  );
 
   if (invalidIndex !== -1) {
-    showErrorToast(`Please fill all fields for card #${invalidIndex + 1}`);
-    return;
+    return showErrorToast(
+      t("cardSlider.errors.fillCard", { index: invalidIndex + 1 })
+    );
   }
 
-  // All fields have its own values
-  const validatedSlider = {
+  emit("handleSubmitFields", {
     itemsToShow: slider.value.itemsToShow,
     autoplay: slider.value.autoplay,
-    items: slider.value.items.map((item) => ({
-      file: item.file,
-      title: item.title.trim(),
-      text: item.text.trim(),
-      link: item.link.trim(),
+    items: slider.value.items.map((i) => ({
+      file: i.file,
+      title: i.title.trim(),
+      text: i.text.trim(),
+      link: i.link.trim(),
     })),
-  };
+  });
 
-  emit("handleSubmitFields", validatedSlider);
   emit("handleCloseComponentPopup");
 };
 </script>
@@ -308,7 +260,6 @@ const handleSubmitCardSlider = () => {
           color: $dangerColor;
         }
       }
-
 
       .image_wrapper {
         position: relative;

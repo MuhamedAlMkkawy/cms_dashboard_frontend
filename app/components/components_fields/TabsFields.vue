@@ -1,22 +1,22 @@
 <template>
   <div class="tabs_fields">
-    <h4 class="centered">Tabs Fields</h4>
+    <h4 class="centered">{{ $t("tabs.title") }}</h4>
 
     <!-- Tabs Items -->
-    <div
-      class="tab_item"
-      v-for="(tab, index) in tabs"
-      :key="index"
-    >
+    <div class="tab_item" v-for="(tab, index) in tabs" :key="index">
       <div class="item_index">
-        Tab <span># {{ index + 1 }}</span>
+        {{ $t("tabs.tab") }} <span># {{ index + 1 }}</span>
       </div>
 
       <div class="tab_header">
         <!-- Title -->
         <div class="input grow_input">
-          <label>Tab Title</label>
-          <input type="text" v-model="tab.title" placeholder="Tab title" />
+          <label>{{ $t("tabs.tabTitle") }}</label>
+          <input
+            type="text"
+            v-model="tab.title"
+            :placeholder="$t('tabs.tabTitlePlaceholder')"
+          />
         </div>
 
         <!-- Delete -->
@@ -31,11 +31,11 @@
 
       <!-- Content -->
       <div class="input full_input">
-        <label>Tab Description</label>
+        <label>{{ $t("tabs.tabDescription") }}</label>
         <textarea
           rows="4"
           v-model="tab.description"
-          placeholder="Tab description..."
+          :placeholder="$t('tabs.tabDescriptionPlaceholder')"
         ></textarea>
       </div>
     </div>
@@ -44,79 +44,80 @@
 
     <!-- Actions -->
     <div class="flex_buttons">
-      <button class="main-btn reversed" @click="addTab">Add Tab</button>
-      <button class="main-btn" @click="handleSubmitTabs">Submit</button>
+      <button class="main-btn reversed" @click="addTab">
+        {{ $t("tabs.addTab") }}
+      </button>
+      <button class="main-btn" @click="handleSubmitTabs">
+        {{ $t("tabs.submit") }}
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-  const { showErrorToast } = useToastMsg()
-  const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"])
+import { useI18n } from "vue-i18n";
 
-  const tabs = ref([
-    {
-      title: "",
-      description: "",
-    },
-  ])
+const { t } = useI18n();
+const { showErrorToast } = useToastMsg();
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
-  // ----------------------------
-  // DEFINE PROPS
-  // ----------------------------
-  const props = defineProps({
-    values: Object, // existing buttons data passed in
+const tabs = ref([
+  {
+    title: "",
+    description: "",
+  },
+]);
+
+// ----------------------------
+// DEFINE PROPS
+// ----------------------------
+const props = defineProps({ values: Object });
+
+// -----------------------------
+// RENDER DATA FROM PROPS
+// -----------------------------
+watch(
+  () => props.values,
+  (values) => {
+    if (!values) return;
+
+    tabs.value = values?.items?.map((item) => ({
+      title: item.title ?? "",
+      description: item.description ?? "",
+    })) || [{ title: "", description: "" }];
+  },
+  { immediate: true }
+);
+
+// Add tab
+const addTab = () => {
+  tabs.value.push({
+    title: "",
+    description: "",
   });
+};
 
-  // -----------------------------
-  // HANDLE VIEWING THE RENDERED VALUES
-  // -----------------------------
-  watch(
-    () => props.values,
-    (values) => {
+// Remove tab
+const removeTab = (index) => {
+  if (tabs.value.length > 1) {
+    tabs.value.splice(index, 1);
+  } else {
+    showErrorToast(t("tabs.minError"));
+  }
+};
 
-      if (!values) return;
-
-      // Render buttons from props or fallback to default
-      tabs.value = values?.items?.map((item) => ({
-        title: item.title ?? "",
-        description : item.description ?? ""
-      }))
-    },
-    { immediate: true }
+// Submit tabs
+const handleSubmitTabs = () => {
+  const invalid = tabs.value.some(
+    (t) => !t?.title?.trim() || !t?.description?.trim()
   );
-
-
-
-  // Add tab
-  const addTab = () => {
-    tabs.value.push({
-      title: "",
-      description: "",
-    })
+  if (invalid) {
+    showErrorToast(t("tabs.fillAllError"));
+    return;
   }
-
-  // Remove tab
-  const removeTab = (index) => {
-    if (tabs.value.length > 1) {
-      tabs.value.splice(index, 1)
-    } else {
-      showErrorToast("At least one tab is required")
-    }
-  }
-
-  // Submit tabs
-  const handleSubmitTabs = () => {
-    const invalid = tabs.value.some(
-      t => !t?.title?.trim() || !t?.description?.trim()
-    )
-    if (invalid) {
-      showErrorToast("Please fill all tab titles and descriptions")
-      return
-    }
-    emit("handleSubmitFields", {items : tabs.value})
-    emit("handleCloseComponentPopup")
-  }
+  emit("handleSubmitFields", { items: tabs.value });
+  emit("handleCloseComponentPopup");
+};
 </script>
 
 <style scoped lang="scss">

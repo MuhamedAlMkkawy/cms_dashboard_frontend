@@ -1,36 +1,35 @@
 <template>
   <div class="custom_html_fields">
-    <h4 class="centered">Custom HTML Section</h4>
+    <h4 class="centered">{{ $t("customHtml.title") }}</h4>
+
     <!-- HTML QUILL EDITOR -->
-    <Editor
-      v-model="body.html"
-      placeholder="Write or paste HTML here..."
-    />
+    <Editor v-model="body.html" :placeholder="$t('customHtml.placeholder')" />
 
     <slot></slot>
 
     <button class="main-btn" @click="handleSubmitHtml">
-      Submit
+      {{ $t("customHtml.submit") }}
     </button>
   </div>
 </template>
 
-<script setup>  
-const { showErrorToast } = useToastMsg()
+<script setup>
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
+
+const { showErrorToast } = useToastMsg();
 
 // ---------------
 // DEFINE EMITS
 // ---------------
-const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"])
-
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
 // ----------------
 // DEFINE EDITOR DATA
 // ----------------
 const body = ref({
-  html: ""
-})
-
+  html: "",
+});
 
 // ----------------------------
 // DEFINE PROPS
@@ -45,27 +44,24 @@ const props = defineProps({
 watch(
   () => props.values,
   (values) => {
-
     if (!values) return;
-
-    body.value.html = values.html
+    body.value.html = values.html;
   },
   { immediate: true }
 );
 
 // ----------------
-// HANDLE SUBMIT 
+// HANDLE SUBMIT
 // ----------------
 const handleSubmitHtml = () => {
   if (!body.value.html.trim()) {
-    showErrorToast("Content cannot be empty")
-    return
+    showErrorToast(t("customHtml.emptyError"));
+    return;
   }
 
-
-  emit("handleSubmitFields", body.value)
-  emit("handleCloseComponentPopup")
-}
+  emit("handleSubmitFields", body.value);
+  emit("handleCloseComponentPopup");
+};
 </script>
 
 <style scoped lang="scss">
@@ -84,7 +80,6 @@ const handleSubmitHtml = () => {
       margin-bottom: 6px;
     }
   }
-
 
   // .editor_input {
   //   width: 100%;

@@ -1,20 +1,18 @@
 <template>
   <div class="popup" v-if="visible">
     <div class="content">
-
       <!-- CLOSE -->
-      <button
-        class="pi pi-times close_btn"
-        @click="close"
-      ></button>
-      <label for="icon_input">Search an Icon</label>
+      <button class="pi pi-times close_btn" @click="close"></button>
+
+      <label for="icon_input">{{ $t("iconPicker.label") }}</label>
+
       <!-- SEARCH -->
       <input
         id="icon_input"
         class="icon_search"
         type="text"
         v-model="search"
-        placeholder="Search icon..."
+        :placeholder="$t('iconPicker.placeholder')"
       />
 
       <!-- ICONS -->
@@ -28,7 +26,6 @@
           <i :class="icon"></i>
         </button>
       </div>
-
     </div>
   </div>
 </template>
@@ -57,10 +54,10 @@ onMounted(() => {
   const styles = Array.from(document.styleSheets);
   const result = new Set();
 
-  styles.forEach(sheet => {
+  styles.forEach((sheet) => {
     try {
       const rules = sheet.cssRules || [];
-      Array.from(rules).forEach(rule => {
+      Array.from(rules).forEach((rule) => {
         if (!rule.selectorText) return;
 
         // Match: .pi-home:before OR .pi-home::before
@@ -78,13 +75,12 @@ onMounted(() => {
   icons.value = Array.from(result).sort();
 });
 
-
 // -----------------------------
 // FILTER ICONS
 // -----------------------------
 const filteredIcons = computed(() => {
   if (!search.value) return icons.value;
-  return icons.value.filter(icon =>
+  return icons.value.filter((icon) =>
     icon.toLowerCase().includes(search.value.toLowerCase())
   );
 });
@@ -94,7 +90,7 @@ const filteredIcons = computed(() => {
 // -----------------------------
 const select = (icon) => {
   emit("select", icon);
-  search.value = ""
+  search.value = "";
   visible.value = false;
 };
 
@@ -105,17 +101,15 @@ const close = () => {
 </script>
 
 <style scoped lang="scss">
-  // .popup{
-  //   // min-height : 500px;
-  // }
+// .popup{
+//   // min-height : 500px;
+// }
 
-
-  .content {
-    height: 100%;
-    // padding-top: 40px;
-    text-align: start;
-  }
-
+.content {
+  height: 100%;
+  // padding-top: 40px;
+  text-align: start;
+}
 
 .icon_search {
   width: 100%;

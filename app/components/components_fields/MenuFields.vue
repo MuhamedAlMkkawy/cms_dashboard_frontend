@@ -1,43 +1,46 @@
 <template>
   <div class="nav_menu_fields">
-    <h4 class="centered">Nav Menu</h4>
+    <h4 class="centered">{{ $t("navMenu.title") }}</h4>
 
-    <!-- -----------------------------
-        LOOP PARENT + CHILD AS ONE UNIT
-    ------------------------------ -->
     <div class="menu_group" v-for="(item, index) in body.items" :key="index">
       <!-- Parent -->
       <div :class="['menu_item ', { has_childs: item?.hasChilds }]">
         <div class="input icon_input">
-          <label>Icon</label>
-
+          <label>{{ $t("navMenu.icon") }}</label>
           <button class="icon_select_btn" @click="emit('openIconPicker', item)">
             <i :class="item.icon || 'pi pi-stop'"></i>
-            <!-- <span>{{ item.icon ? 'Change Icon' : 'Choose Icon' }}</span> -->
           </button>
         </div>
 
         <div class="input">
-          <label>Title</label>
-          <input type="text" v-model="item.title" placeholder="Route title" />
+          <label>{{ $t("navMenu.titleLabel") }}</label>
+          <input
+            type="text"
+            v-model="item.title"
+            :placeholder="$t('navMenu.titlePlaceholder')"
+          />
         </div>
 
         <div class="input" v-if="!item?.hasChilds">
-          <label>link</label>
-          <input type="text" v-model="item.link" placeholder="Route link" />
+          <label>{{ $t("navMenu.linkLabel") }}</label>
+          <input
+            type="text"
+            v-model="item.link"
+            :placeholder="$t('navMenu.linkPlaceholder')"
+          />
         </div>
 
         <div class="input" v-if="!item.hasChilds">
-          <label>Target</label>
+          <label>{{ $t("navMenu.targetLabel") }}</label>
           <select v-model="item.target">
-            <option value="_self">Same Tab</option>
-            <option value="_blank">New Tab</option>
+            <option value="_self">{{ $t("navMenu.sameTab") }}</option>
+            <option value="_blank">{{ $t("navMenu.newTab") }}</option>
           </select>
         </div>
 
         <div class="input toggle_input">
           <ToggleSwitch v-model="item.hasChilds" @change="onToggle(index)" />
-          <span>Has Childs</span>
+          <span>{{ $t("navMenu.hasChilds") }}</span>
         </div>
 
         <button
@@ -51,21 +54,20 @@
       <div v-if="item.hasChilds" class="submenu_block">
         <div class="submenu_block_header">
           <h5>
-            Sub Menu for: <span>{{ item.title }}</span>
+            {{ $t("navMenu.subMenuFor") }} <span>{{ item.title }}</span>
           </h5>
           <button class="add_sub_menu" @click="addSubMenuItem(index)">
             <i class="pi pi-plus"></i>
           </button>
         </div>
+
         <div
           class="submenu_item"
           v-for="(subItem, subIndex) in item.children"
           :key="`child-${index}-${subIndex}`"
         >
-          <!-- <h4>( {{ subIndex+1 }} ) </h4> -->
-
           <div class="icon_input input">
-            <label for="icon">icon</label>
+            <label>{{ $t("navMenu.icon") }}</label>
             <button
               class="icon_select_btn"
               @click="emit('openIconPicker', subItem)"
@@ -75,28 +77,28 @@
           </div>
 
           <div class="input">
-            <label>Sub Menu Title</label>
+            <label>{{ $t("navMenu.subTitleLabel") }}</label>
             <input
               type="text"
               v-model="subItem.title"
-              placeholder="Sub Menu title"
+              :placeholder="$t('navMenu.subTitlePlaceholder')"
             />
           </div>
 
           <div class="input">
-            <label>Sub Menu link</label>
+            <label>{{ $t("navMenu.subLinkLabel") }}</label>
             <input
               type="text"
               v-model="subItem.link"
-              placeholder="Sub Menu link"
+              :placeholder="$t('navMenu.subLinkPlaceholder')"
             />
           </div>
 
           <div class="input" v-if="!subItem.hasChilds">
-            <label>Sub Menu Target</label>
+            <label>{{ $t("navMenu.subTargetLabel") }}</label>
             <select v-model="subItem.target">
-              <option value="_self">Same Tab</option>
-              <option value="_blank">New Tab</option>
+              <option value="_self">{{ $t("navMenu.sameTab") }}</option>
+              <option value="_blank">{{ $t("navMenu.newTab") }}</option>
             </select>
           </div>
 
@@ -113,21 +115,25 @@
 
     <div class="flex_buttons">
       <button class="main-btn reversed" @click="addMenuItem">
-        Add Menu Item
+        {{ $t("navMenu.addMenuItem") }}
       </button>
-      <button class="main-btn" @click="handleSubmitNavMenu">Submit</button>
+      <button class="main-btn" @click="handleSubmitNavMenu">
+        {{ $t("navMenu.submit") }}
+      </button>
     </div>
-
-    <!--     
-  <IconPicker
-    v-model="iconPickerOpen"
-    @select="setIcon"
-  /> -->
   </div>
 </template>
 
 <script setup>
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
 const { showErrorToast } = useToastMsg();
+
+// ----------------------------
+// DEFINE EMITS
+// ----------------------------
 const emit = defineEmits([
   "handleSubmitFields",
   "handleCloseComponentPopup",
@@ -161,9 +167,8 @@ const body = ref({
 // DEFINE PROPS
 // ----------------------------
 const props = defineProps({
-  values : Object
-})
-
+  values: Object,
+});
 
 // -----------------------------
 // HANDLE SHOWING THE VALUES OF THE FIELDS
@@ -186,12 +191,9 @@ watch(
           }))
         : [],
     }));
-
   },
   { immediate: true }
 );
-
-
 
 // -----------------------------
 // ADD / REMOVE PARENT MENU ITEMS
@@ -210,7 +212,7 @@ const removeMenuItem = (index) => {
   if (body.value.items.length !== 1) {
     body.value.items.splice(index, 1);
   } else {
-    showErrorToast("Menu should have at least one Route");
+    showErrorToast(t("navMenu.menuMinError"));
   }
 };
 
@@ -247,45 +249,29 @@ const removeSubMenuItem = (i, sIndex) => {
 // ----------------------------------------
 const normalizeMenuItems = (items = []) => {
   return items.map((item) => {
-    const normalized = {
-      title: item.title,
-    };
+    const normalized = { title: item.title };
 
-    // icon → only if exists
-    if (item.icon && item.icon.trim() !== "") {
-      normalized.icon = item.icon;
-    }
+    if (item.icon?.trim()) normalized.icon = item.icon;
 
     const hasChildren =
-      item.hasChilds == true &&
+      item.hasChilds &&
       Array.isArray(item.children) &&
       item.children.length > 0;
+    if (item.hasChilds !== undefined) normalized.hasChilds = item.hasChilds;
 
-    // hasChilds → only if exists
-    if (item.hasChilds !== undefined) {
-      normalized.hasChilds = item.hasChilds;
-    }
-
-    // ================= HAS CHILDREN =================
     if (hasChildren) {
       normalized.children = normalizeMenuItems(item.children);
       return normalized;
     }
 
-    // ================= NO CHILDREN =================
     if (item.link) {
       normalized.link = item.link;
-
-      if (item.target) {
-        normalized.target = item.target;
-      }
+      if (item.target) normalized.target = item.target;
     }
 
     return normalized;
   });
 };
-
-
 
 // -----------------------------
 // HANDLE SUBMIT ACTION
@@ -298,7 +284,7 @@ const handleSubmitNavMenu = () => {
   });
 
   if (invalid) {
-    showErrorToast("Please fill all titles and links to continue");
+    showErrorToast(t("navMenu.fillAllError"));
     return;
   }
 

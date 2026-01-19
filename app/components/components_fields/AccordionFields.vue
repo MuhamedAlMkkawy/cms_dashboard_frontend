@@ -1,6 +1,6 @@
 <template>
   <div class="accordion_fields">
-    <h4 class="centered">Accordion</h4>
+    <h4 class="centered">{{ $t("accordion.title") }}</h4>
 
     <!-- Accordion Items -->
     <div
@@ -8,14 +8,17 @@
       v-for="(item, index) in accordions"
       :key="index"
     >
-    <h6 class="item_index">Item <span>#{{ index+1 }}</span></h6>
+      <h6 class="item_index">
+        {{ $t("accordion.item") }} <span>#{{ index + 1 }}</span>
+      </h6>
+
       <!-- Title -->
       <div class="input grow_input">
-        <label>Title</label>
+        <label>{{ $t("accordion.fields.titleLabel") }}</label>
         <input
           type="text"
           v-model="item.title"
-          placeholder="Accordion title"
+          :placeholder="$t('accordion.fields.titlePlaceholder')"
         />
       </div>
 
@@ -30,11 +33,11 @@
 
       <!-- Content -->
       <div class="input full_input">
-        <label>Content</label>
+        <label>{{ $t("accordion.fields.contentLabel") }}</label>
         <textarea
           rows="4"
           v-model="item.content"
-          placeholder="Accordion content..."
+          :placeholder="$t('accordion.fields.contentPlaceholder')"
         ></textarea>
       </div>
     </div>
@@ -44,52 +47,43 @@
     <!-- Actions -->
     <div class="flex_buttons">
       <button class="main-btn reversed" @click="addAccordion">
-        Add Item
+        {{ $t("accordion.actions.addItem") }}
       </button>
       <button class="main-btn" @click="handleSubmitAccordion">
-        Submit
+        {{ $t("accordion.actions.submit") }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-  const { showErrorToast } = useToastMsg()
+  import { useI18n } from "vue-i18n";
 
-  const emit = defineEmits([
-    "handleSubmitFields",
-    "handleCloseComponentPopup"
-  ])
+  const { t } = useI18n();
+  const { showErrorToast } = useToastMsg();
+
+  const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
   const accordions = ref([
     {
       title: "",
       content: "",
-    }
-  ])
+    },
+  ]);
 
-
-  // ----------------------------
-  // DEFINE PROPS
-  // ----------------------------
   const props = defineProps({
-    values: Object, // existing buttons data passed in
+    values: Object,
   });
 
-  // -----------------------------
-  // HANDLE VIEWING THE RENDERED VALUES
-  // -----------------------------
   watch(
     () => props.values,
     (values) => {
-
       if (!values) return;
 
-      // Render buttons from props or fallback to default
       accordions.value = values?.items?.map((item) => ({
         title: item.title ?? "",
-        content : item.content ?? ""
-      }))
+        content: item.content ?? "",
+      }));
     },
     { immediate: true }
   );
@@ -99,31 +93,32 @@
     accordions.value.push({
       title: "",
       content: "",
-    })
-  }
+    });
+  };
 
   // Remove accordion
   const removeAccordion = (index) => {
     if (accordions.value.length > 1) {
-      accordions.value.splice(index, 1)
+      accordions.value.splice(index, 1);
     } else {
-      showErrorToast("At least one accordion item is required")
+      showErrorToast(t("accordion.errors.atLeastOne"));
     }
-  }
+  };
 
   // Submit
   const handleSubmitAccordion = () => {
     const invalid = accordions.value.some(
-      a => !a.title.trim() || !a.content.trim()
-    )
+      (a) => !a.title.trim() || !a.content.trim()
+    );
 
     if (invalid) {
-      showErrorToast("Please fill all accordion titles and contents")
-      return
+      showErrorToast(t("accordion.errors.fillAll"));
+      return;
     }
-    emit("handleSubmitFields", {items : accordions.value})
-    emit("handleCloseComponentPopup")
-  }
+
+    emit("handleSubmitFields", { items: accordions.value });
+    emit("handleCloseComponentPopup");
+  };
 </script>
 
 <style scoped lang="scss">
@@ -149,6 +144,4 @@
     min-height: 90px;
   }
 }
-
-
 </style>

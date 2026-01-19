@@ -6,27 +6,28 @@
         @click="handleClose"
       ></button>
 
-      <h4>Page Name</h4>
+      <h4>{{ $t("pagePopup.title") }}</h4>
 
       <div class="input">
         <input
           type="text"
-          placeholder="Name"
           v-model.trim="page.name"
+          :placeholder="$t('pagePopup.placeholder')"
           @keydown.enter="handleSubmit"
         />
       </div>
 
       <button class="main-btn" @click="handleSubmit">
-        Submit
+        {{ $t("pagePopup.submit") }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const { showErrorToast } = useApiMethods()
 
 /* ------------------------
@@ -69,8 +70,8 @@ watch(
  * METHODS
  * ------------------------ */
 const handleSubmit = () => {
-  if (!page.value.name) {
-    showErrorToast('You should add the page name to continue!')
+  if (!page.value.name.trim()) {
+    showErrorToast(t("pagePopup.emptyError"))
     return
   }
 
