@@ -3,7 +3,13 @@
     <div class="side_bar" v-if="pages.length">
       <div class="header_image">
         <button class="back_btn" @click="$router.back()">
-          <i class="pi pi-angle-left"></i>
+          <i
+            :class="
+              globalStore.lang === 'ar'
+                ? 'pi pi-angle-right'
+                : 'pi pi-angle-left'
+            "
+          ></i>
         </button>
         <div class="image">
           <img
@@ -27,6 +33,20 @@
       </div>
     </div>
     <div class="project_content">
+      <!-- <div class="pages">
+        <button
+          class="add_page gradient_background"
+          @click="showControlPagePopup = true"
+          :title="t('projectEditor.addPage')"
+        >
+          <i class="pi pi-plus"></i>
+          {{ t("projectEditor.addNewPage") }}
+        </button>
+        <button class="logout_btn main-btn danger" @click="handleLogout">
+          <i class="pi pi-sign-out"></i>
+        </button>
+        <LanguageSwitch />
+      </div> -->
       <div class="pages">
         <div
           v-for="page in pages"
@@ -63,6 +83,9 @@
           <i class="pi pi-plus"></i>
           {{ t("projectEditor.addNewPage") }}
         </button>
+        <!-- <button class="logout_btn main-btn danger" @click="handleLogout">
+          <i class="pi pi-sign-out"></i>
+        </button> -->
         <LanguageSwitch />
       </div>
     </div>
@@ -220,6 +243,11 @@
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+// -----------------------------
+// DEFINE GLOBAL STORE
+// -----------------------------
+const globalStore = useGlobalStore();
+
 // -----------------------------
 // DEFINE ROUTE
 // -----------------------------
@@ -583,22 +611,18 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-  .languages-switch{
-    position: unset;
-    i.pi{
-      color: red !important;
-    }
-    a{
-      color: $mainColor !important;
-    }
-  }
 .project_page {
   margin-inline-start: 250px;
   padding: 20px;
-
+  button.logout_btn {
+    width: unset;
+    height: 45px;
+    padding: 0px 15px;
+    margin: 0 !important;
+  }
   .pages {
     @include displayFlex($justify: start, $gap: 10px);
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 
     .page_item {
       background: #e4e4e450;

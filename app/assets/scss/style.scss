@@ -200,3 +200,16 @@ span[role="alert"] {
     }
   }
 }
+
+.project_page {
+  .languages-switch {
+    position: unset;
+    i.pi {
+      color: $mainColor !important;
+    }
+    a {
+      min-height: 40px;
+      color: $mainColor !important;
+    }
+  }
+}
