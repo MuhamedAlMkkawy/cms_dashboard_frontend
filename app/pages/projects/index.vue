@@ -37,7 +37,7 @@
         </NuxtLink>
 
         <NuxtLink
-          to="/modify_project"
+          :to="$localeRoute('/modify_project')"
           class="content_item add_project"
           :title="$t('projects.addProject')"
         >
