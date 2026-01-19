@@ -241,5 +241,18 @@
   },
   "empty": {
     "text": "No Content Found Yet"
+  },
+  "toast": {
+    "error": "Error",
+    "success": "Success",
+    "info": "Info",
+    "warn": "Warning"
+  },
+  "authorization": {
+    "error": "You must be logged in to continue."
+  },
+  "error_page": {
+    "title": "Page is Not Found",
+    "home_button": "Go To Home Page"
   }
 }

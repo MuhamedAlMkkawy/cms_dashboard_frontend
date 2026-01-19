@@ -28,7 +28,7 @@ export function useApiMethods() {
 
 
   // define handle the next route 
-  const handleNextRoute = (nextRoute) => {
+  const handleNextRoute = async (nextRoute) => {
     setTimeout(()=>{
       if(nextRoute == 'reload_page'){
         router.go(0);
@@ -65,12 +65,11 @@ export function useApiMethods() {
     // ${authStore?.userData ? `?device_id=${globalStore.device_id}&` : apiUrl.startsWith('search?') ? '&' : '?' }
     if (error) {
       handleToastMsg('error' , error?.response?._data?.message)
-      if (error?.response?._data?.error === "Forbidden") {
+      if (error?.response?._data?.error === "Unauthorized") {
         setTimeout(() => {
-          router.push(localeRoute('login'));
+          handleNextRoute('login');
         }, 500);
         useCookie("authStore").value = "";
-        window.sessionStorage.clear();
       }
     } else {
       if (data.status == 'success') {
@@ -93,12 +92,11 @@ export function useApiMethods() {
     if (error) {
       handleToastMsg('error' , error?.response?._data?.message)
       if(
-        error?.response?._data?.message === 'forbidden'
+        error?.response?._data?.error === 'Unauthorized'
       ){
         useCookie('authStore').value = ''
-        window.sessionStorage.clear();
         setTimeout(() => {
-          handleNextRoute('/auth/login')
+          handleNextRoute('/login')
         }, 500);
       }
     }

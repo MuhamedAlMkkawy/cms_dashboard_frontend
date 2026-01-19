@@ -468,10 +468,6 @@ const resizeMove = (e) => {
   resizing.content.customClasses = `${classes} w-[${Math.floor(
     newWidth
   )}%]`.trim();
-
-  // Optional: force re-render if using reactive framework
-  // e.g., in Vue: trigger reactivity by replacing the object
-  // resizing.content = { ...resizing.content };
 };
 
 const stopResize = () => {

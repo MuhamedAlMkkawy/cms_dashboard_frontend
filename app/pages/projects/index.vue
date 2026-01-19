@@ -60,7 +60,7 @@ definePageMeta({
 const handleDraftProject = (projectID, projectVisible) => {
   submitMethod(
     `projects/${projectID}`,
-    false,
+    true,
     {
       visible: !projectVisible,
     },
