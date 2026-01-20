@@ -75,11 +75,11 @@ export function useApiMethods() {
     } else {
       if (data.status == "success") {
         getResult.value = data;
+        globalStore.switchLoading(false);
       }
       if (showToast) {
         handleToastMsg(data?.status, data?.message);
       }
-      globalStore.switchLoading(false);
     }
   };
 
