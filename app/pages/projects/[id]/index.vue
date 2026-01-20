@@ -2,13 +2,16 @@
   <div class="project_page page" :style="pages.length === 0 ? 'margin: 0' : ''">
     <div class="side_bar" v-if="pages.length">
       <div class="header_image">
-        <button :class="['back_btn ' , {ar_btn : globalStore.lang == 'ar'}]" @click="$router.back()">
+        <!-- <button
+          :class="['back_btn ', { ar_btn: globalStore.lang == 'ar' }]"
+          @click="$router.back()"
+        >
           <i
             :class="`pi pi-angle-${
               globalStore.lang == 'ar' ? 'right' : 'left'
             }`"
           ></i>
-        </button>
+        </button> -->
         <div class="image">
           <img
             src="@/assets/images/logo.png"
@@ -31,7 +34,7 @@
       </div> -->
     </div>
     <div class="project_content">
-      <div class="pages">
+      <div class="pages flex_content">
         <div class="image">
           <img :src="currentPage?.logo" alt="logo_image" loading="lazy" />
         </div>
@@ -43,12 +46,9 @@
           <i class="pi pi-plus"></i>
           {{ t("projectEditor.addNewPage") }}
         </button>
-        <button class="logout_btn main-btn danger" @click="handleLogout">
-          <i class="pi pi-sign-out"></i>
-        </button>
-        <LanguageSwitch />
+        <ProjectControl />
       </div>
-      <div class="pages">
+      <div class="pages flex_content">
         <div
           v-for="page in pages"
           :key="page"
@@ -244,6 +244,11 @@
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+
+definePageMeta({
+  layout: "none",
+});
+
 // -----------------------------
 // DEFINE GLOBAL STORE
 // -----------------------------
@@ -336,10 +341,6 @@ const handleSectionPopup = (section) => {
 const handleEditSection = (section) => {
   modifiedSection.value = section;
   showControlSectionPopup.value = true;
-};
-
-const getSlotsCount = (section) => {
-  return section.components.length + 1; // always add 1 empty slot
 };
 
 // ----------------------------
@@ -536,14 +537,6 @@ const handleAddComponentContent = (data) => {
   targetComponent.content = data.content;
 };
 
-// ----------------------------
-// HANDLE CHANGE SECTION LAYOUT
-// ----------------------------
-const changeLayout = (section) => {
-  section.layout_items =
-    section.layout_items < 3 ? section.layout_items + 1 : 1;
-};
-
 const originalPages = ref({});
 
 watch(
@@ -573,12 +566,6 @@ const isPageChanged = computed(() => {
   return JSON.stringify(currentPage.value) != JSON.stringify(original);
 });
 
-// ----------------------------
-// HANDLE LOGOUT
-// ----------------------------
-const handleLogout = () => {
-  submitMethod("/logout", true, null, "POST", "/login");
-};
 // ----------------------------
 // HANDLE SAVE PAGE CONTENT
 // ----------------------------
@@ -621,13 +608,8 @@ onMounted(() => {
 .project_page {
   margin-inline-start: 250px;
   padding: 20px;
-  button.logout_btn {
-    width: unset;
-    height: 45px;
-    padding: 0px 15px;
-    margin: 0 !important;
-  }
-  .pages {
+
+  .flex_content {
     @include displayFlex($justify: start, $gap: 10px);
     margin-bottom: 15px;
     &:first-of-type {
@@ -689,6 +671,7 @@ onMounted(() => {
       border-radius: 4px;
       // background: $mainColor;
       min-height: 42px;
+      min-width: 48px !important;
       animation: pulse-m infinite 1s linear;
       i.pi {
         font-size: 15px;

@@ -47,7 +47,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(
+    background:
+      radial-gradient(
         circle at 20% 80%,
         rgba(255, 255, 255, 0.1) 2%,
         transparent 5%
@@ -163,12 +164,25 @@ span[role="alert"] {
 }
 
 // style the language switch
+.project_control {
+  // position: fixed;
+  // inset-inline-start: 50px;
+  // top: 50px;
+  @include displayFlex($gap: 4px);
+}
+header {
+  .project_control {
+    position: unset;
+    color: #fff;
+    .languages-switch {
+      a {
+        min-height: 42px;
+      }
+    }
+  }
+}
 .languages-switch {
-  position: relative;
   padding: 4px 8px;
-  position: fixed;
-  inset-inline-start: 50px;
-  bottom: 50px;
   display: flex;
   align-items: center;
   justify-content: center;

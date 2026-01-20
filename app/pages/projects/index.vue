@@ -1,13 +1,13 @@
 <template>
   <div class="page projects_page gradient_background">
     <div class="container">
-      <div class="image mazaya_logo">
+      <!-- <div class="image mazaya_logo">
         <img
           src="@/assets/images/logo.png"
           :alt="$t('projects.logoAlt')"
           loading="lazy"
         />
-      </div>
+      </div> -->
 
       <div class="content_items items_4">
         <NuxtLink
@@ -45,16 +45,15 @@
         </NuxtLink>
       </div>
     </div>
-    <LanguageSwitch />
   </div>
 </template>
 
 <script setup>
 const { getMethod, submitMethod, getResult } = useApiMethods();
 
-definePageMeta({
-  layout: "none",
-});
+// definePageMeta({
+//   layout: "none",
+// });
 
 //  HANDLE DRAFT THE PROJECT
 const handleDraftProject = (projectID, projectVisible) => {

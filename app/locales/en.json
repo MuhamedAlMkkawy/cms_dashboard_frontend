@@ -50,7 +50,7 @@
   "projectEditor": {
     "back": "Back",
     "addPage": "Add Page",
-    "addNewPage": "Add New Page",
+    "addNewPage": "Add Page",
     "addSection": "Add Section",
     "save": "Save",
     "menu": {
@@ -254,5 +254,8 @@
   "error_page": {
     "title": "Page is Not Found",
     "home_button": "Go To Home Page"
+  },
+  "logout": {
+    "text": "Logout"
   }
 }

@@ -1,13 +1,13 @@
 <template>
   <div class="page home_page gradient_background">
     <div class="container">
-      <div class="image mazaya_logo">
+      <!-- <div class="image mazaya_logo">
         <img
           src="../assets/images/logo.png"
           :alt="$t('home.logoAlt')"
           loading="lazy"
         />
-      </div>
+      </div> -->
 
       <h1>{{ $t("home.welcome") }}</h1>
 
@@ -36,16 +36,15 @@
         </NuxtLink>
       </div>
     </div>
-    <LanguageSwitch />
   </div>
 </template>
 
 <script setup>
 const { getMethod, getResult } = useApiMethods();
 
-definePageMeta({
-  layout: "none",
-});
+// definePageMeta({
+//   layout: "none",
+// });
 
 onMounted(() => {
   getMethod("statistics", null, true, false);

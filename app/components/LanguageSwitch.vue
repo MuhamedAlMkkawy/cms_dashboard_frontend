@@ -9,7 +9,8 @@
       :to="switchLocalePath(locale.code)"
       @click="useGlobalStore().setLang(locale.code)"
     >
-      <span>{{ locale.name }}</span>
+      <!-- <span>{{ locale.name }}</span> -->
+      <span>{{ locale.code == "ar" ? "ع" : "En" }}</span>
       <i class="pi pi-globe"></i>
     </NuxtLink>
   </div>
