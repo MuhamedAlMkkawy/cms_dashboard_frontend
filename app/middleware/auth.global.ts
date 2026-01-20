@@ -2,27 +2,28 @@ import { defineNuxtRouteMiddleware, navigateTo } from "nuxt/app";
 import { useAuthStore } from "~/stores/authStore";
 import { useGlobalStore } from "~/stores/globalStore";
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to) => {
   const authStore = useAuthStore();
   const globalStore = useGlobalStore();
-  const router = useRouter()
-
 
   const lang = globalStore.lang || "en";
+  const localePrefix = lang === "en" ? "" : `/${lang}`;
 
-  const authed = useCookie("authStore")?.value;
-  // Redirect unauthenticated users to login
-  if(authed){
-    if (to.path.endsWith("/login")) {
-      return router.push(`/${lang === "en" ? "" : lang}/`);
+  const isLoginPage =
+    to.path == "/login" || to.path == `${localePrefix}/login`;
+
+  const authed = useCookie("authStore").value;
+
+  // Logged in → block login page
+  if (authed) {
+    if (isLoginPage) {
+      return navigateTo(`${localePrefix}/`);
     }
-  }else {
-    if (!to.path.endsWith("/login")) {
-      return router.push(`${lang === "en" ? "" : lang}/login`);
-    }
-    // Redirect logged-in users away from login page
-  
     return;
   }
-  
+
+  //Not logged in → force login
+  if (!isLoginPage) {
+    return navigateTo(`${localePrefix}/login`);
+  }
 });

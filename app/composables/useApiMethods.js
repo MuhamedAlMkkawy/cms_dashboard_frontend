@@ -116,7 +116,7 @@ export function useApiMethods() {
       if (refetchApi) {
         getMethod(refetchApi, "", authStore ? true : false, false);
       }
-      if(endPoint.endsWith('/login')){
+      if(endPoint.endsWith('login') && data){
         authStore?.handleUserData(data?.data);
       }
       submitResult.value = data;
