@@ -2,13 +2,11 @@
   <div class="project_page page" :style="pages.length === 0 ? 'margin: 0' : ''">
     <div class="side_bar" v-if="pages.length">
       <div class="header_image">
-        <button class="back_btn" @click="$router.back()">
+        <button :class="['back_btn ' , {ar_btn : globalStore.lang == 'ar'}]" @click="$router.back()">
           <i
-            :class="
-              globalStore.lang === 'ar'
-                ? 'pi pi-angle-right'
-                : 'pi pi-angle-left'
-            "
+            :class="`pi pi-angle-${
+              globalStore.lang == 'ar' ? 'right' : 'left'
+            }`"
           ></i>
         </button>
         <div class="image">
@@ -25,15 +23,18 @@
         @dragEnd="onDragEndComponentFromSidebar"
       />
 
-      <hr />
-      <div class="header_image">
+      <!-- <hr /> -->
+      <!-- <div class="header_image">
         <div class="image">
           <img :src="currentPage?.logo" alt="logo_image" loading="lazy" />
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="project_content">
-      <!-- <div class="pages">
+      <div class="pages">
+        <div class="image">
+          <img :src="currentPage?.logo" alt="logo_image" loading="lazy" />
+        </div>
         <button
           class="add_page gradient_background"
           @click="showControlPagePopup = true"
@@ -46,7 +47,7 @@
           <i class="pi pi-sign-out"></i>
         </button>
         <LanguageSwitch />
-      </div> -->
+      </div>
       <div class="pages">
         <div
           v-for="page in pages"
@@ -75,18 +76,18 @@
             :popup="true"
           />
         </div>
-        <button
+        <!-- <button
           class="add_page gradient_background"
           @click="showControlPagePopup = true"
           :title="t('projectEditor.addPage')"
         >
           <i class="pi pi-plus"></i>
           {{ t("projectEditor.addNewPage") }}
-        </button>
+        </button> -->
         <!-- <button class="logout_btn main-btn danger" @click="handleLogout">
           <i class="pi pi-sign-out"></i>
         </button> -->
-        <LanguageSwitch />
+        <!-- <LanguageSwitch /> -->
       </div>
     </div>
     <hr />
@@ -573,6 +574,12 @@ const isPageChanged = computed(() => {
 });
 
 // ----------------------------
+// HANDLE LOGOUT
+// ----------------------------
+const handleLogout = () => {
+  submitMethod("/logout", true, null, "POST", "/login");
+};
+// ----------------------------
 // HANDLE SAVE PAGE CONTENT
 // ----------------------------
 const handleSavePageContent = () => {
@@ -623,7 +630,9 @@ onMounted(() => {
   .pages {
     @include displayFlex($justify: start, $gap: 10px);
     margin-bottom: 15px;
-
+    &:first-of-type {
+      gap: 10px;
+    }
     .page_item {
       background: #e4e4e450;
       color: $mainColor;

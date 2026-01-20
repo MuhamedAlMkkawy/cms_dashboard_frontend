@@ -1,9 +1,9 @@
-import { useRouter } from 'vue-router';
-import { useGlobalStore } from '@/stores/globalStore';
-import { useAuthStore } from '@/stores/authStore';
-import { useToastMsg } from '@/composables/useToastMsg';
-import { fetchApiData , submitApiForm } from '@/composables/useApiFetch';
-import { ref } from 'vue';
+import { useRouter } from "vue-router";
+import { useGlobalStore } from "@/stores/globalStore";
+import { useAuthStore } from "@/stores/authStore";
+import { useToastMsg } from "@/composables/useToastMsg";
+import { fetchApiData, submitApiForm } from "@/composables/useApiFetch";
+import { ref } from "vue";
 
 export function useApiMethods() {
   // define global store
@@ -16,104 +16,112 @@ export function useApiMethods() {
   const router = useRouter();
 
   // define local route
-  const localeRoute = useLocaleRoute()
+  const localeRoute = useLocaleRoute();
 
   // define useToastMsg
-  const { 
-    showErrorToast, 
-    showSuccessToast,
-    showInfoToast,
-    showWarnToast 
-  } = useToastMsg();
+  const { showErrorToast, showSuccessToast, showInfoToast, showWarnToast } =
+    useToastMsg();
 
-
-  // define handle the next route 
+  // define handle the next route
   const handleNextRoute = async (nextRoute) => {
-    setTimeout(()=>{
-      if(nextRoute == 'reload_page'){
+    setTimeout(() => {
+      if (nextRoute == "reload_page") {
         router.go(0);
-      }else{
+      } else if (nextRoute == "unAuthed") {
+        useCookie("authStore").value = null;
+        router.push(localeRoute("/login"));
+      } else {
         router.push(localeRoute(nextRoute));
       }
-    } , 500)
-  }
-
+    }, 500);
+  };
 
   // define handle the toast message and its type
-  const handleToastMsg = (type , message) => {
+  const handleToastMsg = (type, message) => {
     // to stop the loading while showing the message
     globalStore.switchLoading(false);
-    if(type == 'success'){
+    if (type == "success") {
       showSuccessToast(message);
-    }else if(type == 'info'){
+    } else if (type == "info") {
       showInfoToast(message);
-    }else if(type == 'warn'){
+    } else if (type == "warn") {
       showWarnToast(message);
-    }else{
+    } else {
       showErrorToast(message);
     }
-  }
+  };
 
-  // Fetch Data 
+  // Fetch Data
   const getResult = ref(null);
-  const getMethod = async (apiUrl , pageNumber ,authed , showToast) => {
+  const getMethod = async (apiUrl, pageNumber, authed, showToast) => {
     globalStore.switchLoading(true);
-    getResult.value = null
+    getResult.value = null;
 
-    const { data, error } = await fetchApiData(`${apiUrl}${pageNumber ? `${apiUrl.includes('?') ? '&' : '?'}page=${pageNumber}` : ''}`, authed);
+    const { data, error } = await fetchApiData(
+      `${apiUrl}${
+        pageNumber
+          ? `${apiUrl.includes("?") ? "&" : "?"}page=${pageNumber}`
+          : ""
+      }`,
+      authed
+    );
 
     // ${authStore?.userData ? `?device_id=${globalStore.device_id}&` : apiUrl.startsWith('search?') ? '&' : '?' }
     if (error) {
-      handleToastMsg('error' , error?.response?._data?.message)
+      handleToastMsg("error", error?.response?._data?.message);
       if (error?.response?._data?.error === "Unauthorized") {
-        setTimeout(() => {
-          handleNextRoute('login');
-        }, 500);
-        useCookie("authStore").value = "";
+        handleNextRoute("unAuthed");
       }
     } else {
-      if (data.status == 'success') {
+      if (data.status == "success") {
         getResult.value = data;
       }
-      if(showToast){
-        handleToastMsg(data?.status , data?.message)
+      if (showToast) {
+        handleToastMsg(data?.status, data?.message);
       }
-      globalStore.switchLoading(false)
+      globalStore.switchLoading(false);
     }
-  }
-
+  };
 
   // submit form function
-  const submitResult = ref(null)
-  const submitMethod = async (endPoint, authed , payload , method  , nextRoute , refetchApi) => {
+  const submitResult = ref(null);
+  const submitMethod = async (
+    endPoint,
+    authed,
+    payload,
+    method,
+    nextRoute,
+    refetchApi
+  ) => {
     globalStore.switchLoading(true);
-    const {data , error} = await submitApiForm(endPoint, authed ,  payload , method);
-    
+    const { data, error } = await submitApiForm(
+      endPoint,
+      authed,
+      payload,
+      method
+    );
+
     if (error) {
-      handleToastMsg('error' , error?.response?._data?.message)
-      if(
-        error?.response?._data?.error === 'Unauthorized'
-      ){
-        useCookie('authStore').value = ''
-        setTimeout(() => {
-          handleNextRoute('/login')
-        }, 500);
+      handleToastMsg("error", error?.response?._data?.message);
+      if (error?.response?._data?.error === "Unauthorized") {
+        handleNextRoute("unAuthed");
       }
-    }
-      
-    else {
+    } else {
+      if (endPoint.endsWith("logout")) {
+        handleNextRoute("unAuthed");
+      }
       if (nextRoute) {
         handleNextRoute(nextRoute);
       }
       if (refetchApi) {
-        getMethod(refetchApi , '' , authStore ? true : false , false)
+        getMethod(refetchApi, "", authStore ? true : false, false);
       }
       submitResult.value = data;
-      authStore.handleUserData(data?.data)
-      handleToastMsg(data?.status , data?.message)
-      globalStore.switchLoading(false)
+      authStore.handleUserData(data?.data);
+      handleToastMsg(data?.status, data?.message);
+      globalStore.switchLoading(false);
     }
-  };  
+  };
 
   return {
     getMethod,
@@ -121,6 +129,6 @@ export function useApiMethods() {
     submitMethod,
     submitResult,
     showErrorToast,
-    handleNextRoute
+    handleNextRoute,
   };
 }
