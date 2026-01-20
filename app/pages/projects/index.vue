@@ -105,8 +105,8 @@ onMounted(() => {
         .item_control {
           @include displayFlex($gap: 5px);
           position: absolute;
-          top: 10px;
-          inset-inline-end: 15px;
+          top: 5px;
+          inset-inline-end: 5px;
           z-index: 9;
           opacity: 0;
           button {
