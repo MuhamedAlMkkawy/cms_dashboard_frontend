@@ -1,15 +1,23 @@
 <template>
   <div class="project_control">
-    <button class="logout_btn main-btn danger" :title="$t('logout.text')" @click="handleLogout">
+    <button
+      class="logout_btn main-btn danger"
+      :title="$t('logout.text')"
+      @click="handleLogout"
+      v-if="!$route.path.endsWith('/login')"
+    >
       <i class="pi pi-sign-out"></i>
-      <span>{{ $t('logout.text') }}</span>
+      <span>{{ $t("logout.text") }}</span>
     </button>
+    {{ token }}
     <LanguageSwitch />
   </div>
 </template>
 
 <script setup>
-const { submitMethod } = useApiMethods();
+const { submitMethod } = useApiMethods(); 
+
+const token = useState('token')
 // ----------------------------
 // HANDLE LOGOUT
 // ----------------------------
@@ -27,8 +35,8 @@ button.logout_btn {
   display: flex;
   gap: 5px;
   border-radius: 4px;
-  span{
-    font-size:16px;
+  span {
+    font-size: 16px;
   }
 }
 </style>

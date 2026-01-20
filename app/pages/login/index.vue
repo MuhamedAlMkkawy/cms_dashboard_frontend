@@ -1,9 +1,9 @@
 <template>
   <div class="login_page page">
     <div class="container">
-      <div class="image">
+      <!-- <div class="image">
         <img src="../../assets/images/logo.png" alt="image" loading="lazy" />
-      </div>
+      </div> -->
       <VeeForm
         :validation-schema="loginSchema"
         @submit="handleSubmit"
@@ -24,7 +24,7 @@
         />
         <button class="main-btn">{{ $t("login_page.submit_button") }}</button>
       </VeeForm>
-      <LanguageSwitch />
+      <!-- <LanguageSwitch /> -->
     </div>
   </div>
 </template>
@@ -37,9 +37,9 @@ const loginSchema = useLoginSchema();
 const { submitMethod } = useApiMethods();
 
 // DEFINE PAGE META
-definePageMeta({
-  layout: false,
-});
+// definePageMeta({
+//   layout: false,
+// });
 
 const handleSubmit = (values) => {
   submitMethod("login", false, values, "POST", "/");
@@ -82,7 +82,8 @@ const handleSubmit = (values) => {
       padding: 20px 20px;
       border-radius: 20px;
       color: $mainColor;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.2),
         0 0 0 1px rgba(255, 255, 255, 0.1);
       transform-style: preserve-3d;
       perspective: 1000px;
@@ -123,6 +124,12 @@ const handleSubmit = (values) => {
       }
     }
   }
+}
+
+.languages-switch {
+  position: fixed;
+  bottom: 40px;
+  inset-inline-end: 40px;
 }
 
 /* Responsive adjustments */

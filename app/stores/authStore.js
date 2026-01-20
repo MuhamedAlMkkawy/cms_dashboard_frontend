@@ -3,12 +3,12 @@ import { defineStore } from 'pinia';
 
 export const useAuthStore = defineStore('authStore', () => {
   // const user = ref(null);
-  const token = useState('token' , () => null)
+  const token = ref(null)
 
 
   const handleUserData = (newUser) => {
     // user.value = newUser;
-    // console.log(newUser?.token)
+    console.log(newUser)
     token.value = newUser?.token;
   };
 

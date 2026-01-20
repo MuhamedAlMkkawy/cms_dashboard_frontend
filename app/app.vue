@@ -4,7 +4,7 @@
       <NuxtPage />
       <Loading v-if="useGlobalStore()?.loading" />
       <Toast />
-      <ProjectControl v-if="useAuthStore()?.token && !$route.endsWith('/login')" />
+      <!-- <ProjectControl v-if="useAuthStore()?.token && !$route.endsWith('/login')" /> -->
     </NuxtLayout>
   </div>
 </template>
