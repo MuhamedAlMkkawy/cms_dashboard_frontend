@@ -165,15 +165,12 @@ span[role="alert"] {
 
 // style the language switch
 .project_control {
-  // position: fixed;
-  // inset-inline-start: 50px;
-  // top: 50px;
   @include displayFlex($gap: 4px);
 }
 header {
   .project_control {
     position: unset;
-    color: #fff;
+    color: $mainColor !important;
     .languages-switch {
       a {
         min-height: 42px;
@@ -182,23 +179,24 @@ header {
   }
 }
 .languages-switch {
-  padding: 4px 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: 0.5s;
   i.pi {
-    color: #fff;
+    // color: #fff;
     font-size: 18px;
   }
 
   a {
     @include displayFlex($gap: 5px, $direction: row, $justify: flex-start);
-    padding: 3px 5px;
+    padding: 3px 8px;
     height: 30px;
     overflow: hidden;
     cursor: pointer;
-    // padding-inline-end: 20px;
+    height: 45px;
+    background: #e8eef0;
+    border-radius: 4px;
     span {
       font-size: clamp(14px, 2.5vw, 20px);
     }
@@ -215,17 +213,17 @@ header {
   }
 }
 
-.project_page,
-.modify_project_page {
-  .languages-switch {
-    position: unset;
-    padding: 0;
-    i.pi {
-      color: $mainColor !important;
-    }
-    a {
-      min-height: 40px;
-      color: $mainColor !important;
-    }
-  }
-}
+// .project_page,
+// .modify_project_page {
+//   .languages-switch {
+//     position: unset;
+//     padding: 0;
+//     i.pi {
+//       color: $mainColor !important;
+//     }
+//     a {
+//       min-height: 40px;
+//       color: $mainColor !important;
+//     }
+//   }
+// }

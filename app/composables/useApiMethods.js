@@ -116,8 +116,10 @@ export function useApiMethods() {
       if (refetchApi) {
         getMethod(refetchApi, "", authStore ? true : false, false);
       }
+      if(endPoint.endsWith('/login')){
+        authStore?.handleUserData(data?.data);
+      }
       submitResult.value = data;
-      authStore.handleUserData(data?.data);
       handleToastMsg(data?.status, data?.message);
       globalStore.switchLoading(false);
     }

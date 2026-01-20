@@ -7,7 +7,7 @@
       v-if="!$route.path.endsWith('/login')"
     >
       <i class="pi pi-sign-out"></i>
-      <span>{{ $t("logout.text") }}</span>
+      <!-- <span>{{ $t("logout.text") }}</span> -->
     </button>
     {{ token }}
     <LanguageSwitch />
@@ -15,9 +15,9 @@
 </template>
 
 <script setup>
-const { submitMethod } = useApiMethods(); 
+const { submitMethod } = useApiMethods();
 
-const token = useState('token')
+const token = useState("token");
 // ----------------------------
 // HANDLE LOGOUT
 // ----------------------------
@@ -35,8 +35,13 @@ button.logout_btn {
   display: flex;
   gap: 5px;
   border-radius: 4px;
+  background-color: #fee9e9;
+  border-color: #fee9e9;
   span {
     font-size: 16px;
+  }
+  i.pi {
+    color: $dangerColor !important;
   }
 }
 </style>
