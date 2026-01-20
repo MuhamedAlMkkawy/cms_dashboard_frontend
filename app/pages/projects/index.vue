@@ -9,7 +9,7 @@
         />
       </div> -->
 
-      <div class="content_items items_4">
+      <div class="content_items items_4" v-if="getResult?.data">
         <NuxtLink
           v-for="project in getResult?.data"
           :key="project._id"
@@ -44,6 +44,7 @@
           <i class="pi pi-plus"></i>
         </NuxtLink>
       </div>
+      <Empty v-else />
     </div>
   </div>
 </template>
@@ -95,6 +96,7 @@ onMounted(() => {
         transition: 0.6s;
         position: relative;
         width: 100%;
+        min-height: 88px;
         .image {
           max-width: 180px;
           margin: 0 auto;
