@@ -55,7 +55,7 @@
               <span>{{ $t("cardSlider.uploadImage") }}</span>
             </template>
             <template v-else>
-              <img :src="item.file" loading="lazy" />
+              <img :src="useRuntimeConfig().public.apiBase+item.file" loading="lazy" />
             </template>
           </label>
         </div>

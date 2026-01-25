@@ -20,7 +20,7 @@
     <!-- Preview -->
     <div v-if="body.image" class="preview">
       <img
-        :src="body.image"
+        :src="useRuntimeConfig().public.apiBase+body.image"
         :alt="$t('logo.previewAlt')"
         loading="lazy"
         preview

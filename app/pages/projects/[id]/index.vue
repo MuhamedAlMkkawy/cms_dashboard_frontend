@@ -35,7 +35,7 @@
     <div class="project_content">
       <div class="pages flex_content">
         <div class="image">
-          <img :src="getResult?.data?.logo" alt="logo_image" loading="lazy" />
+          <img :src="useRuntimeConfig().public.apiBase+getResult?.data?.logo" alt="logo_image" loading="lazy" />
         </div>
         <button
           class="add_page gradient_background"
@@ -613,6 +613,13 @@ onMounted(() => {
     margin-bottom: 15px;
     &:first-of-type {
       gap: 10px;
+    }
+
+    .image{
+      height: 50px;
+      img{
+        object-fit: contain;
+      }
     }
     .page_item {
       background: #e4e4e450;

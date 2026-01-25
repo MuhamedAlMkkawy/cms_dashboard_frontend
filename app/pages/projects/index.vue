@@ -17,7 +17,7 @@
           :class="['content_item', { drafted_item: !project.visible }]"
         >
           <div class="image">
-            <img :src="project.logo" :alt="project?.name" loading="lazy" />
+            <img :src="useRuntimeConfig().public.apiBase+project.logo" :alt="project?.name" loading="lazy" />
           </div>
 
           <div class="item_control">
@@ -108,7 +108,7 @@ onMounted(() => {
         }
         &.drafted_item{
           .image{
-            filter: brightness(0) invert(1);
+            filter: brightness(0.5);
           }
         }
         .item_control {

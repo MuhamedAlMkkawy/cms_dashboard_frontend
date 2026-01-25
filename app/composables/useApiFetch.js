@@ -4,13 +4,13 @@ const createFetchOptions = (authed , options = {}) => {
   const lang = useGlobalStore().lang;
   const config = useRuntimeConfig();
   const baseURL = options.baseURL || config.public.apiBase;
-  const secretKey = config.public.secretKey;
+  // const secretKey = config.public.secretKey;
 
 
   const headers = {
     ...(authed ? { authorization: `Bearer ${token}` } : {}),
     'accept-language': lang || 'en',
-    secretKey: secretKey,
+    // secretKey: secretKey,
     ...options.headers,
   };
 
