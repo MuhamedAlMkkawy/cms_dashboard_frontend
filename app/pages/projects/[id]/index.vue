@@ -582,7 +582,7 @@ const handleSavePageContent = () => {
 
   const method = getResult?.value && pageId ? "PATCH" : "POST";
 
-  submitMethod(url, false, currentPage?.value, method, "");
+  submitMethod(url, true, currentPage?.value, method, "");
 
   originalPage.value = JSON.parse(JSON.stringify(currentPage.value));
 };
