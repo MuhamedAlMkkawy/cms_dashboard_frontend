@@ -91,7 +91,7 @@ onMounted(() => {
       // width: 100%;
       .content_item {
         border: 1px solid #fff;
-        padding: clamp(20px, 2.5vw, 50px);
+        padding: 20px 8px;
         border-radius: 4px;
         transition: 0.6s;
         position: relative;
@@ -99,9 +99,17 @@ onMounted(() => {
         min-height: 88px;
         .image {
           max-width: 180px;
+          height: 80px;
           margin: 0 auto;
-          filter: brightness(0) invert(1);
           transition: 1s;
+          img{
+            object-fit: contain;
+          }
+        }
+        &.drafted_item{
+          .image{
+            filter: brightness(0) invert(1);
+          }
         }
         .item_control {
           @include displayFlex($gap: 5px);
