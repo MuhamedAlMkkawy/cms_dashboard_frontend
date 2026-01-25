@@ -116,8 +116,9 @@ export function useApiMethods() {
       if (refetchApi) {
         getMethod(refetchApi, "", authStore ? true : false, false);
       }
-      if(endPoint.endsWith('login') && data){
+      if(endPoint.endsWith('login')){
         authStore?.handleUserData(data?.data);
+        console.log(data)
       }
       submitResult.value = data;
       handleToastMsg(data?.status, data?.message);

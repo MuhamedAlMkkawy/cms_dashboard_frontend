@@ -1,6 +1,6 @@
 // Common options configuration function
 const createFetchOptions = (authed , options = {}) => {
-  const token = useAuthStore()?.userData?.token || JSON.parse(window.sessionStorage.getItem('authStore'))?.token; // You can fetch the actual token from auth storage
+  const token = useAuthStore()?.user?.token || JSON.parse(window.sessionStorage.getItem('authStore'))?.token; // You can fetch the actual token from auth storage
   const lang = useGlobalStore().lang;
   const config = useRuntimeConfig();
   const baseURL = options.baseURL || config.public.apiBase;

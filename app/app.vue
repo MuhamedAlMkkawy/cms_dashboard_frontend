@@ -21,6 +21,11 @@ useHead({
     dir: currentDir,
   },
 });
+
+
+// watchEffect(()=>{
+//   console.log(useAuthStore()?.user)
+// })
 </script>
 
 <style>

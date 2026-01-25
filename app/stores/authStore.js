@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('authStore', () => {
 
   const handleUserData = (newUser) => {
     // user.value = newUser;
-    // console.log(newUser?.token)
+    // console.log(newUser)
     user.value.token = newUser?.token;
     user.value.role = newUser?.role;
   };
