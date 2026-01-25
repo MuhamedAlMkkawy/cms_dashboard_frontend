@@ -107,8 +107,9 @@ export function useApiMethods() {
         handleNextRoute("unAuthed");
       }
     } else {
-      if (endPoint.endsWith("login")) {
+      if (endPoint.endsWith("login") && data) {
         authStore?.handleUserData(data?.data);
+        console.log(data?.data);
       }
       else if (endPoint.endsWith("logout")) {
         handleNextRoute("unAuthed");
