@@ -206,7 +206,7 @@
 
     <button
       class="main-btn"
-      :disabled="!isPageChanged"
+      :disabled="!isPageChanged && !currentPage"
       @click="handleSavePageContent"
     >
       {{ t("projectEditor.save") }}
@@ -554,9 +554,9 @@ watch(
   { immediate: true }
 );
 
+
 const isPageChanged = computed(() => {
   if (!currentPage.value) return false;
-
   const pageId = currentPage.value._id;
   const original = originalPages.value[pageId];
 
@@ -574,7 +574,7 @@ const handleSavePageContent = () => {
     return;
   }
 
-  const pageId = getResult?.value ? currentPage.value?._id : "";
+  const pageId = getResult?.value?.pages?.length ? currentPage.value?._id : "";
 
   const url = pageId
     ? `/projects/${route.params.id}/pages/${pageId}`
