@@ -574,7 +574,7 @@ const handleSavePageContent = () => {
     return;
   }
 
-  const pageId = getResult?.value?.pages?.length ? currentPage.value?._id : "";
+  const pageId = getResult?.value?.data?.pages?.length ? currentPage.value?._id : "";
 
   const url = pageId
     ? `/projects/${route.params.id}/pages/${pageId}`
