@@ -7,8 +7,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      // apiBase: "http://127.0.0.1:3000/api/",
       apiBase: "https://cms.roqay.dev/api/",
-      // apiBase: "http://172.16.173.184:3000/",
       // secretKey : "9e810ce4d7b9e83d7aaf208b3ecfd0488d6a1e5c67a6a72f384a1d3bcb40c012"
     },
   },
@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     },
     head: {
       title: "CMS Dashboard",
-      htmlAttrs: { lang: "ar" },
+      htmlAttrs: { lang: "en" },
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },

@@ -63,7 +63,7 @@ export function useApiMethods() {
           ? `${apiUrl.includes("?") ? "&" : "?"}page=${pageNumber}`
           : ""
       }`,
-      authed
+      authed,
     );
 
     // ${authStore?.userData ? `?device_id=${globalStore.device_id}&` : apiUrl.startsWith('search?') ? '&' : '?' }
@@ -91,14 +91,14 @@ export function useApiMethods() {
     payload,
     method,
     nextRoute,
-    refetchApi
+    refetchApi,
   ) => {
     globalStore.switchLoading(true);
     const { data, error } = await submitApiForm(
       endPoint,
       authed,
       payload,
-      method
+      method,
     );
 
     if (error) {
@@ -107,7 +107,10 @@ export function useApiMethods() {
         handleNextRoute("unAuthed");
       }
     } else {
-      if (endPoint.endsWith("logout")) {
+      if (endPoint.endsWith("login")) {
+        authStore?.handleUserData(data?.data);
+      }
+      else if (endPoint.endsWith("logout")) {
         handleNextRoute("unAuthed");
       }
       if (nextRoute) {
@@ -116,10 +119,7 @@ export function useApiMethods() {
       if (refetchApi) {
         getMethod(refetchApi, "", authStore ? true : false, false);
       }
-      if(endPoint.endsWith('login')){
-        authStore?.handleUserData(data?.data);
-        console.log(data)
-      }
+
       submitResult.value = data;
       handleToastMsg(data?.status, data?.message);
       globalStore.switchLoading(false);

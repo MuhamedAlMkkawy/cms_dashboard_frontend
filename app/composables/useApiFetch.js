@@ -1,7 +1,15 @@
+import { useAuthStore } from "@/stores/authStore";
+import { useGlobalStore } from "@/stores/globalStore";
+
+
 // Common options configuration function
 const createFetchOptions = (authed , options = {}) => {
-  const token = useAuthStore()?.user?.token || JSON.parse(window.sessionStorage.getItem('authStore'))?.token; // You can fetch the actual token from auth storage
-  const lang = useGlobalStore().lang;
+  const globalStore = useGlobalStore()
+  const authStore = useAuthStore()
+
+
+  const token = authStore?.user?.token; // You can fetch the actual token from auth storage
+  const lang = globalStore?.lang;
   const config = useRuntimeConfig();
   const baseURL = options.baseURL || config.public.apiBase;
   // const secretKey = config.public.secretKey;
@@ -34,9 +42,10 @@ export const useApiFetch = (url, authed ,options = {}) => {
 
 // Unified fetch function
 const fetchData = async (url , authed , options = {}, method) => {
+  // console.log(authed , token)
   try {
     const response = await $fetch(url, {
-      ...createFetchOptions(authed , options),
+      ...createFetchOptions(authed, options),
       method,
       body: options.body || undefined, // Ensure body is included if it exists
     });

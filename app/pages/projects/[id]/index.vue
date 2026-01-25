@@ -537,7 +537,7 @@ const handleAddComponentContent = (data) => {
 };
 
 const originalPages = ref({});
-
+// const originalPage = ref('')
 watch(
   () => getResult?.value,
   (newValue) => {
@@ -584,7 +584,7 @@ const handleSavePageContent = () => {
 
   submitMethod(url, true, currentPage?.value, method, "");
 
-  originalPage.value = JSON.parse(JSON.stringify(currentPage.value));
+  // originalPage.value = JSON.parse(JSON.stringify(currentPage.value));
 };
 
 // CHECK IF THE PROJECT HAS PAGES
