@@ -69,13 +69,13 @@
 
 // DRAFT ITEM STYLE
 .drafted_item {
-  background: grey;
+  background: grey !important;
   border-color: grey !important;
+  .image {
+    filter: brightness(0) invert(1) !important;
+  }
   &:hover {
     background: grey !important;
-    .image {
-      filter: brightness(0) invert(1) !important;
-    }
     .item_control {
       opacity: 1 !important;
       pointer-events: visible;
