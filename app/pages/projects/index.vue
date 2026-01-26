@@ -97,6 +97,7 @@ onMounted(() => {
         position: relative;
         width: 100%;
         min-height: 88px;
+        background: #fff;
         .image {
           max-width: 180px;
           height: 80px;
