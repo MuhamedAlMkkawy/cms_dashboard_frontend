@@ -242,6 +242,7 @@
 </template>
 
 <script setup>
+import { ConfirmPopupStyle } from "primevue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -578,27 +579,32 @@ const handleSavePageContent = () => {
 
   const pageId = currentPage?.value?._id;
 
-  // check if current page already exists in pages list
-  const pageExists = getResult?.value?.data?.pages?.some(
-    (page) => page?._id === pageId
-  );
+  if (!pageId) {
+    showErrorToast(t("projectEditor.errors.invalidPageId"));
+    return;
+  }
 
-  const url = pageExists
+
+  // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
+  const isShortId = /^\d+$/.test(pageId); // true for "1", "2", "3", etc.
+
+  const url = !isShortId
     ? `/projects/${route.params.id}/pages/${pageId}`
     : `/projects/${route.params.id}/pages`;
 
-  const method = pageExists ? "PATCH" : "POST";
+  const method = !isShortId ? "PATCH" : "POST";
 
   submitMethod(url, true, currentPage.value, method, "");
 };
 
+
 // CHECK IF THE PROJECT HAS PAGES
 watch(
-  () => getResult?.value,
+  () => getResult?.value?.data,
   (newValue) => {
     if (newValue) {
-      pages.value = newValue?.data?.pages;
-      activePage.value = newValue?.data?.pages[0]?._id;
+      pages.value = newValue?.pages;
+      activePage.value = newValue?.pages[0]?._id;
     }
   }
 );

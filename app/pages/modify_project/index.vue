@@ -15,7 +15,7 @@
           />
           <i v-else class="pi pi-upload"></i>
         </label>
-        {{ image }}
+        <!-- {{ image }} -->
 
         <label for="upload_img">
           {{ t("project.uploadLogo") }}
