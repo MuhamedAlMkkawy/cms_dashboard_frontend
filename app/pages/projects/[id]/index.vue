@@ -48,6 +48,8 @@
         <ProjectControl />
       </div>
       <div class="pages flex_content">
+        <!-- {{ pages }}
+        {{ getResult?.pages }} -->
         <div
           v-for="page in pages"
           :key="page"
@@ -129,13 +131,13 @@
           @drop="onDropComponent(section, $event)"
         >
           <div
-            v-for="(component, index) in section.components"
-            :key="component.id"
+            v-for="(component, index) in section?.components"
+            :key="component?.id"
             class="section_component flex-shrink-0 relative"
             :class="component?.content?.customClasses"
             :style="{
               width:
-                component?.content?.customClasses.match(/w-\[(.*?)\]/)?.[1],
+                component && component?.content?.customClasses?.match(/w-\[(.*?)\]/)?.[1],
             }"
             draggable="true"
             @dragstart="onDragStartComponent(section, component, index, $event)"
@@ -574,17 +576,20 @@ const handleSavePageContent = () => {
     return;
   }
 
-  const pageId = getResult?.value?.data?.pages?.length ? currentPage.value?._id : "";
+  const pageId = currentPage?.value?._id;
 
-  const url = pageId
+  // check if current page already exists in pages list
+  const pageExists = getResult?.value?.data?.pages?.some(
+    (page) => page?._id === pageId
+  );
+
+  const url = pageExists
     ? `/projects/${route.params.id}/pages/${pageId}`
     : `/projects/${route.params.id}/pages`;
 
-  const method = getResult?.value && pageId ? "PATCH" : "POST";
+  const method = pageExists ? "PATCH" : "POST";
 
-  submitMethod(url, true, currentPage?.value, method, "");
-
-  // originalPage.value = JSON.parse(JSON.stringify(currentPage.value));
+  submitMethod(url, true, currentPage.value, method, "");
 };
 
 // CHECK IF THE PROJECT HAS PAGES
