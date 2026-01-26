@@ -160,11 +160,13 @@ onMounted(() => {
     border-style: dashed !important;
     @include displayFlex();
     cursor: pointer;
+    background: transparent !important;
     i {
       font-size: 30px;
     }
     &:hover {
       color: $mainColor;
+      background: #fff !important;
     }
   }
 }
