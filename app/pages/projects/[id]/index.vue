@@ -208,7 +208,7 @@
 
     <button
       class="main-btn"
-      :disabled="!isPageChanged && !currentPage"
+      :disabled="!isPageChanged"
       @click="handleSavePageContent"
     >
       {{ t("projectEditor.save") }}
