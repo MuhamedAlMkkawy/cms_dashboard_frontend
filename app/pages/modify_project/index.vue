@@ -8,13 +8,14 @@
       >
         <label for="upload_img" class="upload_image_icon image">
           <img
-            v-if="image.url"
-            :src="image.url"
+            v-if="image"
+            :src="image"
             alt="project image"
             loading="lazy"
           />
           <i v-else class="pi pi-upload"></i>
         </label>
+        {{ image }}
 
         <label for="upload_img">
           {{ t("project.uploadLogo") }}
@@ -23,7 +24,7 @@
         <input
           type="file"
           accept="image/*"
-          @change="handleUploadImage($event.target.files[0])"
+          @change="handleImageUpload($event.target.files[0])"
           id="upload_img"
           hidden
         />
@@ -64,48 +65,62 @@
 </template>
 
 <script setup>
-  import { modifyProjectSchema } from "../../schemas/modifyProject";
-  import { useI18n } from 'vue-i18n';
+import { modifyProjectSchema } from "../../schemas/modifyProject";
+import { useI18n } from "vue-i18n";
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  const {
-    submitMethod,
-    showErrorToast
-  } = useApiMethods();
+const { submitMethod, submitResult, showErrorToast } = useApiMethods();
 
-  definePageMeta({
-    layout: "none",
-  });
+definePageMeta({
+  layout: "none",
+});
 
-  const image = ref({
-    file: null,
-    url: null,
-  });
+const image = ref();
 
-  const handleUploadImage = (file) => {
-    image.value.file = file;
-    image.value.url = URL.createObjectURL(file);
-  };
+const handleImageUpload = (file) => {
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "image/svg+xml",
+  ];
 
-  const handleSubmit = (values) => {
-    if (!image.value.file) {
-      showErrorToast(t('project.errors.logoRequired'));
-      return;
-    }
+  if (!allowedTypes.includes(file.type)) {
+    showErrorToast(t("logo.invalidFile"));
+    e.target.value = "";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  submitMethod("/uploads/single", true , formData, "POST", null);
+};
+
+watchEffect(() => {
+  if (submitResult?.value) {
+    image.value = submitResult?.value?.data?.path;
+  }
+});
+
+const handleSubmit = (values) => {
+  if (!image.value) {
+    showErrorToast(t("project.errors.logoRequired"));
+    return;
+  }
 
     const formData = new FormData();
-    formData.append("logo", image.value.file);
+    formData.append("logo", image.value);
     formData.append("name.ar", values.ar_name);
     formData.append("name.en", values.en_name);
     formData.append("description.ar", values.ar_description);
     formData.append("description.en", values.en_description);
 
-    submitMethod('/projects', true, formData, 'POST', '/projects');
-  };
+  submitMethod("/projects", true, formData, "POST", "/projects");
+};
 </script>
-
-
 
 <style lang="scss" scoped>
 .modify_project_page {

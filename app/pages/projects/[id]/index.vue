@@ -35,7 +35,7 @@
     <div class="project_content">
       <div class="pages flex_content">
         <div class="image">
-          <img :src="useRuntimeConfig().public.apiBase+getResult?.data?.logo" alt="logo_image" loading="lazy" />
+          <img :src="getResult?.data?.logo" alt="logo_image" loading="lazy" />
         </div>
         <button
           class="add_page gradient_background"

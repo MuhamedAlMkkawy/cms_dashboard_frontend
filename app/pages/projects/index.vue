@@ -17,7 +17,7 @@
           :class="['content_item', { drafted_item: !project.visible }]"
         >
           <div class="image">
-            <img :src="useRuntimeConfig().public.apiBase+project.logo" :alt="project?.name" loading="lazy" />
+            <img :src="project.logo" :alt="project?.name" loading="lazy" />
           </div>
 
           <div class="item_control">

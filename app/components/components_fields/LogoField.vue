@@ -134,7 +134,7 @@ const handleImageUpload = (e) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  submitMethod("/uploads/single", false, formData, "POST", null);
+  submitMethod("/uploads/single", true , formData, "POST", null);
 };
 
 watchEffect(() => {
