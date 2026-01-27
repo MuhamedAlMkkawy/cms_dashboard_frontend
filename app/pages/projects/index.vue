@@ -77,7 +77,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .projects_page {
-  padding-block: 0px;
+  padding-block: 90px 20px;
   .container {
     @include displayFlex($direction: column, $gap: 50px);
     // min-height: 100vh;
@@ -88,7 +88,7 @@ onMounted(() => {
     }
     .content_items {
       // @include displayFlex($wrap : wrap , $align : stretch , $gap : 20px);
-      // width: 100%;
+      max-width: 100% !important;
       .content_item {
         border: 1px solid #fff;
         padding: 20px 8px;
