@@ -110,7 +110,7 @@
               @click="
                 currentPage.sections.splice(
                   currentPage.sections.indexOf(section),
-                  1
+                  1,
                 )
               "
               class="section_control pi pi-trash"
@@ -137,7 +137,8 @@
             :class="component?.content?.customClasses"
             :style="{
               width:
-                component && component?.content?.customClasses?.match(/w-\[(.*?)\]/)?.[1],
+                component &&
+                component?.content?.customClasses?.match(/w-\[(.*?)\]/)?.[1],
             }"
             draggable="true"
             @dragstart="onDragStartComponent(section, component, index, $event)"
@@ -161,7 +162,7 @@
                   handleSectionContent(
                     section.id,
                     component.type,
-                    component.content
+                    component.content,
                   )
                 "
               >
@@ -264,7 +265,8 @@ const route = useRoute();
 // -----------------------------
 // HANDLE API Methods
 // -----------------------------
-const { getMethod, getResult, submitMethod, showErrorToast } = useApiMethods();
+const { getMethod, getResult, submitMethod, submitResult, showErrorToast } =
+  useApiMethods();
 
 // ----------------------------
 // HANDLE PAGE ITEM 'S MENU
@@ -306,7 +308,7 @@ const pages = ref([]);
 // ----------------------------
 const activePage = ref();
 const currentPage = computed(() =>
-  pages.value.find((p) => p._id === activePage.value)
+  pages.value.find((p) => p._id === activePage.value),
 );
 
 // ----------------------------
@@ -319,7 +321,7 @@ const handleSectionPopup = (section) => {
   if (modifiedSection.value) {
     // EDIT MODE
     const targetSection = currentPage.value.sections.find(
-      (item) => item.id === modifiedSection.value.id
+      (item) => item.id === modifiedSection.value.id,
     );
 
     if (targetSection) {
@@ -354,7 +356,7 @@ const showControlPagePopup = ref(false);
 const handleControlPage = (page) => {
   if (modifiedPage.value) {
     const targetPage = pages.value.find(
-      (item) => item._id === modifiedPage.value._id
+      (item) => item._id === modifiedPage.value._id,
     );
     if (targetPage) targetPage.name = page.name;
   } else {
@@ -414,7 +416,7 @@ const onDropComponent = (targetSection, e) => {
   // Determine container and children for drop index
   const container = e.currentTarget.closest(".section_content");
   const children = Array.from(
-    container.querySelectorAll(".section_component")
+    container.querySelectorAll(".section_component"),
   ).filter((c) => !c.classList.contains("empty_placeholder"));
 
   let dropIndex = children.length; // default append
@@ -498,7 +500,7 @@ const resizeMove = (e) => {
 
   // Add new width class
   resizing.content.customClasses = `${classes} w-[${Math.floor(
-    newWidth
+    newWidth,
   )}%]`.trim();
 };
 
@@ -525,13 +527,13 @@ const handleSectionContent = (sectionID, type, values) => {
 
 const handleAddComponentContent = (data) => {
   const targetedSection = currentPage?.value.sections.find(
-    (item) => item.id == data.sectionID
+    (item) => item.id == data.sectionID,
   );
   if (!targetedSection)
     return showErrorToast(t("projectEditor.errors.sectionNotFound"));
 
   const targetComponent = targetedSection.components.find(
-    (comp) => comp.type === data.type
+    (comp) => comp.type === data.type,
   );
   if (!targetComponent)
     return showErrorToast(t("projectEditor.errors.componentNotFound"));
@@ -554,19 +556,30 @@ watch(
       originalPages.value[page._id] = JSON.parse(JSON.stringify(page));
     });
   },
-  { immediate: true }
+  { immediate: true },
 );
-
 
 const isPageChanged = computed(() => {
   if (!currentPage.value) return false;
   const pageId = currentPage.value._id;
   const original = originalPages.value[pageId];
 
-  if (!original) return false;
+  if (!original) return true;
 
   return JSON.stringify(currentPage.value) != JSON.stringify(original);
 });
+
+watch(
+  () => submitResult?.value?.data,
+  (newValue) => {
+    if (!newValue || !currentPage.value) return;
+
+    const pageId = currentPage.value._id;
+
+    // Reset "dirty" state by updating the original snapshot
+    originalPages.value[pageId] = JSON.parse(JSON.stringify(currentPage.value));
+  },
+);
 
 // ----------------------------
 // HANDLE SAVE PAGE CONTENT
@@ -584,7 +597,6 @@ const handleSavePageContent = () => {
     return;
   }
 
-
   // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
   const isShortId = /^\d+$/.test(pageId); // true for "1", "2", "3", etc.
 
@@ -597,7 +609,6 @@ const handleSavePageContent = () => {
   submitMethod(url, true, currentPage.value, method, "");
 };
 
-
 // CHECK IF THE PROJECT HAS PAGES
 watch(
   () => getResult?.value?.data,
@@ -606,7 +617,7 @@ watch(
       pages.value = newValue?.pages;
       activePage.value = newValue?.pages[0]?._id;
     }
-  }
+  },
 );
 
 onMounted(() => {
@@ -626,9 +637,9 @@ onMounted(() => {
       gap: 10px;
     }
 
-    .image{
+    .image {
       height: 50px;
-      img{
+      img {
         object-fit: contain;
       }
     }

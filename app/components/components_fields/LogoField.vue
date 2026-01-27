@@ -11,22 +11,22 @@
         hidden
         @change="handleImageUpload"
       />
+
       <label for="logo_input" class="upload_logo_btn">
         <i class="pi pi-upload"></i>
         <span>{{ $t("logo.upload") }}</span>
       </label>
     </div>
-
     <!-- Preview -->
-    <div v-if="body.image" class="preview">
+    <label for="logo_input" v-if="body.image" class="preview">
       <img
-        :src="useRuntimeConfig().public.apiBase+body.image"
+        :src="body.image"
         :alt="$t('logo.previewAlt')"
         loading="lazy"
         preview
       />
-      <button class="pi pi-trash delete_btn" @click="removeImage"></button>
-    </div>
+      <!-- <button class="pi pi-trash delete_btn" @click="removeImage"></button> -->
+    </label>
 
     <!-- width -->
     <div class="input">
@@ -105,17 +105,13 @@ watch(
       height: values.height ?? "",
     };
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // -------- HANDLE IMAGE UPLOAD ----------
-const handleImageUpload = (e) => {
-  const file = e.target.files?.[0];
-
-  if (!file) {
-    showErrorToast(t("logo.noFile"));
-    return;
-  }
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
   const allowedTypes = [
     "image/jpeg",
@@ -127,14 +123,13 @@ const handleImageUpload = (e) => {
 
   if (!allowedTypes.includes(file.type)) {
     showErrorToast(t("logo.invalidFile"));
-    e.target.value = "";
+    event.target.value = "";
     return;
   }
 
   const formData = new FormData();
   formData.append("file", file);
-
-  submitMethod("/uploads/single", true , formData, "POST", null);
+  submitMethod("/uploads/single", true, formData, "POST");
 };
 
 watchEffect(() => {
@@ -209,7 +204,11 @@ const handleSubmitLogo = () => {
     height: 100px;
     border-radius: 4px;
     overflow: hidden;
-
+    display: block;
+    cursor: pointer;
+    &:hover {
+      filter: brightness(0.5);
+    }
     .delete_btn {
       position: absolute;
       top: 2px;

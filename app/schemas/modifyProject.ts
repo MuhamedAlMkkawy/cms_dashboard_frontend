@@ -14,11 +14,11 @@ export const modifyProjectSchema = yup.object({
   ar_description: yup
     .string()
     .required('Project Description in Arabic is required')
-    .min(10, 'Project Description in Arabic must be at least 10 characters')
-    .max(30, 'Project Description in Arabic must be at most 30 characters'),
+    .min(10, 'Project Description in Arabic must be at least 10 characters'),
+    // .max(30, 'Project Description in Arabic must be at most 30 characters'),
   en_description: yup
     .string()
     .required('Project Description in English is required')
     .min(10, 'Project Description in English must be at least 10 characters')
-    .max(30, 'Project Description in English must be at most 30 characters'),
+    // .max(30, 'Project Description in English must be at most 30 characters'),
 });
