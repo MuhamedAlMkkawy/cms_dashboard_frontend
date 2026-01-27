@@ -176,18 +176,18 @@ const props = defineProps({
 watch(
   () => props.values,
   (values) => {
-    body.value.items = values.items.map((item) => ({
-      icon: item.icon ?? "",
-      title: item.title ?? "",
-      link: item.link ?? "",
-      target: item.target ?? "_self",
-      hasChilds: item.hasChilds ?? false,
-      children: item.hasChilds
-        ? (item.children ?? []).map((child) => ({
-            icon: child.icon ?? "",
-            title: child.title ?? "",
-            link: child.link ?? "",
-            target: child.target ?? "_self",
+    body.value.items = values?.items?.map((item) => ({
+      icon: item?.icon ?? "",
+      title: item?.title ?? "",
+      link: item?.link ?? "",
+      target: item?.target ?? "_self",
+      hasChilds: item?.hasChilds ?? false,
+      children: item?.hasChilds
+        ? (item?.children ?? []).map((child) => ({
+            icon: child?.icon ?? "",
+            title: child?.title ?? "",
+            link: child?.link ?? "",
+            target: child?.target ?? "_self",
           }))
         : [],
     }));
