@@ -203,15 +203,22 @@
                 @mousedown.prevent="startResize(section, component, $event)"
               ></div>
             </div>
+            <!-- PLACEHOLDER AT END -->
+            <div
+              v-if="
+                dragOverSection === section &&
+                dragOverIndex === (section.components?.length || 0) &&
+                !isSamePosition(section, section.components?.length || 0) &&
+                draggedComponent
+              "
+              class="section_component empty_placeholder"
+            >
+              {{ t("projectEditor.placeholders.dropHere") }}
+            </div>
           </template>
-
-          <!--  PLACEHOLDER AT END -->
+          <!-- EMPTY SECTION DROP ZONE -->
           <div
-            v-if="
-              dragOverSection === section &&
-              dragOverIndex === section.components.length &&
-              !isSamePosition(section, section.components.length)
-            "
+            v-if="section.components.length === 0 && draggedComponent"
             class="section_component empty_placeholder"
           >
             {{ t("projectEditor.placeholders.dropHere") }}
@@ -434,15 +441,12 @@ const onDragOverComponent = (section, e) => {
 
   dragOverSection.value = section;
 
-  const container = e.currentTarget.closest(".section_content");
-  if (!container) return;
-
+  const container = e.currentTarget; // directly use section_content
   const children = Array.from(
     container.querySelectorAll(".section_component:not(.empty_placeholder)"),
   );
 
-  let index = children.length;
-
+  let index = children.length; // default to end
   for (let i = 0; i < children.length; i++) {
     const rect = children[i].getBoundingClientRect();
     if (e.clientY < rect.top + rect.height / 2) {
@@ -486,7 +490,7 @@ const onDragStartComponent = (section, component, index, e) => {
   });
 
   // Set fixed width & height
-  clone.style.width = "300px";             // fixed width
+  clone.style.width = "300px"; // fixed width
   clone.style.height = `${rect.height}px`; // keep original height
   clone.style.background = "#fff";
   clone.style.opacity = "0.8";
@@ -507,7 +511,6 @@ const onDragStartComponent = (section, component, index, e) => {
     if (clone.parentNode) clone.parentNode.removeChild(clone);
   }, 0);
 };
-
 
 const onDropComponent = (targetSection, e) => {
   if (!draggedComponent.value) return;

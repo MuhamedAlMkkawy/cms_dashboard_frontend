@@ -56,7 +56,7 @@
             </template>
             <template v-else>
               <img
-                :src="useRuntimeConfig().public.apiBase + item.file"
+                :src="item.file"
                 loading="lazy"
               />
             </template>
@@ -183,10 +183,10 @@ const handleSubmitCardSlider = () => {
 
   const invalidIndex = slider.value.items.findIndex(
     (item) =>
-      !item.file ||
-      !item.title?.trim() ||
-      !item.text?.trim() ||
-      !item.link?.trim(),
+      !item.file 
+      // !item.title?.trim() ||
+      // !item.text?.trim() ||
+      // !item.link?.trim(),
   );
 
   if (invalidIndex !== -1) {
