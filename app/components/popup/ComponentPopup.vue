@@ -14,6 +14,7 @@
         @openIconPicker="openIconPicker"
         @handleSubmitFields="handleFieldsSubmit"
       >
+
       <ClassesInput
         v-model="customClasses"
         id="custom_classes"

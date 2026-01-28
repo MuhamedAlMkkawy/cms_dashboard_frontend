@@ -155,6 +155,7 @@
       "text": "Card Text",
       "link": "Route / Link"
     },
+    "submit": "Submit",
     "errors": {
       "noFile": "No file found to upload",
       "minCard": "You should add at least one card.",

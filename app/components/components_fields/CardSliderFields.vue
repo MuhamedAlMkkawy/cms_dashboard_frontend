@@ -18,8 +18,8 @@
       <ToggleButton
         v-model="slider.autoplay"
         class="w-24"
-        :onLabel="$t('common.on')"
-        :offLabel="$t('common.off')"
+        onLabel="true"
+        offLabel="false"
       />
     </div>
 
@@ -55,7 +55,10 @@
               <span>{{ $t("cardSlider.uploadImage") }}</span>
             </template>
             <template v-else>
-              <img :src="useRuntimeConfig().public.apiBase+item.file" loading="lazy" />
+              <img
+                :src="useRuntimeConfig().public.apiBase + item.file"
+                loading="lazy"
+              />
             </template>
           </label>
         </div>
@@ -89,7 +92,7 @@
 
     <!-- SUBMIT BUTTON -->
     <button class="main-btn mt-4" @click="handleSubmitCardSlider">
-      {{ $t("cardSlider.actions.submit") }}
+      {{ $t("cardSlider.submit") }}
     </button>
   </div>
 </template>
@@ -138,7 +141,7 @@ const handleCardImageUpload = (event, index) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  submitMethod("/uploads/single", true , formData, "POST", null);
+  submitMethod("/uploads/single", true, formData, "POST", null);
 };
 
 watchEffect(() => {
@@ -153,20 +156,21 @@ const props = defineProps({ values: Object });
 watch(
   () => props.values,
   (values) => {
-    if (!values) return;
-
     slider.value = {
-      itemsToShow: values.itemsToShow ?? 1,
-      autoplay: values.autoplay ?? false,
-      items: values.items?.map((item) => ({
-        file: item.file,
-        title: item.title ?? "",
-        text: item.text ?? "",
-        link: item.link ?? "",
-      })),
+      itemsToShow: values?.itemsToShow ?? 1,
+      autoplay: values?.autoplay ?? false,
+      items:
+        values?.items?.length > 0
+          ? values.items.map((item) => ({
+              file: item.file ?? null,
+              title: item.title ?? "",
+              text: item.text ?? "",
+              link: item.link ?? "",
+            }))
+          : [{ file: null, title: "", text: "", link: "" }],
     };
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // -----------------------------
@@ -182,12 +186,12 @@ const handleSubmitCardSlider = () => {
       !item.file ||
       !item.title?.trim() ||
       !item.text?.trim() ||
-      !item.link?.trim()
+      !item.link?.trim(),
   );
 
   if (invalidIndex !== -1) {
     return showErrorToast(
-      t("cardSlider.errors.fillCard", { index: invalidIndex + 1 })
+      t("cardSlider.errors.fillCard", { index: invalidIndex + 1 }),
     );
   }
 

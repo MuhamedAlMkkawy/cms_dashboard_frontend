@@ -15,51 +15,43 @@
 
 <script setup>
 import { useI18n } from "vue-i18n";
-const { t } = useI18n();
 
+const { t } = useI18n();
 const { showErrorToast } = useToastMsg();
 
-// ---------------
-// DEFINE EMITS
-// ---------------
+// Define emits
 const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
-// ----------------
-// DEFINE EDITOR DATA
-// ----------------
+// Editor state
 const body = ref({
   html: "",
 });
 
-// ----------------------------
-// DEFINE PROPS
-// ----------------------------
+// Props
 const props = defineProps({
-  values: Object, // existing buttons data passed in
+  values: {
+    type: Object,
+    default: () => ({ html: "" }), // default to empty html
+  },
 });
 
-// -----------------------------
-// HANDLE VIEWING THE RENDERED VALUES
-// -----------------------------
+// Initialize from props
 watch(
   () => props.values,
   (values) => {
-    if (!values) return;
-    body.value.html = values.html;
+    body.value.html = values?.html ?? "";
   },
-  { immediate: true }
+  { immediate: true },
 );
 
-// ----------------
-// HANDLE SUBMIT
-// ----------------
+// Submit
 const handleSubmitHtml = () => {
-  if (!body.value.html.trim()) {
+  if (!body.value.html?.trim()) {
     showErrorToast(t("customHtml.emptyError"));
     return;
   }
 
-  emit("handleSubmitFields", body.value);
+  emit("handleSubmitFields", { html: body.value.html });
   emit("handleCloseComponentPopup");
 };
 </script>
@@ -67,7 +59,9 @@ const handleSubmitHtml = () => {
 <style scoped lang="scss">
 .custom_html_fields {
   max-height: 700px;
-  overflow-y: scroll;
+  overflow-y: auto;
+  padding: 8px;
+
   .input {
     margin-bottom: 15px;
     display: flex;
@@ -81,18 +75,16 @@ const handleSubmitHtml = () => {
     }
   }
 
-  // .editor_input {
-  //   width: 100%;
-  //   max-width: unset;
-  //   :deep(.p-editor-container) {
-  //     width: 100%;
-  //     border-radius: 6px;
-  //     border: 1px solid #e4e4e4;
+  // Styling for Quill Editor if using PrimeVue Editor
+  :deep(.p-editor-container) {
+    width: 100%;
+    min-height: 200px;
+    border-radius: 6px;
+    border: 1px solid #e4e4e4;
 
-  //     &:focus-within {
-  //       border-color: $mainColor;
-  //     }
-  //   }
-  // }
+    &:focus-within {
+      border-color: #f05d2a; // main color
+    }
+  }
 }
 </style>

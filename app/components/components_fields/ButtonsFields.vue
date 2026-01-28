@@ -1,12 +1,12 @@
 <template>
   <div class="buttons_fields">
-    <h4 class="centered">{{ $t("buttons.title") }}</h4>
+    <h4 class="centered">{{ t("buttons.title") }}</h4>
 
     <!-- Loop through buttons -->
     <div class="button_item" v-for="(btn, index) in buttons" :key="index">
       <!-- Icon -->
       <div class="input icon_input">
-        <label>{{ $t("buttons.fields.icon") }}</label>
+        <label>{{ t("buttons.fields.icon") }}</label>
         <button class="icon_select_btn" @click="emit('openIconPicker', btn)">
           <i :class="btn.icon || 'pi pi-stop'"></i>
         </button>
@@ -14,33 +14,33 @@
 
       <!-- Title -->
       <div class="input grow_input">
-        <label>{{ $t("buttons.fields.title") }}</label>
+        <label>{{ t("buttons.fields.title") }}</label>
         <input
           type="text"
           v-model="btn.title"
-          :placeholder="$t('buttons.placeholders.title')"
+          :placeholder="t('buttons.placeholders.title')"
         />
       </div>
 
       <!-- Link -->
       <div class="input">
-        <label>{{ $t("buttons.fields.link") }}</label>
+        <label>{{ t("buttons.fields.link") }}</label>
         <input
           type="text"
           v-model="btn.link"
-          :placeholder="$t('buttons.placeholders.link')"
+          :placeholder="t('buttons.placeholders.link')"
         />
       </div>
 
       <!-- Target -->
       <div class="input">
-        <label>{{ $t("buttons.fields.target") }}</label>
+        <label>{{ t("buttons.fields.target") }}</label>
         <select v-model="btn.target">
           <option value="_self">
-            {{ $t("buttons.targets.self") }}
+            {{ t("buttons.targets.self") }}
           </option>
           <option value="_blank">
-            {{ $t("buttons.targets.blank") }}
+            {{ t("buttons.targets.blank") }}
           </option>
         </select>
       </div>
@@ -48,7 +48,7 @@
       <!-- Reversed Switch -->
       <div class="input toggle_input">
         <ToggleSwitch v-model="btn.reversed" />
-        <span>{{ $t("buttons.fields.reversed") }}</span>
+        <span>{{ t("buttons.fields.reversed") }}</span>
       </div>
 
       <!-- Delete button -->
@@ -65,10 +65,10 @@
 
     <div class="flex_buttons">
       <button class="main-btn reversed" @click="addButton">
-        {{ $t("buttons.actions.addButton") }}
+        {{ t("buttons.actions.addButton") }}
       </button>
       <button class="main-btn" @click="handleSubmitButtons">
-        {{ $t("buttons.actions.submit") }}
+        {{ t("buttons.actions.submit") }}
       </button>
     </div>
   </div>
@@ -92,7 +92,7 @@ const buttons = ref([
 
 // Add / Remove Buttons
 const addButton = () => {
-  buttons.value.push({
+  buttons?.value?.push({
     icon: "",
     title: "",
     link: "",
@@ -122,18 +122,26 @@ const props = defineProps({
 watch(
   () => props.values,
   (values) => {
-    if (!values) return;
-
-    // Render buttons from props or fallback to default
-    buttons.value = values?.items?.map((btn) => ({
-      icon: btn.icon ?? "",
-      title: btn.title ?? "",
-      link: btn.link ?? "",
-      target: btn.target ?? "_self",
-      reversed: btn.reversed ?? false,
-    }));
+    buttons.value =
+      values?.items?.length > 0
+        ? values.items.map((btn) => ({
+            icon: btn.icon ?? "",
+            title: btn.title ?? "",
+            link: btn.link ?? "",
+            target: btn.target ?? "_self",
+            reversed: btn.reversed ?? false,
+          }))
+        : [
+            {
+              icon: "",
+              title: "",
+              link: "",
+              target: "_self",
+              reversed: false,
+            },
+          ];
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // Submit

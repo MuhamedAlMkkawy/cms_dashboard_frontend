@@ -11,24 +11,19 @@
         hidden
         @change="handleImageUpload"
       />
-
       <label for="logo_input" class="upload_logo_btn">
         <i class="pi pi-upload"></i>
         <span>{{ $t("logo.upload") }}</span>
       </label>
     </div>
+
     <!-- Preview -->
     <label for="logo_input" v-if="body.image" class="preview">
-      <img
-        :src="body.image"
-        :alt="$t('logo.previewAlt')"
-        loading="lazy"
-        preview
-      />
+      <img :src="body.image" :alt="$t('logo.previewAlt')" loading="lazy" />
       <!-- <button class="pi pi-trash delete_btn" @click="removeImage"></button> -->
     </label>
 
-    <!-- width -->
+    <!-- Width -->
     <div class="input">
       <label for="logo_width">{{ $t("logo.widthLabel") }}</label>
       <input
@@ -40,7 +35,7 @@
       />
     </div>
 
-    <!-- height -->
+    <!-- Height -->
     <div class="input">
       <label for="logo_height">{{ $t("logo.heightLabel") }}</label>
       <input
@@ -52,7 +47,6 @@
       />
     </div>
 
-    <!-- CSS classes slot -->
     <slot></slot>
 
     <button class="main-btn" @click="handleSubmitLogo">
@@ -63,54 +57,37 @@
 
 <script setup>
 import { useI18n } from "vue-i18n";
-const { t } = useI18n();
 
-// --------------
-// DEFINE EMITS
-// --------------
+const { t } = useI18n();
+const { submitMethod, submitResult, showErrorToast } = useApiMethods();
 const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
-// --------------
-// HANDLE API METHODS
-// --------------
-const { submitMethod, submitResult, showErrorToast } = useApiMethods();
-
-// --------------
-// HANDLE BODY
-// --------------
 const body = ref({
   image: null,
   width: "",
   height: "",
 });
 
-// ----------------------------
-// DEFINE PROPS
-// ----------------------------
 const props = defineProps({
-  values: Object, // existing buttons data passed in
+  values: { type: Object, default: () => ({}) },
 });
 
-// -----------------------------
-// HANDLE VIEWING THE RENDERED VALUES
-// -----------------------------
+// Initialize from props
 watch(
   () => props.values,
   (values) => {
-    if (!values) return;
-
     body.value = {
-      image: values.image ?? null,
-      width: values.width ?? "",
-      height: values.height ?? "",
+      image: values?.image ?? null,
+      width: values?.width ?? "",
+      height: values?.height ?? "",
     };
   },
   { immediate: true },
 );
 
-// -------- HANDLE IMAGE UPLOAD ----------
+// Image upload
 const handleImageUpload = (event) => {
-  const file = event.target.files[0];
+  const file = event.target.files?.[0];
   if (!file) return;
 
   const allowedTypes = [
@@ -120,7 +97,6 @@ const handleImageUpload = (event) => {
     "image/gif",
     "image/svg+xml",
   ];
-
   if (!allowedTypes.includes(file.type)) {
     showErrorToast(t("logo.invalidFile"));
     event.target.value = "";
@@ -129,12 +105,13 @@ const handleImageUpload = (event) => {
 
   const formData = new FormData();
   formData.append("file", file);
+
   submitMethod("/uploads/single", true, formData, "POST");
 };
 
 watchEffect(() => {
   if (submitResult?.value) {
-    body.value.image = submitResult?.value?.data?.path;
+    body.value.image = submitResult.value.data?.path;
   }
 });
 
@@ -142,22 +119,22 @@ const removeImage = () => {
   body.value.image = null;
 };
 
-// -------- SUBMIT ----------
+// Submit
 const handleSubmitLogo = () => {
   if (!body.value.image) {
     showErrorToast(t("logo.imageRequired"));
     return;
   }
 
-  emit("handleSubmitFields", body.value);
+  emit("handleSubmitFields", { ...body.value });
   emit("handleCloseComponentPopup");
 };
 </script>
 
 <style scoped lang="scss">
 .logo_fields {
-  /* 🔹 Layout override ONLY */
   .input {
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -174,7 +151,6 @@ const handleSubmitLogo = () => {
     }
   }
 
-  /* 🔹 File upload button (component-specific) */
   label.upload_logo_btn {
     border: 1px dashed #e4e4e4;
     border-radius: 6px;
@@ -184,19 +160,16 @@ const handleSubmitLogo = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-
     span {
-      margin-inline-start: 8px;
+      margin-left: 8px;
       font-size: 14px;
     }
-
     &:hover {
-      color: $mainColor;
-      border-color: $mainColor;
+      color: #f05d2a;
+      border-color: #f05d2a;
     }
   }
 
-  /* 🔹 Image preview */
   .preview {
     margin-block: 10px;
     position: relative;
@@ -206,9 +179,13 @@ const handleSubmitLogo = () => {
     overflow: hidden;
     display: block;
     cursor: pointer;
-    &:hover {
-      filter: brightness(0.5);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
+
     .delete_btn {
       position: absolute;
       top: 2px;
@@ -216,6 +193,8 @@ const handleSubmitLogo = () => {
       font-size: 13px;
       cursor: pointer;
       border-radius: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
     }
   }
 }

@@ -57,68 +57,66 @@
 </template>
 
 <script setup>
-  import { useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
-  const { t } = useI18n();
-  const { showErrorToast } = useToastMsg();
+const { t } = useI18n();
+const { showErrorToast } = useToastMsg();
 
-  const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
+const emit = defineEmits(["handleSubmitFields", "handleCloseComponentPopup"]);
 
-  const accordions = ref([
-    {
-      title: "",
-      content: "",
-    },
-  ]);
+const accordions = ref([{ title: "", content: "" }]);
 
-  const props = defineProps({
-    values: Object,
-  });
+// Props with default to avoid undefined
+const props = defineProps({
+  values: {
+    type: Object,
+    default: () => ({ items: [] }),
+  },
+});
 
-  watch(
-    () => props.values,
-    (values) => {
-      if (!values) return;
+// Initialize from props or fallback to one default item
+watch(
+  () => props.values,
+  (values) => {
+    accordions.value =
+      values?.items?.length > 0
+        ? values.items.map((item) => ({
+            title: item.title ?? "",
+            content: item.content ?? "",
+          }))
+        : [{ title: "", content: "" }];
+  },
+  { immediate: true },
+);
 
-      accordions.value = values?.items?.map((item) => ({
-        title: item.title ?? "",
-        content: item.content ?? "",
-      }));
-    },
-    { immediate: true }
+// Add accordion
+const addAccordion = () => {
+  accordions.value.push({ title: "", content: "" });
+};
+
+// Remove accordion
+const removeAccordion = (index) => {
+  if (accordions.value.length > 1) {
+    accordions.value.splice(index, 1);
+  } else {
+    showErrorToast(t("accordion.errors.atLeastOne"));
+  }
+};
+
+// Submit
+const handleSubmitAccordion = () => {
+  const invalid = accordions.value.some(
+    (a) => !a.title.trim() || !a.content.trim(),
   );
 
-  // Add accordion
-  const addAccordion = () => {
-    accordions.value.push({
-      title: "",
-      content: "",
-    });
-  };
+  if (invalid) {
+    showErrorToast(t("accordion.errors.fillAll"));
+    return;
+  }
 
-  // Remove accordion
-  const removeAccordion = (index) => {
-    if (accordions.value.length > 1) {
-      accordions.value.splice(index, 1);
-    } else {
-      showErrorToast(t("accordion.errors.atLeastOne"));
-    }
-  };
-
-  // Submit
-  const handleSubmitAccordion = () => {
-    const invalid = accordions.value.some(
-      (a) => !a.title.trim() || !a.content.trim()
-    );
-
-    if (invalid) {
-      showErrorToast(t("accordion.errors.fillAll"));
-      return;
-    }
-
-    emit("handleSubmitFields", { items: accordions.value });
-    emit("handleCloseComponentPopup");
-  };
+  emit("handleSubmitFields", { items: accordions.value });
+  emit("handleCloseComponentPopup");
+};
 </script>
 
 <style scoped lang="scss">
