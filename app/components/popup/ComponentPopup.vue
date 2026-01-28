@@ -45,7 +45,7 @@
   })
 
   // DEFINE CUSTOM CLASSES 
-  const customClasses = ref('')
+  const customClasses = ref('w-[100%]')
 
 
   // DEFINE EMITS

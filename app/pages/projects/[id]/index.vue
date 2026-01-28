@@ -127,67 +127,91 @@
 
         <div
           class="section_content flex flex-row w-full"
-          @dragover.prevent
+          @dragover.prevent="onDragOverComponent(section, $event)"
           @drop="onDropComponent(section, $event)"
         >
-          <div
-            v-for="(component, index) in section?.components"
-            :key="component?.id"
-            class="section_component flex-shrink-0 relative"
-            :class="component?.content?.customClasses"
-            :style="{
-              width:
-                component &&
-                component?.content?.customClasses?.match(/w-\[(.*?)\]/)?.[1],
-            }"
-            draggable="true"
-            @dragstart="onDragStartComponent(section, component, index, $event)"
-            @dragover.prevent
-            @drop="onDropComponent(section, $event)"
+          <template
+            v-for="(component, index) in section.components"
+            :key="component._id"
           >
-            <!-- Component content -->
-            <div class="component_block">
-              <!-- <i :class="'pi ' + component.icon"></i> -->
-              <span>{{ component.type }}</span>
-            </div>
-
-            <!-- Control buttons -->
-            <div class="component_buttons">
-              <small>{{ component?.content?.customClasses }}</small>
-              <!-- Edit -->
-              <button
-                class="edit_component"
-                :title="t('projectEditor.buttons.editComponent')"
-                @click="
-                  handleSectionContent(
-                    section.id,
-                    component.type,
-                    component.content,
-                  )
-                "
-              >
-                <i class="pi pi-pen-to-square"></i>
-              </button>
-
-              <button
-                class="remove_component"
-                :title="t('projectEditor.buttons.removeComponent')"
-                @click="removeComponent(section, index)"
-              >
-                <i class="pi pi-trash"></i>
-              </button>
-            </div>
-
-            <!-- Resize handle -->
+            <!-- PLACEHOLDER BEFORE COMPONENT -->
             <div
-              class="resize_handle"
-              @mousedown.prevent="startResize(section, component, $event)"
-            ></div>
-          </div>
+              v-if="
+                dragOverSection === section &&
+                dragOverIndex === index &&
+                !isSamePosition(section, index)
+              "
+              class="section_component empty_placeholder"
+            >
+              {{ t("projectEditor.placeholders.dropHere") }}
+            </div>
 
-          <!-- Empty placeholder for new components -->
+            <!-- COMPONENT -->
+            <div
+              class="section_component relative"
+              :style="{
+                width:
+                  component?.content?.customClasses?.match(
+                    /w-\[(.*?)\]/,
+                  )?.[1] || '100%',
+              }"
+              :class="[
+                component?.content?.customClasses,
+                // { dragging: isDragging(component) },
+              ]"
+              draggable="true"
+              @dragstart="
+                onDragStartComponent(section, component, index, $event)
+              "
+              @dragover.prevent="onDragOverComponent(section, $event)"
+            >
+              <!-- Component content -->
+              <div class="component_block">
+                <span>{{ component.type }}</span>
+              </div>
+
+              <!-- Control buttons -->
+              <div class="component_buttons">
+                <small>{{ component?.content?.customClasses }}</small>
+
+                <button
+                  class="edit_component"
+                  :title="t('projectEditor.buttons.editComponent')"
+                  @click="
+                    handleSectionContent(
+                      section.id,
+                      component.type,
+                      component.content,
+                    )
+                  "
+                >
+                  <i class="pi pi-pen-to-square"></i>
+                </button>
+
+                <button
+                  class="remove_component"
+                  :title="t('projectEditor.buttons.removeComponent')"
+                  @click="removeComponent(section, index)"
+                >
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
+
+              <!-- Resize handle -->
+              <div
+                class="resize_handle"
+                @mousedown.prevent="startResize(section, component, $event)"
+              ></div>
+            </div>
+          </template>
+
+          <!--  PLACEHOLDER AT END -->
           <div
-            v-if="draggedComponent && draggedComponent.fromSection !== section"
+            v-if="
+              dragOverSection === section &&
+              dragOverIndex === section.components.length &&
+              !isSamePosition(section, section.components.length)
+            "
             class="section_component empty_placeholder"
           >
             {{ t("projectEditor.placeholders.dropHere") }}
@@ -388,73 +412,145 @@ const handleEditPage = (id) => {
 // HANDLE DRAG & DROP COMPONENTS
 // ------------------------------
 const draggedComponent = ref(null);
+const dragOverSection = ref(null);
+const dragOverIndex = ref(null);
 
-const onDragStartComponentFromSidebar = ({ item, index, event }) => {
-  draggedComponent.value = { component: item, fromSidebar: true };
-  event.dataTransfer.effectAllowed = "copy"; // Because it's coming from sidebar
-  event.dataTransfer.setData("text/plain", "dragging"); // needed for Firefox
+const isSamePosition = (section, hoverIndex) => {
+  if (!draggedComponent.value) return false;
+
+  const { fromSection, index: fromIndex } = draggedComponent.value;
+
+  if (fromSection !== section) return false;
+
+  // simulate final index after removal
+  let finalIndex = hoverIndex;
+  if (hoverIndex > fromIndex) finalIndex--;
+
+  return finalIndex === fromIndex;
 };
 
-const onDragEndComponentFromSidebar = (event) => {
-  draggedComponent.value = null;
-};
-
-// ---------------------
-// Drag & Drop
-// ---------------------
-const onDragStartComponent = (section, component, index, e) => {
-  draggedComponent.value = { component, fromSection: section, index };
-  e.dataTransfer.effectAllowed = "move";
-  e.dataTransfer.setData("text/plain", "dragging"); // needed for Firefox
-};
-
-const onDropComponent = (targetSection, e) => {
+const onDragOverComponent = (section, e) => {
   if (!draggedComponent.value) return;
 
-  const { component, fromSidebar, fromSection } = draggedComponent.value;
+  dragOverSection.value = section;
 
-  // Determine container and children for drop index
   const container = e.currentTarget.closest(".section_content");
-  const children = Array.from(
-    container.querySelectorAll(".section_component"),
-  ).filter((c) => !c.classList.contains("empty_placeholder"));
+  if (!container) return;
 
-  let dropIndex = children.length; // default append
+  const children = Array.from(
+    container.querySelectorAll(".section_component:not(.empty_placeholder)"),
+  );
+
+  let index = children.length;
+
   for (let i = 0; i < children.length; i++) {
     const rect = children[i].getBoundingClientRect();
-    if (e.clientX < rect.left + rect.width / 2) {
-      dropIndex = i;
+    if (e.clientY < rect.top + rect.height / 2) {
+      index = i;
       break;
     }
   }
 
+  dragOverIndex.value = index;
+};
+
+const onDragStartComponentFromSidebar = ({ item, index, event }) => {
+  draggedComponent.value = { component: item, fromSidebar: true };
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", "dragging");
+};
+const onDragEndComponentFromSidebar = (event) => {
+  draggedComponent.value = null;
+};
+
+const onDragStartComponent = (section, component, index, e) => {
+  draggedComponent.value = {
+    component,
+    fromSidebar: false,
+    fromSection: section,
+    index,
+  };
+
+  e.dataTransfer.effectAllowed = "move";
+  e.dataTransfer.setData("text/plain", "dragging");
+
+  const el = e.currentTarget;
+  const rect = el.getBoundingClientRect();
+
+  // Clone element for drag image
+  const clone = el.cloneNode(true);
+
+  // Remove Tailwind w-[...] classes
+  clone.classList.forEach((cls) => {
+    if (/^w-\[.*\]$/.test(cls)) clone.classList.remove(cls);
+  });
+
+  // Set fixed width & height
+  clone.style.maxWidth = "300px";           // optional
+  clone.style.width = "300px";             // fixed width
+  clone.style.height = `${rect.height}px`; // keep original height
+  clone.style.background = "#fff";
+  clone.style.opacity = "0.8";
+
+  // Hide offscreen
+  clone.style.position = "fixed";
+  clone.style.top = "-9999px";
+  clone.style.left = "-9999px";
+
+  document.body.appendChild(clone);
+
+  // Use the clone as drag image, centered under cursor
+  const cloneRect = clone.getBoundingClientRect();
+  e.dataTransfer.setDragImage(clone, cloneRect.width / 2, cloneRect.height / 2);
+
+  // Remove clone after drag starts
+  setTimeout(() => {
+    if (clone.parentNode) clone.parentNode.removeChild(clone);
+  }, 0);
+};
+
+
+const onDropComponent = (targetSection, e) => {
+  if (!draggedComponent.value) return;
+
+  const { component, fromSidebar, fromSection, index } = draggedComponent.value;
+
+  //  USE THE ALREADY CALCULATED INDEX
+  let dropIndex = dragOverIndex.value ?? targetSection.components.length;
+
   if (fromSidebar) {
-    // Add new component
-    const newComponent = { ...component, id: Date.now(), width: 30 };
+    const newComponent = {
+      ...component,
+      _id: Date.now(),
+      content: {
+        customClasses: "w-[100%]",
+      },
+    };
+
     targetSection.components.splice(dropIndex, 0, newComponent);
   } else {
     const fromComponents = fromSection.components;
     const toComponents = targetSection.components;
 
-    // Find source index
-    const fromIndex = fromComponents.findIndex((c) => c._id === component._id);
-    if (fromIndex === -1) return;
+    // const fromIndex = fromComponents.findIndex((c) => c._id === component._id);
+    // if (fromIndex === -1) return;
 
-    // Remove FIRST (IMPORTANT)
-    const [movedComponent] = fromComponents.splice(fromIndex, 1);
+    const [movedComponent] = fromComponents.splice(index, 1);
 
-    // Fix index when moving inside same section
-    let finalIndex = dropIndex;
-    if (fromSection.id === targetSection.id && dropIndex > fromIndex) {
-      finalIndex -= 1;
+    //  correct same-section reorder
+    if (fromSection === targetSection && dropIndex > index) {
+      dropIndex--;
     }
-
-    // Insert without replacement
-    toComponents.splice(finalIndex, 0, movedComponent);
+    toComponents.splice(dropIndex, 0, movedComponent);
   }
 
+  // cleanup
+  e.currentTarget.classList.remove("dragging");
   draggedComponent.value = null;
+  dragOverSection.value = null;
+  dragOverIndex.value = null;
 };
+
 // ---------------------
 // Resize
 // ---------------------
@@ -639,6 +735,7 @@ onMounted(() => {
 
     .image {
       height: 50px;
+      max-width: 150px;
       img {
         object-fit: contain;
       }
