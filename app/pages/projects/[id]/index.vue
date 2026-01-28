@@ -486,7 +486,6 @@ const onDragStartComponent = (section, component, index, e) => {
   });
 
   // Set fixed width & height
-  clone.style.maxWidth = "300px";           // optional
   clone.style.width = "300px";             // fixed width
   clone.style.height = `${rect.height}px`; // keep original height
   clone.style.background = "#fff";
