@@ -274,7 +274,6 @@
 </template>
 
 <script setup>
-import { ConfirmPopupStyle } from "primevue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -679,6 +678,31 @@ watch(
   },
 );
 
+
+const getChangedFields = (current, original) => {
+  const changes = {};
+
+  Object.keys(current).forEach((key) => {
+    const curVal = current[key];
+    const origVal = original[key];
+
+    // deep compare for objects/arrays
+    if (typeof curVal === "object") {
+      if (JSON.stringify(curVal) !== JSON.stringify(origVal)) {
+        changes[key] = curVal;
+      }
+    } else {
+      if (curVal !== origVal) {
+        changes[key] = curVal;
+      }
+    }
+  });
+
+  return changes;
+};
+
+
+
 // ----------------------------
 // HANDLE SAVE PAGE CONTENT
 // ----------------------------
@@ -688,24 +712,54 @@ const handleSavePageContent = () => {
     return;
   }
 
-  const pageId = currentPage?.value?._id;
+  const pageId = currentPage.value._id;
+  const original = originalPages.value[pageId];
 
-  if (!pageId) {
+  if (!original) {
     showErrorToast(t("projectEditor.errors.invalidPageId"));
     return;
   }
 
-  // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
+    // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
   const isShortId = /^\d+$/.test(pageId); // true for "1", "2", "3", etc.
 
   const url = !isShortId
     ? `/projects/${route.params.id}/pages/${pageId}`
     : `/projects/${route.params.id}/pages`;
 
+  // get only changed fields
+  const changedData = getChangedFields(currentPage.value, original);
+
   const method = !isShortId ? "PATCH" : "POST";
 
-  submitMethod(url, true, currentPage.value, method, "");
+
+  submitMethod(url, true, changedData, method , "");
 };
+
+// const handleSavePageContent = () => {
+//   if (!currentPage?.value?.sections?.length) {
+//     showErrorToast(t("projectEditor.errors.pageContentRequired"));
+//     return;
+//   }
+
+//   const pageId = currentPage?.value?._id;
+
+//   if (!pageId) {
+//     showErrorToast(t("projectEditor.errors.invalidPageId"));
+//     return;
+//   }
+
+//   // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
+//   const isShortId = /^\d+$/.test(pageId); // true for "1", "2", "3", etc.
+
+//   const url = !isShortId
+//     ? `/projects/${route.params.id}/pages/${pageId}`
+//     : `/projects/${route.params.id}/pages`;
+
+//   const method = !isShortId ? "PATCH" : "POST";
+
+//   submitMethod(url, true, currentPage.value, method, "");
+// };
 
 // CHECK IF THE PROJECT HAS PAGES
 watch(
