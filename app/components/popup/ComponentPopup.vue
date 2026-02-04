@@ -1,6 +1,15 @@
 <template>
   <div class="popup">
-    <div :class="['content ' , {max_width : props.componentData.type.toLowerCase().replace(/\s+/g, '-') === 'custom-html'} ]">
+    <div
+      :class="[
+        'content ',
+        {
+          max_width:
+            props.componentData.type.toLowerCase().replace(/\s+/g, '-') ===
+            'custom-html',
+        },
+      ]"
+    >
       <button
         class="pi pi-times close_btn"
         @click="$emit('handleCloseComponentPopup')"
@@ -8,20 +17,23 @@
 
       <!-- Dynamic component -->
       <component
-        :is="componentMap[props.componentData.type.toLowerCase().replace(/\s+/g, '-')]"
+        :is="
+          componentMap[
+            props.componentData.type.toLowerCase().replace(/\s+/g, '-')
+          ]
+        "
         :values="componentData?.values"
         @handleCloseComponentPopup="emit('handleCloseComponentPopup')"
         @openIconPicker="openIconPicker"
         @handleSubmitFields="handleFieldsSubmit"
       >
-
-      <ClassesInput
-        v-model="customClasses"
-        id="custom_classes"
-        label="CSS Classes"
-        placeholder="e.g. rounded-lg shadow-md text-center"
-      />
-    </component>
+        <ClassesInput
+          v-model="customClasses"
+          id="custom_classes"
+          label="CSS Classes"
+          placeholder="e.g. rounded-lg shadow-md text-center"
+        />
+      </component>
       <!-- Icon Picker -->
       <IconPicker v-model="iconPickerOpen" @select="setIcon" />
     </div>
@@ -29,82 +41,80 @@
 </template>
 
 <script setup>
-  import AccordionFields from '../components_fields/AccordionFields.vue'
-  import ButtonsFields from '../components_fields/ButtonsFields.vue'
-  import CardSliderFields from '../components_fields/CardSliderFields.vue'
-  import CustomHtml from '../components_fields/CustomHtml.vue'
-  import LogoField from '../components_fields/LogoField.vue'
-  import MenuFields from '../components_fields/MenuFields.vue'
-  import SocialFields from '../components_fields/SocialFields.vue'
-  import TabsFields from '../components_fields/TabsFields.vue'
-  import TimelineFields from '../components_fields/TimelineFields.vue'
+import AccordionFields from "../components_fields/AccordionFields.vue";
+import ButtonsFields from "../components_fields/ButtonsFields.vue";
+import CardSliderFields from "../components_fields/CardSliderFields.vue";
+import CustomHtml from "../components_fields/CustomHtml.vue";
+import LogoField from "../components_fields/LogoField.vue";
+import MenuFields from "../components_fields/MenuFields.vue";
+import SocialFields from "../components_fields/SocialFields.vue";
+import TabsFields from "../components_fields/TabsFields.vue";
+import TimelineFields from "../components_fields/TimelineFields.vue";
 
+// props for dynamic rendering
+const props = defineProps({
+  componentData: Object, // the component data
+});
 
-  // props for dynamic rendering
-  const props = defineProps({
-    componentData : Object // the component data
-  })
+// DEFINE CUSTOM CLASSES
+const customClasses = ref("w-[100%]");
 
-  // DEFINE CUSTOM CLASSES 
-  const customClasses = ref('w-[100%]')
+// DEFINE EMITS
+const emit = defineEmits([
+  "handleAddComponentContent",
+  "handleCloseComponentPopup",
+]);
 
+// map type name to component
+const componentMap = {
+  "card-slider": CardSliderFields,
+  "nav-menu": MenuFields,
+  "custom-html": CustomHtml,
+  logo: LogoField,
+  buttons: ButtonsFields,
+  accordion: AccordionFields,
+  timeline: TimelineFields,
+  "social-media": SocialFields,
+  tabs: TabsFields,
+};
 
-  // DEFINE EMITS
-  const emit = defineEmits(['handleAddComponentContent' , 'handleCloseComponentPopup'])
+// --------------------------
+// HANDLE THE ICON PICKER
+// --------------------------
+const iconPickerOpen = ref(false);
+const currentIconTarget = ref(null);
 
-  // map type name to component
-  const componentMap = {
-    'card-slider': CardSliderFields,
-    'nav-menu' : MenuFields,
-    'custom-html' : CustomHtml,
-    'logo' : LogoField,
-    'buttons' : ButtonsFields,
-    'accordion' : AccordionFields,
-    'timeline' : TimelineFields,
-    'social-media' : SocialFields,
-    'tabs' : TabsFields
-  }
+const openIconPicker = (target) => {
+  currentIconTarget.value = target;
+  iconPickerOpen.value = true;
+};
 
+const setIcon = (icon) => {
+  currentIconTarget.value.icon = icon;
+};
 
-  // --------------------------
-  // HANDLE THE ICON PICKER
-  // --------------------------
-  const iconPickerOpen = ref(false);
-  const currentIconTarget = ref(null);
-
-  const openIconPicker = (target) => {
-    currentIconTarget.value = target;
-    iconPickerOpen.value = true;
-  };
-
-  const setIcon = (icon) => {
-    currentIconTarget.value.icon = icon;
-  };
-
-
-  // --------------------------
-  // HANDLE THE COMPONENT DATA CUSTOM CLASSES 
-  // --------------------------
-  watch(
+// --------------------------
+// HANDLE THE COMPONENT DATA CUSTOM CLASSES
+// --------------------------
+watch(
   () => props.componentData?.values,
-    (values) => {
-      customClasses.value = values?.customClasses ?? '';
+  (values) => {
+    customClasses.value = values?.customClasses ?? "";
+  },
+  { immediate: true },
+);
+
+// called when child emits handleSubmitFields
+const handleFieldsSubmit = (data) => {
+  emit("handleAddComponentContent", {
+    sectionID: props.componentData.sectionID,
+    type: props.componentData.type,
+    content: {
+      ...(props.componentData?.type === "nav-menu" ? { items : data } : data),
+      customClasses: customClasses.value,
     },
-    { immediate: true }
-  );
+  });
 
-
-  // called when child emits handleSubmitFields
-  const handleFieldsSubmit = (data) => {
-    emit('handleAddComponentContent' , {
-      sectionID : props.componentData.sectionID ,
-      type : props.componentData.type ,
-      content : {
-        ...data ,
-        customClasses : customClasses.value
-      }
-    })
-    // emit('handleCloseComponentPopup')
-  }
+  // emit('handleCloseComponentPopup')
+};
 </script>
-
