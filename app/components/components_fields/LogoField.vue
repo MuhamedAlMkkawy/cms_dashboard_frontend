@@ -77,9 +77,9 @@ watch(
   () => props.values,
   (values) => {
     body.value = {
-      image: values?.image ?? null,
-      width: values?.width ?? "",
-      height: values?.height ?? "",
+      image: values?.content?.image ?? null,
+      width: values?.content?.width ?? "",
+      height: values?.content?.height ?? "",
     };
   },
   { immediate: true },

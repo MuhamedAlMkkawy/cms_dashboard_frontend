@@ -22,7 +22,7 @@
             props.componentData.type.toLowerCase().replace(/\s+/g, '-')
           ]
         "
-        :values="componentData?.values"
+        :values="componentData"
         @handleCloseComponentPopup="emit('handleCloseComponentPopup')"
         @openIconPicker="openIconPicker"
         @handleSubmitFields="handleFieldsSubmit"
@@ -97,8 +97,9 @@ const setIcon = (icon) => {
 // HANDLE THE COMPONENT DATA CUSTOM CLASSES
 // --------------------------
 watch(
-  () => props.componentData?.values,
+  () => props.componentData,
   (values) => {
+    // console.log(props.componentData)
     customClasses.value = values?.customClasses ?? "";
   },
   { immediate: true },
@@ -109,6 +110,7 @@ const handleFieldsSubmit = (data) => {
   emit("handleAddComponentContent", {
     sectionID: props.componentData.sectionID,
     type: props.componentData.type,
+    id : props.componentData.id,
     content: {
       ...(props.componentData?.type === "nav-menu" ? { items : data } : data),
       customClasses: customClasses.value,

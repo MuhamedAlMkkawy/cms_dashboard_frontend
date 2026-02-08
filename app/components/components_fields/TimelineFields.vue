@@ -103,7 +103,7 @@ watch(
   (values) => {
     if (!values) return;
 
-    timeline.value = values?.items?.map((item) => ({
+    timeline.value = values?.content?.items?.map((item) => ({
       date: item.date ? new Date(item.date).toLocaleDateString() : "",
       icon: item.icon ?? "",
       title: item.title ?? "",

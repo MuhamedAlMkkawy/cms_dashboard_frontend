@@ -79,8 +79,8 @@ watch(
   () => props.values,
   (values) => {
     accordions.value =
-      values?.items?.length > 0
-        ? values.items.map((item) => ({
+      values?.content?.items?.length > 0
+        ? values?.content?.items.map((item) => ({
             title: item.title ?? "",
             content: item.content ?? "",
           }))

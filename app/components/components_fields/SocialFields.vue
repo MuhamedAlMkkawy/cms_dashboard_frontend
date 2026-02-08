@@ -85,7 +85,7 @@ watch(
   (values) => {
     if (!values) return;
 
-    socials.value = values?.items?.map((item) => ({
+    socials.value = values?.content?.items?.map((item) => ({
       icon: item.icon ?? "",
       link: item.link ?? "",
       color: item.color ?? "#000000",

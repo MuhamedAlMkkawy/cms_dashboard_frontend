@@ -177,13 +177,7 @@
                 <button
                   class="edit_component"
                   :title="t('projectEditor.buttons.editComponent')"
-                  @click="
-                    handleSectionContent(
-                      section.id,
-                      component.type,
-                      component.content,
-                    )
-                  "
+                  @click="handleSectionContent(section.id, component)"
                 >
                   <i class="pi pi-pen-to-square"></i>
                 </button>
@@ -281,11 +275,6 @@ const { t } = useI18n();
 definePageMeta({
   layout: "none",
 });
-
-// -----------------------------
-// DEFINE GLOBAL STORE
-// -----------------------------
-const globalStore = useGlobalStore();
 
 // -----------------------------
 // DEFINE ROUTE
@@ -616,10 +605,11 @@ const removeComponent = (section, index) => {
   section.components.splice(index, 1);
 };
 
-const handleSectionContent = (sectionID, type, values) => {
-  componentData.value.sectionID = sectionID;
-  componentData.value.type = type;
-  componentData.value.values = values;
+const handleSectionContent = (sectionID, component) => {
+  componentData.value = {
+    sectionID,
+    ...component,
+  };
 };
 
 const handleAddComponentContent = (data) => {
@@ -629,9 +619,15 @@ const handleAddComponentContent = (data) => {
   if (!targetedSection)
     return showErrorToast(t("projectEditor.errors.sectionNotFound"));
 
+  // console.log(targetedSection.components);
+  // console.log(data);
+  // console.log("-------------------");
   const targetComponent = targetedSection.components.find(
-    (comp) => comp.type === data.type,
-  );
+    (comp) => comp.id === data.id,
+  ); 
+
+  // console.log(targetComponent);
+
   if (!targetComponent)
     return showErrorToast(t("projectEditor.errors.componentNotFound"));
 
@@ -678,7 +674,6 @@ watch(
   },
 );
 
-
 const getChangedFields = (current, original) => {
   const changes = {};
 
@@ -701,8 +696,6 @@ const getChangedFields = (current, original) => {
   return changes;
 };
 
-
-
 // ----------------------------
 // HANDLE SAVE PAGE CONTENT
 // ----------------------------
@@ -720,7 +713,7 @@ const handleSavePageContent = () => {
     return;
   }
 
-    // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
+  // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
   const isShortId = /^\d+$/.test(pageId); // true for "1", "2", "3", etc.
 
   const url = !isShortId
@@ -732,8 +725,7 @@ const handleSavePageContent = () => {
 
   const method = !isShortId ? "PATCH" : "POST";
 
-
-  submitMethod(url, true, changedData, method , "");
+  submitMethod(url, true, changedData, method, "");
 };
 
 // const handleSavePageContent = () => {

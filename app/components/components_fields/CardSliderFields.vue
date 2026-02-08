@@ -157,11 +157,11 @@ watch(
   () => props.values,
   (values) => {
     slider.value = {
-      itemsToShow: values?.itemsToShow ?? 1,
-      autoplay: values?.autoplay ?? false,
+      itemsToShow: values?.content?.itemsToShow ?? 1,
+      autoplay: values?.content?.autoplay ?? false,
       items:
-        values?.items?.length > 0
-          ? values.items.map((item) => ({
+        values?.content?.items?.length > 0
+          ? values?.content?.items.map((item) => ({
               file: item.file ?? null,
               title: item.title ?? "",
               text: item.text ?? "",

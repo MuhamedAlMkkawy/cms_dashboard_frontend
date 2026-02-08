@@ -153,7 +153,7 @@ watch(
   () => props.values,
   (values) => {
     if (!values) return;
-    body.items = values?.items?.map((item) => ({
+    body.items = values?.content?.items?.map((item) => ({
       icon: item.icon ?? "",
       title: item.title ?? "",
       link: item.link ?? "",

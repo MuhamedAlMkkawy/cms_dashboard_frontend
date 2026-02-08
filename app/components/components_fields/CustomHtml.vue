@@ -39,7 +39,7 @@ const props = defineProps({
 watch(
   () => props.values,
   (values) => {
-    body.value.html = values?.html ?? "";
+    body.value.html = values?.content?.html ?? "";
   },
   { immediate: true },
 );

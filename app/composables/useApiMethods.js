@@ -109,7 +109,7 @@ export function useApiMethods() {
     } else {
       if (endPoint.endsWith("login") && data) {
         authStore?.handleUserData(data?.data);
-        console.log(data?.data);
+        // console.log(data?.data);
       }
       else if (endPoint.endsWith("logout")) {
         handleNextRoute("unAuthed");

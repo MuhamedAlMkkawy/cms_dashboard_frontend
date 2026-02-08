@@ -81,7 +81,7 @@ watch(
   (values) => {
     if (!values) return;
 
-    tabs.value = values?.items?.map((item) => ({
+    tabs.value = values?.content?.items?.map((item) => ({
       title: item.title ?? "",
       description: item.description ?? "",
     })) || [{ title: "", description: "" }];

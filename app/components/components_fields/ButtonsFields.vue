@@ -123,8 +123,8 @@ watch(
   () => props.values,
   (values) => {
     buttons.value =
-      values?.items?.length > 0
-        ? values.items.map((btn) => ({
+      values?.content?.items?.length > 0
+        ? values?.content?.items.map((btn) => ({
             icon: btn.icon ?? "",
             title: btn.title ?? "",
             link: btn.link ?? "",
