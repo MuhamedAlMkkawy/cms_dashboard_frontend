@@ -708,10 +708,12 @@ const handleSavePageContent = () => {
   const pageId = currentPage.value._id;
   const original = originalPages.value[pageId];
 
-  if (!original) {
-    showErrorToast(t("projectEditor.errors.invalidPageId"));
-    return;
-  }
+  // if (!original) {
+  //   showErrorToast(t("projectEditor.errors.invalidPageId"));
+  //   return;
+  // }
+
+  console.log(currentPage.value)
 
   // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
   const isShortId = /^\d+$/.test(pageId); // true for "1", "2", "3", etc.
@@ -721,11 +723,11 @@ const handleSavePageContent = () => {
     : `/projects/${route.params.id}/pages`;
 
   // get only changed fields
-  const changedData = getChangedFields(currentPage.value, original);
+  // const changedData = getChangedFields(currentPage.value, original);
 
   const method = !isShortId ? "PATCH" : "POST";
 
-  submitMethod(url, true, changedData, method, "");
+  submitMethod(url, true, currentPage.value, method, "");
 };
 
 // const handleSavePageContent = () => {

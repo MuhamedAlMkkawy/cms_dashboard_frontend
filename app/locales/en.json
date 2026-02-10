@@ -59,6 +59,7 @@
       "edit": "Edit"
     },
     "errors": {
+      "invalidPageId": "Page Not Found",
       "sectionNotFound": "Section not found",
       "componentNotFound": "Component not found",
       "pageContentRequired": "You have to add data for the page to be added..."
@@ -82,6 +83,7 @@
   "pagePopup": {
     "title": "Page Name",
     "placeholder": "Name",
+    "slug_placeholder" : "Slug",
     "submit": "Submit",
     "emptyError": "You should add the page name to continue!"
   },

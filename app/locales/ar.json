@@ -59,6 +59,7 @@
       "edit": "تعديل"
     },
     "errors": {
+      "invalidPageId": "الصفحة غير موجوده",
       "sectionNotFound": "القسم غير موجود",
       "componentNotFound": "المكون غير موجود",
       "pageContentRequired": "يجب إضافة بيانات للصفحة قبل الحفظ..."
@@ -82,6 +83,7 @@
   "pagePopup": {
     "title": "اسم الصفحة",
     "placeholder": "الاسم",
+    "slug_placeholder" : "الرابط",
     "submit": "إرسال",
     "emptyError": "يجب إدخال اسم الصفحة للمتابعة!"
   },

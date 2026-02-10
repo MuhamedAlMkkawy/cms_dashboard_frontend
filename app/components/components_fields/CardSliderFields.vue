@@ -200,9 +200,9 @@ const handleSubmitCardSlider = () => {
     autoplay: slider.value.autoplay,
     items: slider.value.items.map((i) => ({
       file: i.file,
-      title: i.title.trim(),
-      text: i.text.trim(),
-      link: i.link.trim(),
+      ...(i.title?.trim() && { title: i.title.trim() }),
+      ...(i.text?.trim() && { text: i.text.trim() }),
+      ...(i.link?.trim() && { link: i.link.trim() }),
     })),
   });
 

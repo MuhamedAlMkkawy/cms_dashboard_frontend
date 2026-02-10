@@ -22,6 +22,7 @@
 </template>
 
 <script setup>
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -72,8 +73,13 @@ watch(
       isDragOver: false,
     };
   },
-  { immediate: true }
+  { immediate: true },
 );
+
+/* ------------------------
+ * HELPER: Convert spaces to dash
+ * ------------------------ */
+const slugify = (str) => str.trim().replace(/\s+/g, "-");
 
 /* ------------------------
  * METHODS
@@ -84,7 +90,14 @@ const handleSubmit = () => {
     return;
   }
 
-  emit("handleSectionPopup", section.value);
+  // Convert spaces to dash before emitting
+  const slugifiedName = slugify(section.value.name);
+
+  emit("handleSectionPopup", {
+    ...section.value,
+    name: slugifiedName,
+  });
+
   handleClose();
 };
 
