@@ -619,12 +619,9 @@ const handleAddComponentContent = (data) => {
   if (!targetedSection)
     return showErrorToast(t("projectEditor.errors.sectionNotFound"));
 
-  // console.log(targetedSection.components);
-  // console.log(data);
-  // console.log("-------------------");
   const targetComponent = targetedSection.components.find(
     (comp) => comp.id === data.id,
-  ); 
+  );
 
   // console.log(targetComponent);
 
@@ -674,27 +671,46 @@ watch(
   },
 );
 
-const getChangedFields = (current, original) => {
+function getDeepChangedFields(current, original) {
+  if (typeof current !== "object" || current === null) return current;
+
+  if (Array.isArray(current)) {
+    // Compare array elements
+    const changes = [];
+    let hasChange = false;
+
+    current.forEach((item, index) => {
+      const origItem = original?.[index];
+      const diff = getDeepChangedFields(item, origItem);
+
+      if (diff !== undefined) {
+        changes[index] = diff;
+        hasChange = true;
+      } else {
+        changes[index] = undefined;
+      }
+    });
+
+    return hasChange ? changes : undefined;
+  }
+
+  // For objects
   const changes = {};
+  let hasChange = false;
 
   Object.keys(current).forEach((key) => {
     const curVal = current[key];
-    const origVal = original[key];
+    const origVal = original?.[key];
 
-    // deep compare for objects/arrays
-    if (typeof curVal === "object") {
-      if (JSON.stringify(curVal) !== JSON.stringify(origVal)) {
-        changes[key] = curVal;
-      }
-    } else {
-      if (curVal !== origVal) {
-        changes[key] = curVal;
-      }
+    const diff = getDeepChangedFields(curVal, origVal);
+    if (diff !== undefined) {
+      changes[key] = diff;
+      hasChange = true;
     }
   });
 
-  return changes;
-};
+  return hasChange ? changes : undefined;
+}
 
 // ----------------------------
 // HANDLE SAVE PAGE CONTENT
@@ -713,7 +729,7 @@ const handleSavePageContent = () => {
   //   return;
   // }
 
-  console.log(currentPage.value)
+  console.log(currentPage.value);
 
   // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
   const isShortId = /^\d+$/.test(pageId); // true for "1", "2", "3", etc.
@@ -730,30 +746,7 @@ const handleSavePageContent = () => {
   submitMethod(url, true, currentPage.value, method, "");
 };
 
-// const handleSavePageContent = () => {
-//   if (!currentPage?.value?.sections?.length) {
-//     showErrorToast(t("projectEditor.errors.pageContentRequired"));
-//     return;
-//   }
 
-//   const pageId = currentPage?.value?._id;
-
-//   if (!pageId) {
-//     showErrorToast(t("projectEditor.errors.invalidPageId"));
-//     return;
-//   }
-
-//   // Determine if this is a "new page" based on numeric short IDs vs long MongoDB-style IDs
-//   const isShortId = /^\d+$/.test(pageId); // true for "1", "2", "3", etc.
-
-//   const url = !isShortId
-//     ? `/projects/${route.params.id}/pages/${pageId}`
-//     : `/projects/${route.params.id}/pages`;
-
-//   const method = !isShortId ? "PATCH" : "POST";
-
-//   submitMethod(url, true, currentPage.value, method, "");
-// };
 
 // CHECK IF THE PROJECT HAS PAGES
 watch(
