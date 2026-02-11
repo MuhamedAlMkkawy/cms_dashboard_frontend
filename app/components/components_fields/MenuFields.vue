@@ -393,7 +393,7 @@ const handleSubmitNavMenu = () => {
     position: relative;
     border: 1px solid #e4e4e4;
     border-radius: 5px;
-    padding-inline: 35px 8px; // leave space for the number
+    padding-inline: 8px; // leave space for the number
     margin-bottom: 18px;
 
     h4 {
@@ -407,19 +407,19 @@ const handleSubmitNavMenu = () => {
     }
 
     // Pseudo-element for showing order
-    &::before {
-      content: counter(submenu-counter);
-      counter-increment: submenu-counter;
-      position: absolute;
-      left: 10px;
-      bottom: 0;
-      // top: 50%;
-      // transform: translateY(-50%);
-      font-size: 40px;
-      font-weight: bold;
-      color: rgba(0, 0, 0, 0.1); // faded background look
-      z-index: 0;
-    }
+    // &::before {
+    //   content: counter(submenu-counter);
+    //   counter-increment: submenu-counter;
+    //   position: absolute;
+    //   left: 10px;
+    //   bottom: 0;
+    //   // top: 50%;
+    //   // transform: translateY(-50%);
+    //   font-size: 40px;
+    //   font-weight: bold;
+    //   color: rgba(0, 0, 0, 0.1); // faded background look
+    //   z-index: 0;
+    // }
   }
 
   // &::before{
