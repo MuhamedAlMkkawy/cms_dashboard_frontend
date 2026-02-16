@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import Aura from '@primeuix/themes/aura';
+import Aura from "@primeuix/themes/aura";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
@@ -15,18 +15,19 @@ export default defineNuxtConfig({
 
   ssr: false,
 
+
   app: {
     pageTransition: {
       name: "page",
       mode: "out-in",
     },
     head: {
-      title: "CMS Dashboard",
+      title: "GatePro",
       htmlAttrs: { lang: "en" },
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        { name: "description", content: "CMS Dashboard" },
+        { name: "description", content: "GatePro" },
       ],
       link: [{ rel: "icon", type: "image/x-icon", href: "/logo.ico" }],
     },
@@ -55,15 +56,6 @@ export default defineNuxtConfig({
     // Automatically import components from the default components directory
     { path: "~/components/", pathPrefix: false },
 
-    // Automatically import components from the 'popup' directory with .vue extension
-    { path: "~/components/popup/", pathPrefix: false, extensions: ["vue"] },
-
-    // Automatically import components from the 'fields' directory with .vue extension
-    {
-      path: "~/components/components_fields/",
-      pathPrefix: false,
-      extensions: ["vue"],
-    },
   ],
 
   imports: {
@@ -134,14 +126,13 @@ export default defineNuxtConfig({
   },
 
   css: [
+    "@/assets/css/tailwind.css",
     "@/assets/scss/_generic.scss",
     "@/assets/scss/_main-btn.scss",
     "@/assets/scss/_form.scss",
     "@/assets/scss/_popup.scss",
     "@/assets/scss/_flex_buttons.scss",
-    "@/assets/scss/_grid_items.scss",
-    "@/assets/scss/_components.scss",
-    "@/assets/scss/_sections.scss",
+    "@/assets/scss/_empty.scss",
     "@/assets/scss/style.scss",
     "primeicons/primeicons.css",
     // 'primevue/resources/themes/aura-light-green/theme.css'
